@@ -1,0 +1,98 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{27E5D527-A93E-46E9-A17D-CF5E14B70814}|HRestaurant\\HRestaurant.csproj|c:\\users\\asus\\desktop\\hrestaurant\\hrestaurant\\services\\implaments\\restaurantservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{27E5D527-A93E-46E9-A17D-CF5E14B70814}|HRestaurant\\HRestaurant.csproj|solutionrelative:hrestaurant\\services\\implaments\\restaurantservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{27E5D527-A93E-46E9-A17D-CF5E14B70814}|HRestaurant\\HRestaurant.csproj|c:\\users\\asus\\desktop\\hrestaurant\\hrestaurant\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{27E5D527-A93E-46E9-A17D-CF5E14B70814}|HRestaurant\\HRestaurant.csproj|solutionrelative:hrestaurant\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{27E5D527-A93E-46E9-A17D-CF5E14B70814}|HRestaurant\\HRestaurant.csproj|c:\\users\\asus\\desktop\\hrestaurant\\hrestaurant\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{27E5D527-A93E-46E9-A17D-CF5E14B70814}|HRestaurant\\HRestaurant.csproj|solutionrelative:hrestaurant\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{27E5D527-A93E-46E9-A17D-CF5E14B70814}|HRestaurant\\HRestaurant.csproj|c:\\users\\asus\\desktop\\hrestaurant\\hrestaurant\\services\\implaments\\orderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{27E5D527-A93E-46E9-A17D-CF5E14B70814}|HRestaurant\\HRestaurant.csproj|solutionrelative:hrestaurant\\services\\implaments\\orderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 82,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "RestaurantService.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\Services\\Implaments\\RestaurantService.cs",
+              "RelativeDocumentMoniker": "HRestaurant\\Services\\Implaments\\RestaurantService.cs",
+              "ToolTip": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\Services\\Implaments\\RestaurantService.cs",
+              "RelativeToolTip": "HRestaurant\\Services\\Implaments\\RestaurantService.cs",
+              "ViewState": "AgIAACcAAAAAAAAAAAAAAC8AAACqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-11T21:11:50.727Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "OrderController.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\Controllers\\OrderController.cs",
+              "RelativeDocumentMoniker": "HRestaurant\\Controllers\\OrderController.cs",
+              "ToolTip": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\Controllers\\OrderController.cs",
+              "RelativeToolTip": "HRestaurant\\Controllers\\OrderController.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAAAAkAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-11T21:05:00.276Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "OrderService.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\Services\\Implaments\\OrderService.cs",
+              "RelativeDocumentMoniker": "HRestaurant\\Services\\Implaments\\OrderService.cs",
+              "ToolTip": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\Services\\Implaments\\OrderService.cs",
+              "RelativeToolTip": "HRestaurant\\Services\\Implaments\\OrderService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAG8AAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-11T20:24:06.144Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\Program.cs",
+              "RelativeDocumentMoniker": "HRestaurant\\Program.cs",
+              "ToolTip": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\Program.cs",
+              "RelativeToolTip": "HRestaurant\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-11T13:33:29.534Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedHeight": 7,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
