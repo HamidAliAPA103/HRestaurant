@@ -92,13 +92,15 @@ namespace HRestaurant.Migrations
                     b.Property<Guid>("ResdaranId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("RestaurantID")
+                    b.Property<Guid?>("RestaurantID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("ResdaranId");
 
                     b.HasIndex("RestaurantID");
 
@@ -387,10 +389,14 @@ namespace HRestaurant.Migrations
             modelBuilder.Entity("HRestaurant.Models.MenuCategory", b =>
                 {
                     b.HasOne("HRestaurant.Models.Restaurant", "Restaurant")
-                        .WithMany("Categories")
-                        .HasForeignKey("RestaurantID")
+                        .WithMany()
+                        .HasForeignKey("ResdaranId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("HRestaurant.Models.Restaurant", null)
+                        .WithMany("Categories")
+                        .HasForeignKey("RestaurantID");
 
                     b.Navigation("Restaurant");
                 });

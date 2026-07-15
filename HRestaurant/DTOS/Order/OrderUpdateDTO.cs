@@ -8,3 +8,5 @@ namespace HRestaurant.DTOS.Order
         public OrderStatus Status { get; set; }
     }
 }
+
+//todo:her seyin nece islediyini yoxla orderitem son qaldiqin

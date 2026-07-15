@@ -34,6 +34,10 @@ namespace HRestaurant.Data
             modelBuilder.Entity<OrderItem>()
                 .Property(oi => oi.Prices)
                 .HasPrecision(18, 2);
+            modelBuilder.Entity<MenuCategory>()
+            .HasOne(mc => mc.Restaurant)
+            .WithMany()
+            .HasForeignKey(mc => mc.ResdaranId);
         }
 
     }
