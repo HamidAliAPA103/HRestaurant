@@ -1,53 +1,12 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{27E5D527-A93E-46E9-A17D-CF5E14B70814}|HRestaurant\\HRestaurant.csproj|c:\\users\\asus\\desktop\\hrestaurant\\hrestaurant\\services\\implaments\\menucategoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{27E5D527-A93E-46E9-A17D-CF5E14B70814}|HRestaurant\\HRestaurant.csproj|solutionrelative:hrestaurant\\services\\implaments\\menucategoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{27E5D527-A93E-46E9-A17D-CF5E14B70814}|HRestaurant\\HRestaurant.csproj|c:\\users\\asus\\desktop\\hrestaurant\\hrestaurant\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{27E5D527-A93E-46E9-A17D-CF5E14B70814}|HRestaurant\\HRestaurant.csproj|solutionrelative:hrestaurant\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 1,
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
-        {
-          "DockedHeight": 82,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MenuCategoryService.cs",
-              "DocumentMoniker": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\Services\\Implaments\\MenuCategoryService.cs",
-              "RelativeDocumentMoniker": "HRestaurant\\Services\\Implaments\\MenuCategoryService.cs",
-              "ToolTip": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\Services\\Implaments\\MenuCategoryService.cs",
-              "RelativeToolTip": "HRestaurant\\Services\\Implaments\\MenuCategoryService.cs",
-              "ViewState": "AgIAABMAAAAAAAAAAAAQwBEAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-15T15:42:11.047Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "UserController.cs",
-              "DocumentMoniker": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\Controllers\\UserController.cs",
-              "RelativeDocumentMoniker": "HRestaurant\\Controllers\\UserController.cs",
-              "ToolTip": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\Controllers\\UserController.cs",
-              "RelativeToolTip": "HRestaurant\\Controllers\\UserController.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAAwBIAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-15T12:46:24.496Z",
-              "EditorCaption": ""
-            }
-          ]
-        },
         {
           "DockedHeight": 7,
           "SelectedChildIndex": -1,

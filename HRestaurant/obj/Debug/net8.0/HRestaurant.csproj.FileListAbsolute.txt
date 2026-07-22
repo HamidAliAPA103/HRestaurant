@@ -144,10 +144,10 @@ C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\obj\Debug\net8.0\staticwebassets.b
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\obj\Debug\net8.0\HRestaur.4EF1BF5A.Up2Date
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\obj\Debug\net8.0\HRestaurant.dll
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\obj\Debug\net8.0\refint\HRestaurant.dll
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\obj\Debug\net8.0\HRestaurant.pdb
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\obj\Debug\net8.0\HRestaurant.genruntimeconfig.cache
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\obj\Debug\net8.0\ref\HRestaurant.dll
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
