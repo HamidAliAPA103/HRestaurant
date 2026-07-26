@@ -10,3 +10,6 @@ C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Domain\obj\Debug\n
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Domain\obj\Debug\net8.0\refint\HRestaurant.Domain.dll
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Domain\obj\Debug\net8.0\HRestaurant.Domain.pdb
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Domain\obj\Debug\net8.0\ref\HRestaurant.Domain.dll
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.Domain.deps.json
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.Domain.dll
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.Domain.pdb

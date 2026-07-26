@@ -1,135 +1,218 @@
-﻿using HRestaurant.Data;
-using HRestaurant.DTOS.OrderItem;
+using AutoMapper;
 using HRestaurant.DTOS.Reservation;
 using HRestaurant.DTOS.Responses;
 using HRestaurant.Enum;
 using HRestaurant.Models;
+using HRestaurant.Repositories.Interfaces;
 using HRestaurant.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace HRestaurant.Services.Implementations
+namespace HRestaurant.Services.Implementations;
+
+public sealed class ReservationService : IReservationService
 {
-    public class ReservationService : IReservationService
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
+
+    public ReservationService(
+        IUnitOfWork unitOfWork,
+        IMapper mapper)
     {
-        private readonly AppDbContext _context;
+        ArgumentNullException.ThrowIfNull(unitOfWork);
+        ArgumentNullException.ThrowIfNull(mapper);
 
-        public ReservationService(AppDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<ApiResponse> CreateAsync(ReservationCreateDTO dto)
-        {
-            Reservation reservation = new()
-            {
-                CustomerId = dto.CustomerId,
-                TableId = dto.TableId,
-                ReservationTime = dto.ReservationTime,
-                GuestCount = dto.GuestCount,
-                Status = dto.Status
-            };
-
-            var result = await _context.AddAsync(reservation);
-            if (result.State != EntityState.Added) return new ApiResponse() { StatusCode = 500, Message = "Create failed!" };
-            var saveCount = await _context.SaveChangesAsync();
-            return saveCount > 0 ? new ApiResponse { StatusCode = 201, Message = "Created successfully!" } :
-            new ApiResponse { StatusCode = 500, Message = "Save failed!" };
-        }
-
-        public async Task<ApiResponse> GetAllAsync(ViewType type)
-        {
-            var reservations = (type == ViewType.notdeleted) ?
-
-            await _context.Reservations.Where(c => !c.IsDeleted).ToListAsync() :
-
-            (type == ViewType.deleted) ? await _context.Reservations.Where(c => c.IsDeleted).ToListAsync() :
-
-            await _context.Reservations.ToListAsync();
-
-            var dtos = reservations.Select(c => new ReservationGetDTO { ID = c.ID,CustomerId = c.CustomerId,GuestCount = c.GuestCount,ReservationTime = c.ReservationTime,Status = c.Status,TableId = c.TableId , CreatAt = c.CreatAt, DeletedAt = c.DeletedAt, IsDeleted = c.IsDeleted, UpdateAt = c.UpdateAt }).ToList();
-
-            return new ApiResponse { StatusCode = 200, Data = dtos, Message = $"Total: {dtos.Count.ToString()}" };
-        }
-
-        public async Task<ApiResponse> GetByID(Guid id)
-        {
-            var reservation = await _context.Reservations.FirstOrDefaultAsync(c => !c.IsDeleted && c.ID == id);
-
-            if (reservation == null) return new ApiResponse { StatusCode = 404, Message = "Reservation not found!" };
-
-            var dto = new ReservationGetDTO()
-            {
-                ID = reservation.ID,
-                CustomerId = reservation.CustomerId,
-                GuestCount = reservation.GuestCount,
-                ReservationTime = reservation.ReservationTime,
-                Status = reservation.Status,
-                TableId = reservation.TableId,
-                CreatAt = reservation.CreatAt,
-                DeletedAt = reservation.DeletedAt,
-                UpdateAt = reservation.UpdateAt
-            };
-
-            return new ApiResponse { StatusCode = 200, Data = dto };
-        }
-
-        public async Task<ApiResponse> RemoveAsync(Guid id)
-        {
-            var reservation = await _context.Reservations.FindAsync(id);
-
-            if (reservation == null) return new ApiResponse { StatusCode = 404, Message = "Reservatoin not found!" };
-
-            var result = _context.Remove(reservation);
-            if (result.State != EntityState.Deleted) return new ApiResponse { StatusCode = 404, Message = "Reservatoin not found!" };
-            var saveCount = await _context.SaveChangesAsync();
-            return saveCount > 0 ? new ApiResponse { StatusCode = 204, Message = "Deleted successfully!" } :
-            new ApiResponse() { StatusCode = 500, Message = "Save failed!" };
-        }
-
-        public async Task<ApiResponse> ToggleAsync(Guid id)
-        {
-            var reservation = await _context.Reservations.FindAsync(id);
-
-            if (reservation == null) return new ApiResponse { StatusCode = 404, Message = "Reservatoin not found!" };
-
-            reservation.IsDeleted = !reservation.IsDeleted;
-
-            reservation.DeletedAt = DateTime.Now;
-
-            var result = _context.Update(reservation);
-            if (result.State != EntityState.Modified) return new ApiResponse { StatusCode = 500, Message = "Reservation failed!" };
-            var saveCount = await _context.SaveChangesAsync();
-            return (saveCount > 0 && reservation.IsDeleted) ?
-                new ApiResponse { StatusCode = 204, Message = "Deleted temporarily!" }
-                :
-                (saveCount > 0 && !reservation.IsDeleted) ?
-                new ApiResponse { StatusCode = 200, Message = "Restored successfully!" } :
-                new ApiResponse { StatusCode = 500, Message = "Save failed!" };
-        }
-
-        public async Task<ApiResponse> UpdateAsync(Guid id, ReservationUpdateDTO dto)
-        {
-            var reservation = await _context.Reservations.FirstOrDefaultAsync(c => !c.IsDeleted && c.ID == id);
-
-            if (reservation == null) return new ApiResponse { StatusCode = 404, Message = "Reservatoin not found!" };
-
-            reservation.CustomerId = dto.CustomerId != null ? dto.CustomerId : reservation.CustomerId;
-
-            reservation.TableId = dto.TableId != null ? dto.TableId : reservation.TableId;
-
-            reservation.ReservationTime = dto.ReservationTime != null ? dto.ReservationTime : reservation.ReservationTime;
-
-            reservation.GuestCount = dto.GuestCount != null ? dto.GuestCount : reservation.GuestCount;
-
-            reservation.Status = dto.Status != null ? dto.Status : reservation.Status;
-
-            reservation.UpdateAt = DateTime.UtcNow;
-            var result = _context.Update(reservation);
-
-            if (result.State != EntityState.Modified) return new ApiResponse { StatusCode = 500, Message = "Updated failed!" };
-            var saveCount = await _context.SaveChangesAsync();
-            return saveCount > 0 ? new ApiResponse { StatusCode = 200, Message = "Updated successfully!" } :
-            new ApiResponse() { StatusCode = 500, Message = "Save failed!" };
-        }
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
+
+    public async Task<ApiResponse> CreateAsync(
+        ReservationCreateDTO dto,
+        CancellationToken cancellationToken = default)
+    {
+        var reservation = _mapper.Map<Reservation>(dto);
+
+        await _unitOfWork.Reservations.AddAsync(
+            reservation,
+            cancellationToken);
+
+        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return saveCount > 0
+            ? new ApiResponse
+            {
+                StatusCode = 201,
+                Message = "Created successfully!"
+            }
+            : new ApiResponse
+            {
+                StatusCode = 500,
+                Message = "Save failed!"
+            };
+    }
+
+    public async Task<ApiResponse> GetAllAsync(
+        ViewType type,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _unitOfWork.Reservations.GetQueryable();
+
+        query = type switch
+        {
+            ViewType.deleted => query.Where(entity => entity.IsDeleted),
+            ViewType.notdeleted => query.Where(entity => !entity.IsDeleted),
+            _ => query
+        };
+
+        var reservations = await query.ToListAsync(cancellationToken);
+        var dtos = _mapper.Map<List<ReservationGetDTO>>(reservations);
+
+        return new ApiResponse
+        {
+            StatusCode = 200,
+            Data = dtos,
+            Message = $"Total: {dtos.Count}"
+        };
+    }
+
+    public async Task<ApiResponse> GetByID(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var reservation = await _unitOfWork.Reservations
+            .GetQueryable()
+            .FirstOrDefaultAsync(
+                entity => !entity.IsDeleted && entity.ID == id,
+                cancellationToken);
+
+        if (reservation is null)
+        {
+            return new ApiResponse
+            {
+                StatusCode = 404,
+                Message = "Reservation not found!"
+            };
+        }
+
+        return new ApiResponse
+        {
+            StatusCode = 200,
+            Data = _mapper.Map<ReservationGetDTO>(reservation)
+        };
+    }
+
+    public async Task<ApiResponse> RemoveAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var reservation = await _unitOfWork.Reservations.GetByIdAsync(
+            id,
+            cancellationToken);
+
+        if (reservation is null)
+        {
+            return new ApiResponse
+            {
+                StatusCode = 404,
+                Message = "Reservation not found!"
+            };
+        }
+
+        _unitOfWork.Reservations.Delete(reservation);
+        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return saveCount > 0
+            ? new ApiResponse
+            {
+                StatusCode = 204,
+                Message = "Deleted successfully!"
+            }
+            : new ApiResponse
+            {
+                StatusCode = 500,
+                Message = "Save failed!"
+            };
+    }
+
+    public async Task<ApiResponse> ToggleAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var reservation = await _unitOfWork.Reservations.GetByIdAsync(
+            id,
+            cancellationToken);
+
+        if (reservation is null)
+        {
+            return new ApiResponse
+            {
+                StatusCode = 404,
+                Message = "Reservation not found!"
+            };
+        }
+
+        reservation.IsDeleted = !reservation.IsDeleted;
+        reservation.DeletedAt = reservation.IsDeleted ? DateTime.UtcNow : null;
+        reservation.UpdateAt = DateTime.UtcNow;
+
+        _unitOfWork.Reservations.Update(reservation);
+        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return saveCount > 0
+            ? reservation.IsDeleted
+                ? new ApiResponse
+                {
+                    StatusCode = 204,
+                    Message = "Deleted temporarily!"
+                }
+                : new ApiResponse
+                {
+                    StatusCode = 200,
+                    Message = "Restored successfully!"
+                }
+            : new ApiResponse
+            {
+                StatusCode = 500,
+                Message = "Save failed!"
+            };
+    }
+
+    public async Task<ApiResponse> UpdateAsync(
+        Guid id,
+        ReservationUpdateDTO dto,
+        CancellationToken cancellationToken = default)
+    {
+        var reservation = await _unitOfWork.Reservations
+            .GetQueryable()
+            .FirstOrDefaultAsync(
+                entity => !entity.IsDeleted && entity.ID == id,
+                cancellationToken);
+
+        if (reservation is null)
+        {
+            return new ApiResponse
+            {
+                StatusCode = 404,
+                Message = "Reservation not found!"
+            };
+        }
+
+        _mapper.Map(dto, reservation);
+        reservation.UpdateAt = DateTime.UtcNow;
+
+        _unitOfWork.Reservations.Update(reservation);
+        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return saveCount > 0
+            ? new ApiResponse
+            {
+                StatusCode = 200,
+                Message = "Updated successfully!"
+            }
+            : new ApiResponse
+            {
+                StatusCode = 500,
+                Message = "Save failed!"
+            };
+    }
+
 }

@@ -1,132 +1,215 @@
-﻿using HRestaurant.Data;
-using HRestaurant.DTOS.Reservation;
+using AutoMapper;
 using HRestaurant.DTOS.Responses;
 using HRestaurant.DTOS.Review;
 using HRestaurant.Enum;
 using HRestaurant.Models;
+using HRestaurant.Repositories.Interfaces;
 using HRestaurant.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace HRestaurant.Services.Implementations
+namespace HRestaurant.Services.Implementations;
+
+public sealed class ReviewService : IReviewService
 {
-    public class ReviewService : IReviewService
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
+
+    public ReviewService(
+        IUnitOfWork unitOfWork,
+        IMapper mapper)
     {
-        private readonly AppDbContext _context;
+        ArgumentNullException.ThrowIfNull(unitOfWork);
+        ArgumentNullException.ThrowIfNull(mapper);
 
-        public ReviewService(AppDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<ApiResponse> CreateAsync(ReviewCreateDTO dto)
-        {
-            Review review = new()
-            {
-                CustomerId = dto.CustomerId,
-                ResdaranId = dto.ResdaranId,
-                Rating = dto.Rating,
-                Comment = dto.Comment
-            };
-
-            var result = await _context.AddAsync(review);
-            if (result.State != EntityState.Added) return new ApiResponse() { StatusCode = 500, Message = "Create failed!" };
-            var saveCount = await _context.SaveChangesAsync();
-            return saveCount > 0 ? new ApiResponse { StatusCode = 201, Message = "Created successfully!" } :
-            new ApiResponse { StatusCode = 500, Message = "Save failed!" };
-        }
-
-        public async Task<ApiResponse> GetAllAsync(ViewType type)
-        {
-            var reviews = (type == ViewType.notdeleted) ?
-
-            await _context.Reviews.Where(c => !c.IsDeleted).ToListAsync() :
-
-            (type == ViewType.deleted) ? await _context.Reviews.Where(c => c.IsDeleted).ToListAsync() :
-
-            await _context.Reviews.ToListAsync();
-
-            var dtos = reviews.Select(c => new ReviewGetDTO { ID = c.ID, CustomerId = c.CustomerId, Comment = c.Comment,Rating = c.Rating,ResdaranId = c.ResdaranId, CreatAt = c.CreatAt, DeletedAt = c.DeletedAt, IsDeleted = c.IsDeleted, UpdateAt = c.UpdateAt }).ToList();
-
-            return new ApiResponse { StatusCode = 200, Data = dtos, Message = $"Total: {dtos.Count.ToString()}" };
-        }
-
-        public async Task<ApiResponse> GetByID(Guid id)
-        {
-            var review = await _context.Reviews.FirstOrDefaultAsync(c => !c.IsDeleted && c.ID == id);
-
-            if (review == null) return new ApiResponse { StatusCode = 404, Message = "Review not found!" };
-
-            var dto = new ReviewGetDTO()
-            {
-                ID = review.ID,
-                CustomerId = review.CustomerId,
-                Comment = review.Comment,
-                Rating = review.Rating,
-                ResdaranId = review.ResdaranId,
-                CreatAt = review.CreatAt,
-                DeletedAt = review.DeletedAt,
-                IsDeleted = review.IsDeleted,
-                UpdateAt = review.UpdateAt
-            };
-
-            return new ApiResponse { StatusCode = 200, Data = dto };
-        }
-
-        public async Task<ApiResponse> RemoveAsync(Guid id)
-        {
-            var review = await _context.Reviews.FindAsync(id);
-
-            if (review == null) return new ApiResponse { StatusCode = 404, Message = "Review not found!" };
-
-            var result = _context.Remove(review);
-            if (result.State != EntityState.Deleted) return new ApiResponse { StatusCode = 404, Message = "Review not found!" };
-            var saveCount = await _context.SaveChangesAsync();
-            return saveCount > 0 ? new ApiResponse { StatusCode = 204, Message = "Deleted successfully!" } :
-            new ApiResponse() { StatusCode = 500, Message = "Save failed!" };
-        }
-
-        public async Task<ApiResponse> ToggleAsync(Guid id)
-        {
-            var review = await _context.Reviews.FindAsync(id);
-
-            if (review == null) return new ApiResponse { StatusCode = 404, Message = "Review not found!" };
-
-            review.IsDeleted = !review.IsDeleted;
-
-            review.DeletedAt = DateTime.Now;
-
-            var result = _context.Update(review);
-            if (result.State != EntityState.Modified) return new ApiResponse { StatusCode = 500, Message = "Review failed!" };
-            var saveCount = await _context.SaveChangesAsync();
-            return (saveCount > 0 && review.IsDeleted) ?
-                new ApiResponse { StatusCode = 204, Message = "Deleted temporarily!" }
-                :
-                (saveCount > 0 && !review.IsDeleted) ?
-                new ApiResponse { StatusCode = 200, Message = "Restored successfully!" } :
-                new ApiResponse { StatusCode = 500, Message = "Save failed!" };
-        }
-
-        public async Task<ApiResponse> UpdateAsync(Guid id, ReviewUpdateDTO dto)
-        {
-            var review = await _context.Reviews.FirstOrDefaultAsync(c => !c.IsDeleted && c.ID == id);
-
-            if (review == null) return new ApiResponse { StatusCode = 404, Message = "Review not found!" };
-
-            review.CustomerId = dto.CustomerId != null ? dto.CustomerId : review.CustomerId;
-
-            review.ResdaranId = dto.ResdaranId != null ? dto.ResdaranId : review.ResdaranId;
-
-            review.Rating = dto.Rating != null ? dto.Rating : review.Rating;
-
-            review.Comment = dto.Comment != null ? dto.Comment : review.Comment;
-
-            review.UpdateAt = DateTime.UtcNow;
-            var result = _context.Update(review);
-
-            if (result.State != EntityState.Modified) return new ApiResponse { StatusCode = 500, Message = "Updated failed!" };
-            var saveCount = await _context.SaveChangesAsync();
-            return saveCount > 0 ? new ApiResponse { StatusCode = 200, Message = "Updated successfully!" } :
-            new ApiResponse() { StatusCode = 500, Message = "Save failed!" };
-        }
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
+
+    public async Task<ApiResponse> CreateAsync(
+        ReviewCreateDTO dto,
+        CancellationToken cancellationToken = default)
+    {
+        var review = _mapper.Map<Review>(dto);
+
+        await _unitOfWork.Reviews.AddAsync(review, cancellationToken);
+        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return saveCount > 0
+            ? new ApiResponse
+            {
+                StatusCode = 201,
+                Message = "Created successfully!"
+            }
+            : new ApiResponse
+            {
+                StatusCode = 500,
+                Message = "Save failed!"
+            };
+    }
+
+    public async Task<ApiResponse> GetAllAsync(
+        ViewType type,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _unitOfWork.Reviews.GetQueryable();
+
+        query = type switch
+        {
+            ViewType.deleted => query.Where(entity => entity.IsDeleted),
+            ViewType.notdeleted => query.Where(entity => !entity.IsDeleted),
+            _ => query
+        };
+
+        var reviews = await query.ToListAsync(cancellationToken);
+        var dtos = _mapper.Map<List<ReviewGetDTO>>(reviews);
+
+        return new ApiResponse
+        {
+            StatusCode = 200,
+            Data = dtos,
+            Message = $"Total: {dtos.Count}"
+        };
+    }
+
+    public async Task<ApiResponse> GetByID(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var review = await _unitOfWork.Reviews
+            .GetQueryable()
+            .FirstOrDefaultAsync(
+                entity => !entity.IsDeleted && entity.ID == id,
+                cancellationToken);
+
+        if (review is null)
+        {
+            return new ApiResponse
+            {
+                StatusCode = 404,
+                Message = "Review not found!"
+            };
+        }
+
+        return new ApiResponse
+        {
+            StatusCode = 200,
+            Data = _mapper.Map<ReviewGetDTO>(review)
+        };
+    }
+
+    public async Task<ApiResponse> RemoveAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var review = await _unitOfWork.Reviews.GetByIdAsync(
+            id,
+            cancellationToken);
+
+        if (review is null)
+        {
+            return new ApiResponse
+            {
+                StatusCode = 404,
+                Message = "Review not found!"
+            };
+        }
+
+        _unitOfWork.Reviews.Delete(review);
+        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return saveCount > 0
+            ? new ApiResponse
+            {
+                StatusCode = 204,
+                Message = "Deleted successfully!"
+            }
+            : new ApiResponse
+            {
+                StatusCode = 500,
+                Message = "Save failed!"
+            };
+    }
+
+    public async Task<ApiResponse> ToggleAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var review = await _unitOfWork.Reviews.GetByIdAsync(
+            id,
+            cancellationToken);
+
+        if (review is null)
+        {
+            return new ApiResponse
+            {
+                StatusCode = 404,
+                Message = "Review not found!"
+            };
+        }
+
+        review.IsDeleted = !review.IsDeleted;
+        review.DeletedAt = review.IsDeleted ? DateTime.UtcNow : null;
+        review.UpdateAt = DateTime.UtcNow;
+
+        _unitOfWork.Reviews.Update(review);
+        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return saveCount > 0
+            ? review.IsDeleted
+                ? new ApiResponse
+                {
+                    StatusCode = 204,
+                    Message = "Deleted temporarily!"
+                }
+                : new ApiResponse
+                {
+                    StatusCode = 200,
+                    Message = "Restored successfully!"
+                }
+            : new ApiResponse
+            {
+                StatusCode = 500,
+                Message = "Save failed!"
+            };
+    }
+
+    public async Task<ApiResponse> UpdateAsync(
+        Guid id,
+        ReviewUpdateDTO dto,
+        CancellationToken cancellationToken = default)
+    {
+        var review = await _unitOfWork.Reviews
+            .GetQueryable()
+            .FirstOrDefaultAsync(
+                entity => !entity.IsDeleted && entity.ID == id,
+                cancellationToken);
+
+        if (review is null)
+        {
+            return new ApiResponse
+            {
+                StatusCode = 404,
+                Message = "Review not found!"
+            };
+        }
+
+        _mapper.Map(dto, review);
+        review.UpdateAt = DateTime.UtcNow;
+
+        _unitOfWork.Reviews.Update(review);
+        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return saveCount > 0
+            ? new ApiResponse
+            {
+                StatusCode = 200,
+                Message = "Updated successfully!"
+            }
+            : new ApiResponse
+            {
+                StatusCode = 500,
+                Message = "Save failed!"
+            };
+    }
+
 }

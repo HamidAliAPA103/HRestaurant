@@ -18,18 +18,22 @@ namespace HRestaurant.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(RestaurantCreatDTO dto)
+        public async Task<IActionResult> Create(
+            RestaurantCreatDTO dto,
+            CancellationToken cancellationToken)
         {
-            var result = await _service.CreateAsync(dto);
+            var result = await _service.CreateAsync(dto, cancellationToken);
 
             return StatusCode(result.StatusCode, result);
         }
 
         [HttpDelete]
 
-        public async Task<IActionResult> Remove(Guid id)
+        public async Task<IActionResult> Remove(
+            Guid id,
+            CancellationToken cancellationToken)
         {
-            var result = await _service.RemoveAsync(id);
+            var result = await _service.RemoveAsync(id, cancellationToken);
 
             return StatusCode(result.StatusCode, result);
 
@@ -37,17 +41,25 @@ namespace HRestaurant.Controllers
 
         [HttpGet]
 
-        public async Task<IActionResult> GetAll(ViewType type)
+        public async Task<IActionResult> GetAll(
+            ViewType type,
+            CancellationToken cancellationToken)
         {
-            var result = await _service.GetAllAsync(type);
+            var result = await _service.GetAllAsync(type, cancellationToken);
 
             return StatusCode(result.StatusCode, result);
         }
 
         [HttpPatch]
-        public async Task<IActionResult> Update(Guid id, RestaurantUpdateDTO dto)
+        public async Task<IActionResult> Update(
+            Guid id,
+            RestaurantUpdateDTO dto,
+            CancellationToken cancellationToken)
         {
-            var result = await _service.UpdateAsync(id, dto);
+            var result = await _service.UpdateAsync(
+                id,
+                dto,
+                cancellationToken);
 
             return StatusCode(result.StatusCode, result);
 

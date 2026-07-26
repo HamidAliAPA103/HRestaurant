@@ -38,7 +38,10 @@ namespace HRestaurant.Extentions
         }
 
 
-        public static async Task<string> CreateFileAsync(this HRestaurant.DTOS.Common.FileUploadDTO file, params string[] roots)
+        public static async Task<string> CreateFileAsync(
+            this HRestaurant.DTOS.Common.FileUploadDTO file,
+            CancellationToken cancellationToken = default,
+            params string[] roots)
         {
             string fileName = string.Concat(Guid.NewGuid().ToString(), file.FileName);
 
@@ -51,9 +54,9 @@ namespace HRestaurant.Extentions
 
             path = Path.Combine(path, fileName);
 
-            using (FileStream fileStream = new(path, FileMode.Create))
+            await using (FileStream fileStream = new(path, FileMode.Create))
             {
-                await file.Content.CopyToAsync(fileStream);
+                await file.Content.CopyToAsync(fileStream, cancellationToken);
             }
 
             return fileName;

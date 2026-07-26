@@ -85,3 +85,15 @@ C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\n
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\HRestaurant.WebApi.pdb
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\HRestaurant.WebApi.genruntimeconfig.cache
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\ref\HRestaurant.WebApi.dll
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\bin\Debug\net8.0\AutoMapper.dll
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\bin\Debug\net8.0\Microsoft.Extensions.Primitives.dll
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\bin\Debug\net8.0\System.Diagnostics.DiagnosticSource.dll
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\appsettings.Development.json
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\appsettings.json
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.WebApi.staticwebassets.runtime.json
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.WebApi.staticwebassets.endpoints.json
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.WebApi.exe
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.WebApi.deps.json
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.WebApi.runtimeconfig.json
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.WebApi.dll
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.WebApi.pdb

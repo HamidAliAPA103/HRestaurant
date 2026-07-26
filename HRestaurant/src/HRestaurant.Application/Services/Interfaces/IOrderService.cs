@@ -6,11 +6,11 @@ namespace HRestaurant.Services.Interfaces
 {
     public interface IOrderService
     {
-        Task<ApiResponse> CreateAsync(OrderCreatDTO dto);
-        Task<ApiResponse> GetAllAsync(ViewType type);
-        Task<ApiResponse> RemoveAsync(Guid id);
-        Task<ApiResponse> UpdateAsync(Guid id, OrderUpdateDTO dto);
-        Task<ApiResponse> ToggleAsync(Guid id);
-        Task<ApiResponse> GetByID(Guid id);
+        Task<ApiResponse> CreateAsync(OrderCreatDTO dto, CancellationToken cancellationToken = default);
+        Task<ApiResponse> GetAllAsync(ViewType type, CancellationToken cancellationToken = default);
+        Task<ApiResponse> RemoveAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<ApiResponse> UpdateAsync(Guid id, OrderUpdateDTO dto, CancellationToken cancellationToken = default);
+        Task<ApiResponse> ToggleAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<ApiResponse> GetByID(Guid id, CancellationToken cancellationToken = default);
     }
 }

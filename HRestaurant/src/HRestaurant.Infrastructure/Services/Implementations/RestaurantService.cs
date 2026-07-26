@@ -1,88 +1,148 @@
-﻿using HRestaurant.Data;
+using AutoMapper;
 using HRestaurant.DTOS.Responses;
 using HRestaurant.DTOS.Restaurant;
 using HRestaurant.Enum;
 using HRestaurant.Models;
+using HRestaurant.Repositories.Interfaces;
 using HRestaurant.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace HRestaurant.Services.Implementations
+namespace HRestaurant.Services.Implementations;
+
+public sealed class RestaurantService : IRestaurantService
 {
-    public class RestaurantService : IRestaurantService
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
+
+    public RestaurantService(
+        IUnitOfWork unitOfWork,
+        IMapper mapper)
     {
+        ArgumentNullException.ThrowIfNull(unitOfWork);
+        ArgumentNullException.ThrowIfNull(mapper);
 
-        private readonly AppDbContext _context;
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
+    }
 
-        public RestaurantService(AppDbContext context)
-        {
-            _context = context;
-        }
+    public async Task<ApiResponse> CreateAsync(
+        RestaurantCreatDTO dto,
+        CancellationToken cancellationToken = default)
+    {
+        var restaurant = _mapper.Map<Restaurant>(dto);
 
-        public async Task<ApiResponse> CreateAsync(RestaurantCreatDTO dto)
-        {
-            Restaurant restaurant = new()
+        await _unitOfWork.Restaurants.AddAsync(
+            restaurant,
+            cancellationToken);
+
+        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return saveCount > 0
+            ? new ApiResponse
             {
-                Name = dto.Name,
-                Adres = dto.Adres,
-                Number = dto.Number,
-                CreatAt = DateTime.UtcNow
+                StatusCode = 201,
+                Message = "Created successfully!"
+            }
+            : new ApiResponse
+            {
+                StatusCode = 500,
+                Message = "Save failed!"
             };
+    }
 
-            var result = await _context.AddAsync(restaurant);
-            if (result.State != EntityState.Added) return new ApiResponse() { StatusCode = 500, Message = "Create failed!" };
-            var saveCount = await _context.SaveChangesAsync();
-            return saveCount > 0 ? new ApiResponse { StatusCode = 201, Message = "Created successfully!" } :
-            new ApiResponse { StatusCode = 500, Message = "Save failed!" };
-        }
+    public async Task<ApiResponse> GetAllAsync(
+        ViewType type,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _unitOfWork.Restaurants.GetQueryable();
 
-        public async Task<ApiResponse> GetAllAsync(ViewType type)
+        query = type switch
         {
-            var restaurants = (type == ViewType.notdeleted) ?
+            ViewType.deleted => query.Where(entity => entity.IsDeleted),
+            ViewType.notdeleted => query.Where(entity => !entity.IsDeleted),
+            _ => query
+        };
 
-        await _context.Restaurants.Where(c => !c.IsDeleted).ToListAsync() :
+        var restaurants = await query.ToListAsync(cancellationToken);
+        var dtos = _mapper.Map<List<RestaurantGetDTO>>(restaurants);
 
-        (type == ViewType.deleted) ? await _context.Restaurants.Where(c => c.IsDeleted).ToListAsync() :
-
-        await _context.Restaurants.ToListAsync();
-
-            var dtos = restaurants.Select(c => new RestaurantGetDTO { Name = c.Name,Adres=c.Adres,Number=c.Number, CreatAt = c.CreatAt, ID = c.ID, IsDeleted = c.IsDeleted}).ToList();
-
-            return new ApiResponse { StatusCode = 200, Data = dtos, Message = $"Total: {dtos.Count.ToString()}" };
-
-        }
-
-        public async Task<ApiResponse> RemoveAsync(Guid id)
+        return new ApiResponse
         {
-            var restaurant = await _context.Restaurants.FindAsync(id);
+            StatusCode = 200,
+            Data = dtos,
+            Message = $"Total: {dtos.Count}"
+        };
+    }
 
-            if (restaurant == null) return new ApiResponse { StatusCode = 404, Message = "Restaurant not found!" };
+    public async Task<ApiResponse> RemoveAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var restaurant = await _unitOfWork.Restaurants.GetByIdAsync(
+            id,
+            cancellationToken);
 
-            var result = _context.Remove(restaurant);
-            if (result.State != EntityState.Deleted) return new ApiResponse { StatusCode = 404, Message = "Restaurant not found!" };
-            var saveCount = await _context.SaveChangesAsync();
-            return saveCount > 0 ? new ApiResponse { StatusCode = 204, Message = "Deleted successfully!" } :
-                new ApiResponse() { StatusCode = 500, Message = "Save failed!" };
-        }
-
-        public async Task<ApiResponse> UpdateAsync(Guid id, RestaurantUpdateDTO dto)
+        if (restaurant is null)
         {
-            var restaurant = await _context.Restaurants.FirstOrDefaultAsync(c => !c.IsDeleted && c.ID == id);
-
-            if (restaurant == null) return new ApiResponse { StatusCode = 404, Message = "Restaurant not found!" };
-
-            restaurant.Name = dto.Name != null ? dto.Name : restaurant.Name;
-
-            restaurant.Adres = dto.Adres != null ? dto.Adres : restaurant.Adres;
-
-            restaurant.Number = dto.Number != null ? dto.Number : restaurant.Number;
-
-            restaurant.UpdateAt = DateTime.UtcNow;
-            var result = _context.Update(restaurant);
-
-            if (result.State != EntityState.Modified) return new ApiResponse { StatusCode = 500, Message = "Updated failed!" };
-            var saveCount = await _context.SaveChangesAsync();
-            return saveCount > 0 ? new ApiResponse { StatusCode = 200, Message = "Updated successfully!" } :
-                new ApiResponse() { StatusCode = 500, Message = "Save failed!" };
+            return new ApiResponse
+            {
+                StatusCode = 404,
+                Message = "Restaurant not found!"
+            };
         }
+
+        _unitOfWork.Restaurants.Delete(restaurant);
+        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return saveCount > 0
+            ? new ApiResponse
+            {
+                StatusCode = 204,
+                Message = "Deleted successfully!"
+            }
+            : new ApiResponse
+            {
+                StatusCode = 500,
+                Message = "Save failed!"
+            };
+    }
+
+    public async Task<ApiResponse> UpdateAsync(
+        Guid id,
+        RestaurantUpdateDTO dto,
+        CancellationToken cancellationToken = default)
+    {
+        var restaurant = await _unitOfWork.Restaurants
+            .GetQueryable()
+            .FirstOrDefaultAsync(
+                entity => !entity.IsDeleted && entity.ID == id,
+                cancellationToken);
+
+        if (restaurant is null)
+        {
+            return new ApiResponse
+            {
+                StatusCode = 404,
+                Message = "Restaurant not found!"
+            };
+        }
+
+        _mapper.Map(dto, restaurant);
+        restaurant.UpdateAt = DateTime.UtcNow;
+
+        _unitOfWork.Restaurants.Update(restaurant);
+        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return saveCount > 0
+            ? new ApiResponse
+            {
+                StatusCode = 200,
+                Message = "Updated successfully!"
+            }
+            : new ApiResponse
+            {
+                StatusCode = 500,
+                Message = "Save failed!"
+            };
     }
 }

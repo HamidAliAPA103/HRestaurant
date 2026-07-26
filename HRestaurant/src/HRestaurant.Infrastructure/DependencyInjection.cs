@@ -29,6 +29,7 @@ public static class DependencyInjection
                     typeof(AppDbContext).Assembly.FullName)));
 
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<IRestaurantService, RestaurantService>();
         services.AddScoped<IOrderService, OrderService>();

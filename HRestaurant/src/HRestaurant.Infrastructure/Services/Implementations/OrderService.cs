@@ -1,154 +1,270 @@
-﻿using HRestaurant.Data;
+using AutoMapper;
 using HRestaurant.DTOS.Order;
 using HRestaurant.DTOS.Responses;
-using HRestaurant.DTOS.Restaurant;
 using HRestaurant.Enum;
-using HRestaurant.Migrations;
 using HRestaurant.Models;
+using HRestaurant.Repositories.Interfaces;
 using HRestaurant.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace HRestaurant.Services.Implementations
+namespace HRestaurant.Services.Implementations;
+
+public sealed class OrderService : IOrderService
 {
-    public class OrderService : IOrderService
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
+
+    public OrderService(
+        IUnitOfWork unitOfWork,
+        IMapper mapper)
     {
+        ArgumentNullException.ThrowIfNull(unitOfWork);
+        ArgumentNullException.ThrowIfNull(mapper);
 
-        private readonly AppDbContext _context;
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
+    }
 
-        public OrderService(AppDbContext context)
+    public async Task<ApiResponse> CreateAsync(
+        OrderCreatDTO dto,
+        CancellationToken cancellationToken = default)
+    {
+        var order = _mapper.Map<Order>(dto);
+        order.TotalPrices = 0;
+
+        for (var index = 0; index < dto.Items.Count; index++)
         {
-            _context = context;
-        }
+            var itemDto = dto.Items[index];
+            var menuItem = await _unitOfWork.MenuItems.GetByIdAsync(
+                itemDto.MenuId,
+                cancellationToken);
 
-        public async Task<ApiResponse> CreateAsync(OrderCreatDTO dto)
-        {
-            Order order = new()
+            if (menuItem is null || menuItem.IsDeleted)
             {
-                CustomerID = dto.CustomerID,
-                TableID = dto.TableID,
-                Items = new List<OrderItem>()
-            };
-
-            foreach (var itemDto in dto.Items)
-            {
-                var menu = await _context.Menus.FindAsync(itemDto.MenuId);
-
-                if (menu == null)
-                    return new ApiResponse { StatusCode = 404, Message = "Yemək tapılmadı!" };
-
-                OrderItem orderItem = new()
+                return new ApiResponse
                 {
-                    MenuId = itemDto.MenuId,
-                    Say = itemDto.Say,
-                    Prices = menu.Price
+                    StatusCode = 404,
+                    Message = "Yemək tapılmadı!"
                 };
-
-                order.Items.Add(orderItem);
-                order.TotalPrices += (orderItem.Prices * orderItem.Say);
             }
 
-            var result = await _context.AddAsync(order);
-
-            if (result.State != EntityState.Added)
-                return new ApiResponse() { StatusCode = 500, Message = "Create failed!" };
-
-            var saveCount = await _context.SaveChangesAsync();
-
-            return saveCount > 0
-                ? new ApiResponse { StatusCode = 201, Message = "Created successfully!" }
-                : new ApiResponse { StatusCode = 500, Message = "Save failed!" };
-
+            var orderItem = order.Items[index];
+            orderItem.OrderId = Guid.Empty;
+            orderItem.Prices = menuItem.Price;
+            order.TotalPrices += orderItem.Prices * orderItem.Say;
         }
 
-        public async Task<ApiResponse> GetAllAsync(ViewType type)
+        await _unitOfWork.BeginTransactionAsync(cancellationToken);
+
+        int saveCount;
+
+        try
         {
-            var orders = (type == ViewType.notdeleted) ?
+            await _unitOfWork.Orders.AddAsync(order, cancellationToken);
+            saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await _context.Orders.Where(c => !c.IsDeleted).ToListAsync() :
-
-            (type == ViewType.deleted) ? await _context.Orders.Where(c => c.IsDeleted).ToListAsync() :
-
-            await _context.Orders.ToListAsync();
-
-            var dtos = orders.Select(c => new OrderGetDTO {CustomerID = c.CustomerID , Status=c.Status, TableID=c.TableID, CreatAt = c.CreatAt, ID = c.ID, IsDeleted = c.IsDeleted,TotalPrices=c.TotalPrices }).ToList();
-
-            return new ApiResponse { StatusCode = 200, Data = dtos, Message = $"Total: {dtos.Count.ToString()}" };
-        }
-
-        public async Task<ApiResponse> GetByID(Guid id)
-        {
-            var orders = await _context.Orders.FirstOrDefaultAsync(c => !c.IsDeleted && c.ID == id);
-
-            if (orders == null) return new ApiResponse { StatusCode = 404, Message = "Order not found!" };
-
-            var dto = new OrderGetDTO()
+            if (saveCount <= 0)
             {
-                ID = orders.ID,
-                Status = orders.Status,
-                TableID = orders.TableID,
-                CreatAt = orders.CreatAt,
-                TotalPrices = orders.TotalPrices,
-                CustomerID = orders.CustomerID,
-                IsDeleted = orders.IsDeleted,
-             
-            };
-            return new ApiResponse { StatusCode = 200, Data = dto };
-        }
+                await _unitOfWork.RollbackTransactionAsync(
+                    CancellationToken.None);
 
-        public async Task<ApiResponse> RemoveAsync(Guid id)
+                return new ApiResponse
+                {
+                    StatusCode = 500,
+                    Message = "Save failed!"
+                };
+            }
+        }
+        catch (Exception operationException)
         {
+            try
+            {
+                await _unitOfWork.RollbackTransactionAsync(
+                    CancellationToken.None);
+            }
+            catch (Exception rollbackException)
+            {
+                throw new AggregateException(
+                    "Creating the order and rolling back the transaction both failed.",
+                    operationException,
+                    rollbackException);
+            }
 
-            var orders = await _context.Orders.FindAsync(id);
-
-            if (orders == null) return new ApiResponse { StatusCode = 404, Message = "Order not found!" };
-
-            var result = _context.Remove(orders);
-            if (result.State != EntityState.Deleted) return new ApiResponse { StatusCode = 404, Message = "Order not found!" };
-            var saveCount = await _context.SaveChangesAsync();
-            return saveCount > 0 ? new ApiResponse { StatusCode = 204, Message = "Deleted successfully!" } :
-                new ApiResponse() { StatusCode = 500, Message = "Save failed!" };
+            throw;
         }
 
-        public async Task<ApiResponse> ToggleAsync(Guid id)
+        await _unitOfWork.CommitTransactionAsync(cancellationToken);
+
+        return new ApiResponse
         {
-            var orders = await _context.Orders.FindAsync(id);
-
-            if (orders == null) return new ApiResponse { StatusCode = 404, Message = "Order not found!" };
-
-            orders.IsDeleted = !orders.IsDeleted;
-
-            orders.DeletedAt = DateTime.Now;
-
-            var result = _context.Update(orders);
-            if (result.State != EntityState.Modified) return new ApiResponse { StatusCode = 500, Message = "Order failed!" };
-            var saveCount = await _context.SaveChangesAsync();
-            return (saveCount > 0 && orders.IsDeleted) ?
-                new ApiResponse { StatusCode = 204, Message = "Deleted temporarily!" }
-                :
-                (saveCount > 0 && !orders.IsDeleted) ?
-                new ApiResponse { StatusCode = 200, Message = "Restored successfully!" } :
-                new ApiResponse { StatusCode = 500, Message = "Save failed!" };
-        }
-
-        public async Task<ApiResponse> UpdateAsync(Guid id, OrderUpdateDTO dto)
-        {
-            var orders = await _context.Orders.FirstOrDefaultAsync(c => !c.IsDeleted && c.ID == id);
-
-            if (orders == null) return new ApiResponse { StatusCode = 404, Message = "Order not found!" };
-
-            orders.TableID = dto.TableID != null ? dto.TableID : orders.TableID;
-
-            orders.Status = dto.Status != null ? dto.Status : orders.Status;
-
-         
-
-            orders.UpdateAt = DateTime.UtcNow;
-            var result = _context.Update(orders);
-
-            if (result.State != EntityState.Modified) return new ApiResponse { StatusCode = 500, Message = "Updated failed!" };
-            var saveCount = await _context.SaveChangesAsync();
-            return saveCount > 0 ? new ApiResponse { StatusCode = 200, Message = "Updated successfully!" } :
-                new ApiResponse() { StatusCode = 500, Message = "Save failed!" };
-        }
+            StatusCode = 201,
+            Message = "Created successfully!"
+        };
     }
+
+    public async Task<ApiResponse> GetAllAsync(
+        ViewType type,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _unitOfWork.Orders.GetQueryable();
+
+        query = type switch
+        {
+            ViewType.deleted => query.Where(entity => entity.IsDeleted),
+            ViewType.notdeleted => query.Where(entity => !entity.IsDeleted),
+            _ => query
+        };
+
+        var orders = await query.ToListAsync(cancellationToken);
+        var dtos = _mapper.Map<List<OrderGetDTO>>(orders);
+
+        return new ApiResponse
+        {
+            StatusCode = 200,
+            Data = dtos,
+            Message = $"Total: {dtos.Count}"
+        };
+    }
+
+    public async Task<ApiResponse> GetByID(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var order = await _unitOfWork.Orders
+            .GetQueryable()
+            .FirstOrDefaultAsync(
+                entity => !entity.IsDeleted && entity.ID == id,
+                cancellationToken);
+
+        if (order is null)
+        {
+            return new ApiResponse
+            {
+                StatusCode = 404,
+                Message = "Order not found!"
+            };
+        }
+
+        return new ApiResponse
+        {
+            StatusCode = 200,
+            Data = _mapper.Map<OrderGetDTO>(order)
+        };
+    }
+
+    public async Task<ApiResponse> RemoveAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var order = await _unitOfWork.Orders.GetByIdAsync(
+            id,
+            cancellationToken);
+
+        if (order is null)
+        {
+            return new ApiResponse
+            {
+                StatusCode = 404,
+                Message = "Order not found!"
+            };
+        }
+
+        _unitOfWork.Orders.Delete(order);
+        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return saveCount > 0
+            ? new ApiResponse
+            {
+                StatusCode = 204,
+                Message = "Deleted successfully!"
+            }
+            : new ApiResponse
+            {
+                StatusCode = 500,
+                Message = "Save failed!"
+            };
+    }
+
+    public async Task<ApiResponse> ToggleAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var order = await _unitOfWork.Orders.GetByIdAsync(
+            id,
+            cancellationToken);
+
+        if (order is null)
+        {
+            return new ApiResponse
+            {
+                StatusCode = 404,
+                Message = "Order not found!"
+            };
+        }
+
+        order.IsDeleted = !order.IsDeleted;
+        order.DeletedAt = order.IsDeleted ? DateTime.UtcNow : null;
+        order.UpdateAt = DateTime.UtcNow;
+
+        _unitOfWork.Orders.Update(order);
+        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return saveCount > 0
+            ? order.IsDeleted
+                ? new ApiResponse
+                {
+                    StatusCode = 204,
+                    Message = "Deleted temporarily!"
+                }
+                : new ApiResponse
+                {
+                    StatusCode = 200,
+                    Message = "Restored successfully!"
+                }
+            : new ApiResponse
+            {
+                StatusCode = 500,
+                Message = "Save failed!"
+            };
+    }
+
+    public async Task<ApiResponse> UpdateAsync(
+        Guid id,
+        OrderUpdateDTO dto,
+        CancellationToken cancellationToken = default)
+    {
+        var order = await _unitOfWork.Orders
+            .GetQueryable()
+            .FirstOrDefaultAsync(
+                entity => !entity.IsDeleted && entity.ID == id,
+                cancellationToken);
+
+        if (order is null)
+        {
+            return new ApiResponse
+            {
+                StatusCode = 404,
+                Message = "Order not found!"
+            };
+        }
+
+        _mapper.Map(dto, order);
+        order.UpdateAt = DateTime.UtcNow;
+
+        _unitOfWork.Orders.Update(order);
+        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return saveCount > 0
+            ? new ApiResponse
+            {
+                StatusCode = 200,
+                Message = "Updated successfully!"
+            }
+            : new ApiResponse
+            {
+                StatusCode = 500,
+                Message = "Save failed!"
+            };
+    }
+
 }

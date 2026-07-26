@@ -14,3 +14,6 @@ C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Application\obj\De
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Application\obj\Debug\net8.0\refint\HRestaurant.Application.dll
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Application\obj\Debug\net8.0\HRestaurant.Application.pdb
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Application\obj\Debug\net8.0\ref\HRestaurant.Application.dll
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.Application.deps.json
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.Application.dll
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.Application.pdb

@@ -7,11 +7,11 @@ namespace HRestaurant.Services.Interfaces
 {
     public interface IMenuCategoryService
     {
-        Task<ApiResponse> CreateAsync(MenuCategoryCreateDTO dto);
-        Task<ApiResponse> GetAllAsync(ViewType type);
-        Task<ApiResponse> RemoveAsync(Guid id);
-        Task<ApiResponse> UpdateAsync(Guid id, MenuCategoryUpdateDTO dto);
-        Task<ApiResponse> ToggleAsync(Guid id);
-        Task<ApiResponse> GetByID(Guid id);
+        Task<ApiResponse> CreateAsync(MenuCategoryCreateDTO dto, CancellationToken cancellationToken = default);
+        Task<ApiResponse> GetAllAsync(ViewType type, CancellationToken cancellationToken = default);
+        Task<ApiResponse> RemoveAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<ApiResponse> UpdateAsync(Guid id, MenuCategoryUpdateDTO dto, CancellationToken cancellationToken = default);
+        Task<ApiResponse> ToggleAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<ApiResponse> GetByID(Guid id, CancellationToken cancellationToken = default);
     }
 }
