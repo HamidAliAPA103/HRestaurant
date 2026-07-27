@@ -1,12 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "8Ng+1Liby/k=",
+  "dgSpecHash": "/VXfZA6kzkA=",
   "success": true,
   "projectFilePath": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.WebApi\\HRestaurant.WebApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ASUS\\.nuget\\packages\\automapper\\16.2.0\\automapper.16.2.0.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\fluentvalidation\\12.1.1\\fluentvalidation.12.1.1.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\12.1.1\\fluentvalidation.dependencyinjectionextensions.12.1.1.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\1.1.1\\microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\microsoft.data.sqlclient\\5.1.7\\microsoft.data.sqlclient.5.1.7.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\microsoft.data.sqlclient.sni.runtime\\5.1.2\\microsoft.data.sqlclient.sni.runtime.5.1.2.nupkg.sha512",

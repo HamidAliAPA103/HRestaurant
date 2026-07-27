@@ -1,11 +1,29 @@
 using AutoMapper;
+using FluentValidation;
 using HRestaurant.Infrastructure;
 using HRestaurant.Mappings.Restaurants;
+using HRestaurant.Validators.Restaurants;
+using HRestaurant.WebApi.Validation;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddControllers();
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddValidatorsFromAssemblyContaining<
+    RestaurantCreateDTOValidator>();
+builder.Services.AddScoped<FluentValidationActionFilter>();
+
+builder.Services
+    .AddControllers(options =>
+        options.Filters.AddService<FluentValidationActionFilter>())
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.InvalidModelStateResponseFactory = context =>
+            new BadRequestObjectResult(
+                ValidationErrorResponseFactory.FromModelState(
+                    context.ModelState));
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var autoMapperLicenseKey =

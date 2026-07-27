@@ -22,3 +22,11 @@ C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.Infrastr
 C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.Infrastructure.runtimeconfig.json
 C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.Infrastructure.dll
 C:\Users\ASUS\AppData\Local\Temp\HRestaurantAutoMapperBuild\HRestaurant.Infrastructure.pdb
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantFluentValidationBuild\HRestaurant.Infrastructure.deps.json
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantFluentValidationBuild\HRestaurant.Infrastructure.runtimeconfig.json
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantFluentValidationBuild\HRestaurant.Infrastructure.dll
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantFluentValidationBuild\HRestaurant.Infrastructure.pdb
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantValidationSmoke\HRestaurant.Infrastructure.deps.json
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantValidationSmoke\HRestaurant.Infrastructure.runtimeconfig.json
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantValidationSmoke\HRestaurant.Infrastructure.dll
+C:\Users\ASUS\AppData\Local\Temp\HRestaurantValidationSmoke\HRestaurant.Infrastructure.pdb
