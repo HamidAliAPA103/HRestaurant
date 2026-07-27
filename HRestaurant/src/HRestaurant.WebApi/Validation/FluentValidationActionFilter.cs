@@ -54,8 +54,13 @@ public sealed class FluentValidationActionFilter : IAsyncActionFilter
 
         if (failures.Count > 0)
         {
-            context.Result = new BadRequestObjectResult(
-                ValidationErrorResponseFactory.FromFailures(failures));
+            var response =
+                ValidationErrorResponseFactory.FromFailures(failures);
+
+            context.Result = new ObjectResult(response)
+            {
+                StatusCode = response.StatusCode
+            };
 
             return;
         }

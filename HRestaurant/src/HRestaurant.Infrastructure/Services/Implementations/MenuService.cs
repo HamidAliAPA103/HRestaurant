@@ -1,7 +1,6 @@
 using AutoMapper;
 using HRestaurant.DTOS.Menu;
 using HRestaurant.DTOS.Responses;
-using HRestaurant.Enum;
 using HRestaurant.Extentions;
 using HRestaurant.Models;
 using HRestaurant.Repositories.Interfaces;
@@ -12,10 +11,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HRestaurant.Services.Implementations;
 
-public sealed class MenuService : IMenuService
+public sealed class MenuService :
+    CrudServiceBase<
+        Menu,
+        MenuCreateDTO,
+        MenuUpdateDTO,
+        MenuGetDTO>,
+    IMenuService
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
     private readonly IWebHostEnvironment _web;
     private readonly IHttpContextAccessor _accessor;
 
@@ -24,235 +27,158 @@ public sealed class MenuService : IMenuService
         IMapper mapper,
         IWebHostEnvironment web,
         IHttpContextAccessor accessor)
+        : base(unitOfWork, mapper, "Menu item")
     {
-        ArgumentNullException.ThrowIfNull(unitOfWork);
-        ArgumentNullException.ThrowIfNull(mapper);
         ArgumentNullException.ThrowIfNull(web);
         ArgumentNullException.ThrowIfNull(accessor);
 
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
         _web = web;
         _accessor = accessor;
     }
 
-    public async Task<ApiResponse> CreateAsync(
+    public override async Task<ApiResponse<Guid>> CreateAsync(
         MenuCreateDTO dto,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(dto);
+        ArgumentNullException.ThrowIfNull(dto.Image);
+
         var imageName = await dto.Image.CreateFileAsync(
             cancellationToken,
             _web.WebRootPath,
             "images",
             "menus");
 
-        var menuItem = _mapper.Map<Menu>(dto);
-        menuItem.Image = imageName;
-        menuItem.ImageURL = BuildImageUrl(imageName);
-
-        await _unitOfWork.MenuItems.AddAsync(
-            menuItem,
-            cancellationToken);
-
-        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return saveCount > 0
-            ? new ApiResponse
-            {
-                StatusCode = 201,
-                Message = "Created successfully!"
-            }
-            : new ApiResponse
-            {
-                StatusCode = 500,
-                Message = "Save failed!"
-            };
-    }
-
-    public async Task<ApiResponse> GetAllAsync(
-        ViewType type,
-        CancellationToken cancellationToken = default)
-    {
-        var query = _unitOfWork.MenuItems.GetQueryable();
-
-        query = type switch
+        try
         {
-            ViewType.deleted => query.Where(entity => entity.IsDeleted),
-            ViewType.notdeleted => query.Where(entity => !entity.IsDeleted),
-            _ => query
-        };
+            var menuItem = Mapper.Map<Menu>(dto);
+            menuItem.Image = imageName;
+            menuItem.ImageURL = BuildImageUrl(imageName);
 
-        var menuItems = await query.ToListAsync(cancellationToken);
-        var dtos = _mapper.Map<List<MenuGetDTO>>(menuItems);
-
-        return new ApiResponse
-        {
-            StatusCode = 200,
-            Data = dtos,
-            Message = $"Total: {dtos.Count}"
-        };
-    }
-
-    public async Task<ApiResponse> GetByID(
-        Guid id,
-        CancellationToken cancellationToken = default)
-    {
-        var menuItem = await _unitOfWork.MenuItems
-            .GetQueryable()
-            .FirstOrDefaultAsync(
-                entity => !entity.IsDeleted && entity.ID == id,
+            await Repository.AddAsync(menuItem, cancellationToken);
+            var saveCount = await UnitOfWork.SaveChangesAsync(
                 cancellationToken);
 
-        if (menuItem is null)
-        {
-            return new ApiResponse
+            if (saveCount <= 0)
             {
-                StatusCode = 404,
-                Message = "Menu not found!"
-            };
-        }
+                imageName.DeleteFile(
+                    _web.WebRootPath,
+                    "images",
+                    "menus");
 
-        return new ApiResponse
+                return ApiResponse.PersistenceFailure<Guid>();
+            }
+
+            return ApiResponse.Created(
+                menuItem.ID,
+                "Menu item created successfully.");
+        }
+        catch
         {
-            StatusCode = 200,
-            Data = _mapper.Map<MenuGetDTO>(menuItem)
-        };
+            imageName.DeleteFile(_web.WebRootPath, "images", "menus");
+            throw;
+        }
     }
 
-    public async Task<ApiResponse> RemoveAsync(
+    public override async Task<ApiResponse<object?>> RemoveAsync(
         Guid id,
         CancellationToken cancellationToken = default)
     {
-        var menuItem = await _unitOfWork.MenuItems.GetByIdAsync(
+        var menuItem = await Repository.GetByIdAsync(
             id,
             cancellationToken);
 
         if (menuItem is null)
         {
-            return new ApiResponse
-            {
-                StatusCode = 404,
-                Message = "Menu not found!"
-            };
+            return ApiResponse.NotFound<object?>(ResourceName);
         }
 
-        _unitOfWork.MenuItems.Delete(menuItem);
-        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
+        Repository.Delete(menuItem);
+        var saveCount = await UnitOfWork.SaveChangesAsync(cancellationToken);
 
         if (saveCount <= 0)
         {
-            return new ApiResponse
-            {
-                StatusCode = 500,
-                Message = "Save failed!"
-            };
+            return ApiResponse.PersistenceFailure<object?>();
         }
 
-        menuItem.Image.DeleteFile(_web.WebRootPath, "images", "menus");
+        menuItem.Image.DeleteFile(
+            _web.WebRootPath,
+            "images",
+            "menus");
 
-        return new ApiResponse
-        {
-            StatusCode = 204,
-            Message = "Deleted successfully!"
-        };
+        return ApiResponse.NoContent("Menu item deleted successfully.");
     }
 
-    public async Task<ApiResponse> ToggleAsync(
-        Guid id,
-        CancellationToken cancellationToken = default)
-    {
-        var menuItem = await _unitOfWork.MenuItems.GetByIdAsync(
-            id,
-            cancellationToken);
-
-        if (menuItem is null)
-        {
-            return new ApiResponse
-            {
-                StatusCode = 404,
-                Message = "Menu not found!"
-            };
-        }
-
-        menuItem.IsDeleted = !menuItem.IsDeleted;
-        menuItem.DeletedAt = menuItem.IsDeleted ? DateTime.UtcNow : null;
-        menuItem.UpdateAt = DateTime.UtcNow;
-
-        _unitOfWork.MenuItems.Update(menuItem);
-        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return saveCount > 0
-            ? menuItem.IsDeleted
-                ? new ApiResponse
-                {
-                    StatusCode = 204,
-                    Message = "Deleted temporarily!"
-                }
-                : new ApiResponse
-                {
-                    StatusCode = 200,
-                    Message = "Restored successfully!"
-                }
-            : new ApiResponse
-            {
-                StatusCode = 500,
-                Message = "Save failed!"
-            };
-    }
-
-    public async Task<ApiResponse> UpdateAsync(
+    public override async Task<ApiResponse<object?>> UpdateAsync(
         Guid id,
         MenuUpdateDTO dto,
         CancellationToken cancellationToken = default)
     {
-        var menuItem = await _unitOfWork.MenuItems.GetByIdAsync(
-            id,
-            cancellationToken);
+        ArgumentNullException.ThrowIfNull(dto);
+
+        var menuItem = await Repository
+            .GetQueryable()
+            .FirstOrDefaultAsync(
+                item => !item.IsDeleted && item.ID == id,
+                cancellationToken);
 
         if (menuItem is null)
         {
-            return new ApiResponse
-            {
-                StatusCode = 404,
-                Message = "Menu tapılmadı"
-            };
+            return ApiResponse.NotFound<object?>(ResourceName);
         }
 
-        string? previousImage = null;
+        var previousImage = menuItem.Image;
+        string? newImage = null;
 
-        _mapper.Map(dto, menuItem);
+        Mapper.Map(dto, menuItem);
 
-        if (dto.Image is not null)
+        try
         {
-            previousImage = menuItem.Image;
-            menuItem.Image = await dto.Image.CreateFileAsync(
-                cancellationToken,
+            if (dto.Image is not null)
+            {
+                newImage = await dto.Image.CreateFileAsync(
+                    cancellationToken,
+                    _web.WebRootPath,
+                    "images",
+                    "menus");
+                menuItem.Image = newImage;
+                menuItem.ImageURL = BuildImageUrl(newImage);
+            }
+
+            menuItem.UpdateAt = DateTime.UtcNow;
+
+            Repository.Update(menuItem);
+            var saveCount = await UnitOfWork.SaveChangesAsync(
+                cancellationToken);
+
+            if (saveCount <= 0)
+            {
+                newImage?.DeleteFile(
+                    _web.WebRootPath,
+                    "images",
+                    "menus");
+
+                return ApiResponse.PersistenceFailure<object?>();
+            }
+        }
+        catch
+        {
+            newImage?.DeleteFile(
                 _web.WebRootPath,
                 "images",
                 "menus");
-            menuItem.ImageURL = BuildImageUrl(menuItem.Image);
-        }
-        menuItem.UpdateAt = DateTime.UtcNow;
-
-        _unitOfWork.MenuItems.Update(menuItem);
-        var saveCount = await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        if (saveCount <= 0)
-        {
-            return new ApiResponse
-            {
-                StatusCode = 500,
-                Message = "Save uğursuz oldu!"
-            };
+            throw;
         }
 
-        previousImage?.DeleteFile(_web.WebRootPath, "images", "menus");
-
-        return new ApiResponse
+        if (newImage is not null)
         {
-            StatusCode = 200,
-            Message = "Uğurla yeniləndi!"
-        };
+            previousImage.DeleteFile(
+                _web.WebRootPath,
+                "images",
+                "menus");
+        }
+
+        return ApiResponse.Success("Menu item updated successfully.");
     }
 
     private string BuildImageUrl(string imageName)
@@ -263,5 +189,4 @@ public sealed class MenuService : IMenuService
 
         return $"{request.Scheme}://{request.Host}/images/menus/{imageName}";
     }
-
 }

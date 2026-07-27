@@ -1,88 +1,78 @@
-﻿using HRestaurant.DTOS.MenuCategory;
+using HRestaurant.DTOS.Responses;
 using HRestaurant.DTOS.Table;
 using HRestaurant.Enum;
 using HRestaurant.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HRestaurant.Controllers
+namespace HRestaurant.Controllers;
+
+[Route("api/[controller]")]
+public sealed class TableController : ApiControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TableController : ControllerBase
+    private readonly ITableService _service;
+
+    public TableController(ITableService service)
     {
-        private readonly ITableService _service;
+        ArgumentNullException.ThrowIfNull(service);
+        _service = service;
+    }
 
-        public TableController(ITableService service)
-        {
-            _service = service;
-        }
+    [HttpPost]
+    public async Task<IActionResult> Create(
+        TableCreateDTO dto,
+        CancellationToken cancellationToken)
+    {
+        return FromResponse(
+            await _service.CreateAsync(dto, cancellationToken));
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(
-            TableCreateDTO dto,
-            CancellationToken cancellationToken)
-        {
-            var result = await _service.CreateAsync(dto, cancellationToken);
+    [HttpDelete]
+    public async Task<IActionResult> Remove(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        return FromResponse(
+            await _service.RemoveAsync(id, cancellationToken));
+    }
 
-            return StatusCode(result.StatusCode, result);
-        }
+    [HttpGet]
+    public async Task<IActionResult> GetAll(
+        ViewType type,
+        [FromQuery] PaginationRequest pagination,
+        CancellationToken cancellationToken)
+    {
+        return FromResponse(
+            await _service.GetAllAsync(
+                type,
+                pagination,
+                cancellationToken));
+    }
 
-        [HttpDelete]
+    [HttpPatch]
+    public async Task<IActionResult> Update(
+        Guid id,
+        TableUpdateDTO dto,
+        CancellationToken cancellationToken)
+    {
+        return FromResponse(
+            await _service.UpdateAsync(id, dto, cancellationToken));
+    }
 
-        public async Task<IActionResult> Remove(
-            Guid id,
-            CancellationToken cancellationToken)
-        {
-            var result = await _service.RemoveAsync(id, cancellationToken);
+    [HttpPatch("toggle/{id:guid}")]
+    public async Task<IActionResult> Toggle(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        return FromResponse(
+            await _service.ToggleAsync(id, cancellationToken));
+    }
 
-            return StatusCode(result.StatusCode, result);
-
-        }
-
-        [HttpGet]
-
-        public async Task<IActionResult> GetAll(
-            ViewType type,
-            CancellationToken cancellationToken)
-        {
-            var result = await _service.GetAllAsync(type, cancellationToken);
-
-            return StatusCode(result.StatusCode, result);
-        }
-
-        [HttpPatch]
-        public async Task<IActionResult> Update(
-            Guid id,
-            TableUpdateDTO dto,
-            CancellationToken cancellationToken)
-        {
-            var result = await _service.UpdateAsync(
-                id,
-                dto,
-                cancellationToken);
-
-            return StatusCode(result.StatusCode, result);
-
-        }
-
-        [HttpPatch("toggle/{id}")]
-        public async Task<IActionResult> Toggle(
-            Guid id,
-            CancellationToken cancellationToken)
-        {
-            var result = await _service.ToggleAsync(id, cancellationToken);
-
-            return StatusCode(result.StatusCode, result);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(
-            Guid id,
-            CancellationToken cancellationToken)
-        {
-            var result = await _service.GetByID(id, cancellationToken);
-            return StatusCode(result.StatusCode, result);
-        }
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        return FromResponse(
+            await _service.GetByIdAsync(id, cancellationToken));
     }
 }

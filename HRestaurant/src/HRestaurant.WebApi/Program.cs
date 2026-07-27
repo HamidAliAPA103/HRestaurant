@@ -3,6 +3,7 @@ using FluentValidation;
 using HRestaurant.Infrastructure;
 using HRestaurant.Mappings.Restaurants;
 using HRestaurant.Validators.Restaurants;
+using HRestaurant.WebApi.ExceptionHandling;
 using HRestaurant.WebApi.Validation;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +14,8 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddValidatorsFromAssemblyContaining<
     RestaurantCreateDTOValidator>();
 builder.Services.AddScoped<FluentValidationActionFilter>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 builder.Services
     .AddControllers(options =>
@@ -20,9 +23,16 @@ builder.Services
     .ConfigureApiBehaviorOptions(options =>
     {
         options.InvalidModelStateResponseFactory = context =>
-            new BadRequestObjectResult(
+        {
+            var response =
                 ValidationErrorResponseFactory.FromModelState(
-                    context.ModelState));
+                    context.ModelState);
+
+            return new ObjectResult(response)
+            {
+                StatusCode = response.StatusCode
+            };
+        };
     });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -41,6 +51,8 @@ builder.Services.AddAutoMapper(
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {

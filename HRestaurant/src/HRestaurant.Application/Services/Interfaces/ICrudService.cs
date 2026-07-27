@@ -1,18 +1,21 @@
 using HRestaurant.DTOS.Responses;
-using HRestaurant.DTOS.Restaurant;
 using HRestaurant.Enum;
 
 namespace HRestaurant.Services.Interfaces;
 
-public interface IRestaurantService
+public interface ICrudService<TCreate, TUpdate, TGet>
 {
     Task<ApiResponse<Guid>> CreateAsync(
-        RestaurantCreatDTO dto,
+        TCreate dto,
         CancellationToken cancellationToken = default);
 
-    Task<PagedResponse<RestaurantGetDTO>> GetAllAsync(
+    Task<PagedResponse<TGet>> GetAllAsync(
         ViewType type,
         PaginationRequest pagination,
+        CancellationToken cancellationToken = default);
+
+    Task<ApiResponse<TGet>> GetByIdAsync(
+        Guid id,
         CancellationToken cancellationToken = default);
 
     Task<ApiResponse<object?>> RemoveAsync(
@@ -21,6 +24,10 @@ public interface IRestaurantService
 
     Task<ApiResponse<object?>> UpdateAsync(
         Guid id,
-        RestaurantUpdateDTO dto,
+        TUpdate dto,
+        CancellationToken cancellationToken = default);
+
+    Task<ApiResponse<object?>> ToggleAsync(
+        Guid id,
         CancellationToken cancellationToken = default);
 }
