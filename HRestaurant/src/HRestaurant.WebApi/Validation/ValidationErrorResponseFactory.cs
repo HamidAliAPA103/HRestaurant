@@ -10,9 +10,11 @@ internal static class ValidationErrorResponseFactory
         "One or more validation errors occurred.";
 
     public static ApiResponse<object?> FromFailures(
-        IEnumerable<ValidationFailure> failures)
+        IEnumerable<ValidationFailure> failures,
+        string traceId)
     {
         ArgumentNullException.ThrowIfNull(failures);
+        ArgumentException.ThrowIfNullOrWhiteSpace(traceId);
 
         var errors = failures
             .Where(failure => failure is not null)
@@ -23,13 +25,15 @@ internal static class ValidationErrorResponseFactory
             .Distinct()
             .ToArray();
 
-        return Create(errors);
+        return Create(errors, traceId);
     }
 
     public static ApiResponse<object?> FromModelState(
-        ModelStateDictionary modelState)
+        ModelStateDictionary modelState,
+        string traceId)
     {
         ArgumentNullException.ThrowIfNull(modelState);
+        ArgumentException.ThrowIfNullOrWhiteSpace(traceId);
 
         var errors = modelState
             .Where(entry => entry.Value?.Errors.Count > 0)
@@ -43,15 +47,17 @@ internal static class ValidationErrorResponseFactory
             .Distinct()
             .ToArray();
 
-        return Create(errors);
+        return Create(errors, traceId);
     }
 
     private static ApiResponse<object?> Create(
-        IReadOnlyCollection<ErrorResponse> errors)
+        IReadOnlyCollection<ErrorResponse> errors,
+        string traceId)
     {
         return ApiResponse.Failure<object?>(
             400,
             ValidationMessage,
-            errors);
+            errors,
+            traceId);
     }
 }

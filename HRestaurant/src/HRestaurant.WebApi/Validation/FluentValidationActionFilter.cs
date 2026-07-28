@@ -55,7 +55,9 @@ public sealed class FluentValidationActionFilter : IAsyncActionFilter
         if (failures.Count > 0)
         {
             var response =
-                ValidationErrorResponseFactory.FromFailures(failures);
+                ValidationErrorResponseFactory.FromFailures(
+                    failures,
+                    context.HttpContext.TraceIdentifier);
 
             context.Result = new ObjectResult(response)
             {

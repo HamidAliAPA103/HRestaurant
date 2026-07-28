@@ -6,69 +6,107 @@ using HRestaurant.Validators.Restaurants;
 using HRestaurant.WebApi.ExceptionHandling;
 using HRestaurant.WebApi.Validation;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton(TimeProvider.System);
-builder.Services.AddValidatorsFromAssemblyContaining<
-    RestaurantCreateDTOValidator>();
-builder.Services.AddScoped<FluentValidationActionFilter>();
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-builder.Services.AddProblemDetails();
+    builder.Host.UseSerilog((context, services, configuration) =>
+        configuration
+            .ReadFrom.Configuration(context.Configuration)
+            .ReadFrom.Services(services)
+            .Enrich.FromLogContext());
 
-builder.Services
-    .AddControllers(options =>
-        options.Filters.AddService<FluentValidationActionFilter>())
-    .ConfigureApiBehaviorOptions(options =>
-    {
-        options.InvalidModelStateResponseFactory = context =>
+    builder.Services.AddSingleton(TimeProvider.System);
+    builder.Services.AddValidatorsFromAssemblyContaining<
+        RestaurantCreateDTOValidator>();
+    builder.Services.AddScoped<FluentValidationActionFilter>();
+
+    builder.Services
+        .AddControllers(options =>
+            options.Filters.AddService<FluentValidationActionFilter>())
+        .ConfigureApiBehaviorOptions(options =>
         {
-            var response =
-                ValidationErrorResponseFactory.FromModelState(
-                    context.ModelState);
-
-            return new ObjectResult(response)
+            options.InvalidModelStateResponseFactory = context =>
             {
-                StatusCode = response.StatusCode
+                var response =
+                    ValidationErrorResponseFactory.FromModelState(
+                        context.ModelState,
+                        context.HttpContext.TraceIdentifier);
+
+                return new ObjectResult(response)
+                {
+                    StatusCode = response.StatusCode
+                };
             };
+        });
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+    var autoMapperLicenseKey =
+        builder.Configuration["AutoMapper:LicenseKey"];
+
+    builder.Services.AddAutoMapper(
+        configuration =>
+        {
+            if (!string.IsNullOrWhiteSpace(autoMapperLicenseKey))
+            {
+                configuration.LicenseKey = autoMapperLicenseKey;
+            }
+        },
+        typeof(RestaurantProfile));
+    builder.Services.AddInfrastructure(builder.Configuration);
+
+    var app = builder.Build();
+
+    app.UseSerilogRequestLogging(options =>
+    {
+        options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+        {
+            diagnosticContext.Set(
+                "TraceId",
+                httpContext.TraceIdentifier);
+            diagnosticContext.Set(
+                "RequestHost",
+                httpContext.Request.Host.Value);
+            diagnosticContext.Set(
+                "RequestScheme",
+                httpContext.Request.Scheme);
         };
     });
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-var autoMapperLicenseKey =
-    builder.Configuration["AutoMapper:LicenseKey"];
 
-builder.Services.AddAutoMapper(
-    configuration =>
+    app.UseMiddleware<GlobalExceptionMiddleware>();
+
+    if (app.Environment.IsDevelopment())
     {
-        if (!string.IsNullOrWhiteSpace(autoMapperLicenseKey))
-        {
-            configuration.LicenseKey = autoMapperLicenseKey;
-        }
-    },
-    typeof(RestaurantProfile));
-builder.Services.AddInfrastructure(builder.Configuration);
+        app.Services
+            .GetRequiredService<IMapper>()
+            .ConfigurationProvider
+            .AssertConfigurationIsValid();
 
-var app = builder.Build();
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
 
-app.UseExceptionHandler();
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
+    app.UseAuthorization();
 
-if (app.Environment.IsDevelopment())
-{
-    app.Services
-        .GetRequiredService<IMapper>()
-        .ConfigurationProvider
-        .AssertConfigurationIsValid();
+    app.MapControllers();
 
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.Run();
 }
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+catch (Exception exception)
+{
+    Log.Fatal(exception, "Application terminated unexpectedly.");
+    throw;
+}
+finally
+{
+    Log.CloseAndFlush();
+}

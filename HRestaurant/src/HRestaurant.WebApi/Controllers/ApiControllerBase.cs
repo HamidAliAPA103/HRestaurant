@@ -10,6 +10,11 @@ public abstract class ApiControllerBase : ControllerBase
     {
         ArgumentNullException.ThrowIfNull(response);
 
+        if (!response.Success && string.IsNullOrWhiteSpace(response.TraceId))
+        {
+            response = response.WithTraceId(HttpContext.TraceIdentifier);
+        }
+
         return response.StatusCode == StatusCodes.Status204NoContent
             ? NoContent()
             : StatusCode(response.StatusCode, response);

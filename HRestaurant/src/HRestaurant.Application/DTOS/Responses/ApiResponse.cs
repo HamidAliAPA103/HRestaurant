@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace HRestaurant.DTOS.Responses;
 
 public class ApiResponse<T>
@@ -7,7 +9,9 @@ public class ApiResponse<T>
         string message,
         T? data,
         IReadOnlyCollection<ErrorResponse>? errors,
-        int statusCode)
+        int statusCode,
+        string? traceId = null,
+        string? stackTrace = null)
     {
         if (statusCode is < 100 or > 599)
         {
@@ -35,6 +39,8 @@ public class ApiResponse<T>
         Data = data;
         Errors = errors ?? Array.Empty<ErrorResponse>();
         StatusCode = statusCode;
+        TraceId = traceId;
+        StackTrace = stackTrace;
     }
 
     public bool Success { get; }
@@ -46,6 +52,26 @@ public class ApiResponse<T>
     public IReadOnlyCollection<ErrorResponse> Errors { get; }
 
     public int StatusCode { get; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? TraceId { get; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? StackTrace { get; }
+
+    public ApiResponse<T> WithTraceId(string traceId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(traceId);
+
+        return new ApiResponse<T>(
+            Success,
+            Message,
+            Data,
+            Errors,
+            StatusCode,
+            traceId,
+            StackTrace);
+    }
 }
 
 public static class ApiResponse
@@ -99,7 +125,9 @@ public static class ApiResponse
     public static ApiResponse<T> Failure<T>(
         int statusCode,
         string message,
-        IEnumerable<ErrorResponse>? errors = null)
+        IEnumerable<ErrorResponse>? errors = null,
+        string? traceId = null,
+        string? stackTrace = null)
     {
         var errorList = errors?.ToArray();
 
@@ -116,7 +144,9 @@ public static class ApiResponse
             message,
             default,
             errorList,
-            statusCode);
+            statusCode,
+            traceId,
+            stackTrace);
     }
 
     public static ApiResponse<T> NotFound<T>(string resourceName)
