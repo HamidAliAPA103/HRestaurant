@@ -6,6 +6,7 @@ using HRestaurant.Validators.Restaurants;
 using HRestaurant.WebApi.ExceptionHandling;
 using HRestaurant.WebApi.Validation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -47,7 +48,57 @@ try
             };
         });
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    var allowedOrigins =
+        builder.Configuration
+            .GetSection("Cors:AllowedOrigins")
+            .Get<string[]>()
+        ?? [];
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("Frontend", policy =>
+        {
+            if (allowedOrigins.Length > 0)
+            {
+                policy
+                    .WithOrigins(allowedOrigins)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            }
+        });
+    });
+    builder.Services.AddSwaggerGen(options =>
+    {
+        const string bearerScheme = "Bearer";
+
+        options.AddSecurityDefinition(
+            bearerScheme,
+            new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Description =
+                    "Enter a JWT access token using: Bearer {token}",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT"
+            });
+
+        options.AddSecurityRequirement(
+            new OpenApiSecurityRequirement
+            {
+                [
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = bearerScheme
+                        }
+                    }
+                ] = Array.Empty<string>()
+            });
+    });
     var autoMapperLicenseKey =
         builder.Configuration["AutoMapper:LicenseKey"];
 
@@ -95,11 +146,17 @@ try
 
     app.UseHttpsRedirection();
     app.UseStaticFiles();
+    app.UseCors("Frontend");
+    app.UseAuthentication();
     app.UseAuthorization();
 
     app.MapControllers();
 
     app.Run();
+}
+catch (HostAbortedException)
+{
+    throw;
 }
 catch (Exception exception)
 {
