@@ -1,7 +1,10 @@
 using HRestaurant.DTOS.Responses;
 using HRestaurant.DTOS.User;
 using HRestaurant.Enum;
+using HRestaurant.Infrastructure.Authentication;
+using HRestaurant.Infrastructure.Authorization;
 using HRestaurant.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HRestaurant.Controllers;
@@ -18,6 +21,8 @@ public sealed class UserController : ApiControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = AuthorizationPolicies.EmployeeManagement)]
+    [PermissionAuthorize(Permissions.Employees.Manage)]
     public async Task<IActionResult> Create(
         UserCreateDTO dto,
         CancellationToken cancellationToken)
@@ -27,6 +32,8 @@ public sealed class UserController : ApiControllerBase
     }
 
     [HttpDelete]
+    [Authorize(Policy = AuthorizationPolicies.EmployeeManagement)]
+    [PermissionAuthorize(Permissions.Employees.Manage)]
     public async Task<IActionResult> Remove(
         Guid id,
         CancellationToken cancellationToken)
@@ -36,6 +43,7 @@ public sealed class UserController : ApiControllerBase
     }
 
     [HttpGet]
+    [PermissionAuthorize(Permissions.Employees.Read)]
     public async Task<IActionResult> GetAll(
         ViewType type,
         [FromQuery] PaginationRequest pagination,
@@ -49,6 +57,8 @@ public sealed class UserController : ApiControllerBase
     }
 
     [HttpPatch]
+    [Authorize(Policy = AuthorizationPolicies.EmployeeManagement)]
+    [PermissionAuthorize(Permissions.Employees.Manage)]
     public async Task<IActionResult> Update(
         Guid id,
         UserUpdateDTO dto,
@@ -59,6 +69,8 @@ public sealed class UserController : ApiControllerBase
     }
 
     [HttpPatch("toggle/{id:guid}")]
+    [Authorize(Policy = AuthorizationPolicies.EmployeeManagement)]
+    [PermissionAuthorize(Permissions.Employees.Manage)]
     public async Task<IActionResult> Toggle(
         Guid id,
         CancellationToken cancellationToken)
@@ -68,6 +80,7 @@ public sealed class UserController : ApiControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [PermissionAuthorize(Permissions.Employees.Read)]
     public async Task<IActionResult> GetById(
         Guid id,
         CancellationToken cancellationToken)

@@ -4,7 +4,8 @@ public interface ITokenService
 {
     AccessTokenResult CreateAccessToken(
         TokenUser user,
-        IReadOnlyCollection<string> roles);
+        IReadOnlyCollection<string> roles,
+        IReadOnlyCollection<string> permissions);
 
     RefreshTokenResult CreateRefreshToken();
 

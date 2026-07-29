@@ -1,7 +1,9 @@
 using System.Data;
+using System.Security.Claims;
 using HRestaurant.Data;
 using HRestaurant.DTOS.Auth;
 using HRestaurant.DTOS.Responses;
+using HRestaurant.Infrastructure.Authentication;
 using HRestaurant.Infrastructure.Identity;
 using HRestaurant.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +14,7 @@ namespace HRestaurant.Services.Implementations;
 
 public sealed class AuthService : IAuthService
 {
-    private const string DefaultRole = "Customer";
+    private const string DefaultRole = AppRoles.RestaurantOwner;
     private const string InvalidCredentialsMessage =
         "Email or password is invalid.";
     private const string InvalidRefreshTokenMessage =
@@ -130,7 +132,9 @@ public sealed class AuthService : IAuthService
                 "The user role could not be assigned.");
         }
 
-        var response = CreateTokenPair(user, [DefaultRole]);
+        var response = await CreateTokenPairAsync(
+            user,
+            [DefaultRole]);
         await _dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 
@@ -165,7 +169,9 @@ public sealed class AuthService : IAuthService
         }
 
         var roles = await _userManager.GetRolesAsync(user);
-        var response = CreateTokenPair(user, roles.ToArray());
+        var response = await CreateTokenPairAsync(
+            user,
+            roles.ToArray());
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -221,10 +227,14 @@ public sealed class AuthService : IAuthService
         }
 
         var roles = await _userManager.GetRolesAsync(storedToken.User);
+        var permissions = await GetPermissionsAsync(
+            storedToken.User,
+            roles.ToArray());
         var replacement = _tokenService.CreateRefreshToken();
         var accessToken = _tokenService.CreateAccessToken(
             ToTokenUser(storedToken.User),
-            roles.ToArray());
+            roles.ToArray(),
+            permissions);
 
         storedToken.RevokedAtUtc = nowUtc;
         storedToken.RevocationReason = "Rotated.";
@@ -297,18 +307,62 @@ public sealed class AuthService : IAuthService
             });
     }
 
-    private AuthResponse CreateTokenPair(
+    private async Task<AuthResponse> CreateTokenPairAsync(
         AppUser user,
         IReadOnlyCollection<string> roles)
     {
+        var permissions = await GetPermissionsAsync(user, roles);
         var accessToken = _tokenService.CreateAccessToken(
             ToTokenUser(user),
-            roles);
+            roles,
+            permissions);
         var refreshToken = _tokenService.CreateRefreshToken();
 
         AddRefreshToken(user.Id, refreshToken);
 
         return ToAuthResponse(accessToken, refreshToken);
+    }
+
+    private async Task<IReadOnlyCollection<string>> GetPermissionsAsync(
+        AppUser user,
+        IReadOnlyCollection<string> roles)
+    {
+        var permissions = new HashSet<string>(
+            StringComparer.OrdinalIgnoreCase);
+        var userClaims = await _userManager.GetClaimsAsync(user);
+
+        AddPermissionClaims(permissions, userClaims);
+
+        foreach (var roleName in roles)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+
+            if (role is null)
+            {
+                continue;
+            }
+
+            AddPermissionClaims(
+                permissions,
+                await _roleManager.GetClaimsAsync(role));
+        }
+
+        return permissions.ToArray();
+    }
+
+    private static void AddPermissionClaims(
+        ISet<string> permissions,
+        IEnumerable<Claim> claims)
+    {
+        foreach (var claim in claims.Where(claim =>
+                     string.Equals(
+                         claim.Type,
+                         AuthClaimTypes.Permission,
+                         StringComparison.Ordinal)
+                     && !string.IsNullOrWhiteSpace(claim.Value)))
+        {
+            permissions.Add(claim.Value);
+        }
     }
 
     private void AddRefreshToken(

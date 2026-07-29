@@ -42,7 +42,6 @@ const roleTone: Record<
   Chef: "warning",
   Waiter: "info",
   Cashier: "success",
-  Host: "neutral",
 };
 
 export function EmployeePage() {
@@ -253,7 +252,6 @@ export function EmployeePage() {
               <option>Chef</option>
               <option>Waiter</option>
               <option>Cashier</option>
-              <option>Host</option>
             </select>
           </label>
           {mutation.isError && (

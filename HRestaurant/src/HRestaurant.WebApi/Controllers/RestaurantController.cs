@@ -1,6 +1,8 @@
 using HRestaurant.DTOS.Responses;
 using HRestaurant.DTOS.Restaurant;
 using HRestaurant.Enum;
+using HRestaurant.Infrastructure.Authentication;
+using HRestaurant.Infrastructure.Authorization;
 using HRestaurant.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ public sealed class RestaurantController : ApiControllerBase
     }
 
     [HttpPost]
+    [PermissionAuthorize(Permissions.Restaurants.Manage)]
     public async Task<IActionResult> Create(
         RestaurantCreatDTO dto,
         CancellationToken cancellationToken)
@@ -27,6 +30,7 @@ public sealed class RestaurantController : ApiControllerBase
     }
 
     [HttpDelete]
+    [PermissionAuthorize(Permissions.Restaurants.Manage)]
     public async Task<IActionResult> Remove(
         Guid id,
         CancellationToken cancellationToken)
@@ -36,6 +40,7 @@ public sealed class RestaurantController : ApiControllerBase
     }
 
     [HttpGet]
+    [PermissionAuthorize(Permissions.Restaurants.Read)]
     public async Task<IActionResult> GetAll(
         ViewType type,
         [FromQuery] PaginationRequest pagination,
@@ -49,6 +54,7 @@ public sealed class RestaurantController : ApiControllerBase
     }
 
     [HttpPatch]
+    [PermissionAuthorize(Permissions.Restaurants.Manage)]
     public async Task<IActionResult> Update(
         Guid id,
         RestaurantUpdateDTO dto,

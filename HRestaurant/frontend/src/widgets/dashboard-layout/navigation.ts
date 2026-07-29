@@ -21,7 +21,11 @@ export interface NavigationItem {
   badge?: string;
 }
 
-export const managementRoles: AppRole[] = ["Admin", "Owner", "Manager"];
+export const managementRoles: AppRole[] = [
+  "SuperAdmin",
+  "RestaurantOwner",
+  "Manager",
+];
 
 export const navigationGroups: Array<{
   label: string;
@@ -39,33 +43,31 @@ export const navigationGroups: Array<{
         label: "POS sifariş",
         path: "/pos",
         icon: CreditCard,
-        roles: ["Admin", "Owner", "Manager", "Cashier", "Waiter"],
+        roles: ["SuperAdmin", "Manager", "Cashier", "Waiter"],
       },
       {
         label: "Rezervasiyalar",
         path: "/reservations",
         icon: CalendarDays,
         roles: [
-          "Admin",
-          "Owner",
+          "SuperAdmin",
+          "RestaurantOwner",
           "Manager",
-          "Host",
           "Waiter",
-          "Customer",
         ],
       },
       {
         label: "Mətbəx",
         path: "/kitchen",
         icon: ChefHat,
-        roles: ["Admin", "Owner", "Manager", "Chef"],
+        roles: ["SuperAdmin", "Manager", "Chef"],
         badge: "Canlı",
       },
       {
         label: "Masa planı",
         path: "/tables",
         icon: TableProperties,
-        roles: ["Admin", "Owner", "Manager", "Waiter"],
+        roles: ["SuperAdmin", "RestaurantOwner", "Manager", "Waiter"],
       },
     ],
   },
@@ -100,7 +102,13 @@ export const navigationGroups: Array<{
         label: "Müştərilər",
         path: "/customers",
         icon: ContactRound,
-        roles: ["Admin", "Owner", "Manager", "Host"],
+        roles: [
+          "SuperAdmin",
+          "RestaurantOwner",
+          "Manager",
+          "Waiter",
+          "Cashier",
+        ],
       },
     ],
   },

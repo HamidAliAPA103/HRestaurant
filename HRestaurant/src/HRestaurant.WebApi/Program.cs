@@ -1,6 +1,7 @@
 using AutoMapper;
 using FluentValidation;
 using HRestaurant.Infrastructure;
+using HRestaurant.Infrastructure.Identity;
 using HRestaurant.Mappings.Restaurants;
 using HRestaurant.Validators.Restaurants;
 using HRestaurant.WebApi.ExceptionHandling;
@@ -114,6 +115,8 @@ try
     builder.Services.AddInfrastructure(builder.Configuration);
 
     var app = builder.Build();
+
+    await app.Services.SeedIdentityDataAsync();
 
     app.UseSerilogRequestLogging(options =>
     {

@@ -1,12 +1,10 @@
 export type AppRole =
-  | "Admin"
-  | "Owner"
+  | "SuperAdmin"
+  | "RestaurantOwner"
   | "Manager"
   | "Cashier"
   | "Waiter"
-  | "Chef"
-  | "Host"
-  | "Customer";
+  | "Chef";
 
 export interface LoginRequest {
   email: string;
@@ -45,5 +43,6 @@ export interface JwtPayload {
   email: string;
   restaurant_id: string;
   role: AppRole | AppRole[];
+  permission?: string | string[];
   exp: number;
 }

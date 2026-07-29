@@ -44,3 +44,14 @@ export async function updateResource<TInput>(
   );
   return data;
 }
+
+export async function patchResource<TInput>(
+  endpoint: string,
+  input: TInput,
+) {
+  const { data } = await apiClient.patch<ApiResponse<unknown>>(
+    endpoint,
+    input,
+  );
+  return data;
+}

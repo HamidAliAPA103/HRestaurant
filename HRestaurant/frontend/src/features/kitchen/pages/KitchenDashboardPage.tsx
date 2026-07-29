@@ -7,7 +7,7 @@ import {
   RefreshCw,
   Timer,
 } from "lucide-react";
-import { listResource, updateResource } from "@/shared/api/resources";
+import { listResource, patchResource } from "@/shared/api/resources";
 import { Badge } from "@/shared/components/Badge";
 import { Button } from "@/shared/components/Button";
 import {
@@ -51,8 +51,7 @@ const columns = [
     subtitle: "Ofisiant gözləyir",
     icon: CheckCircle2,
     tone: "text-[#3f8156] bg-[#e5f4e9]",
-    next: OrderStatus.Delivered,
-    action: "Təhvil verildi",
+    action: "Servis gözləyir",
   },
 ] as const;
 
@@ -71,8 +70,7 @@ export function KitchenDashboardPage() {
       order: Order;
       status: OrderStatus;
     }) =>
-      updateResource("/Order", order.id, {
-        tableID: order.tableID,
+      patchResource(`/Order/${order.id}/kitchen-status`, {
         status,
       }),
     onSuccess: () => {
@@ -225,21 +223,27 @@ export function KitchenDashboardPage() {
                         <span className="font-bold">
                           {formatCurrency(order.totalPrices)}
                         </span>
-                        <Button
-                          size="sm"
-                          loading={
-                            mutation.isPending &&
-                            mutation.variables?.order.id === order.id
-                          }
-                          onClick={() =>
-                            mutation.mutate({
-                              order,
-                              status: column.next,
-                            })
-                          }
-                        >
-                          {column.action}
-                        </Button>
+                        {"next" in column ? (
+                          <Button
+                            size="sm"
+                            loading={
+                              mutation.isPending &&
+                              mutation.variables?.order.id === order.id
+                            }
+                            onClick={() =>
+                              mutation.mutate({
+                                order,
+                                status: column.next,
+                              })
+                            }
+                          >
+                            {column.action}
+                          </Button>
+                        ) : (
+                          <Badge tone="success">
+                            {column.action}
+                          </Badge>
+                        )}
                       </div>
                     </article>
                   ))

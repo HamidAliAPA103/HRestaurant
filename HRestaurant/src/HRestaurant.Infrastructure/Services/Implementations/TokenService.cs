@@ -37,10 +37,12 @@ public sealed class TokenService : ITokenService
 
     public AccessTokenResult CreateAccessToken(
         TokenUser user,
-        IReadOnlyCollection<string> roles)
+        IReadOnlyCollection<string> roles,
+        IReadOnlyCollection<string> permissions)
     {
         ArgumentNullException.ThrowIfNull(user);
         ArgumentNullException.ThrowIfNull(roles);
+        ArgumentNullException.ThrowIfNull(permissions);
 
         var nowUtc = _timeProvider.GetUtcNow().UtcDateTime;
         var expiresAtUtc = nowUtc.AddMinutes(
@@ -60,6 +62,15 @@ public sealed class TokenService : ITokenService
                 .Where(role => !string.IsNullOrWhiteSpace(role))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .Select(role => new Claim(AuthClaimTypes.Role, role)));
+
+        claims.AddRange(
+            permissions
+                .Where(permission =>
+                    !string.IsNullOrWhiteSpace(permission))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Select(permission => new Claim(
+                    AuthClaimTypes.Permission,
+                    permission)));
 
         var token = new JwtSecurityToken(
             issuer: _settings.Issuer,

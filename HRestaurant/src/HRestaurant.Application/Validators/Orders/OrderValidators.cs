@@ -47,8 +47,19 @@ public sealed class OrderUpdateDTOValidator
             .WithMessage("Table id is invalid.")
             .When(dto => dto.TableID.HasValue);
 
+    }
+}
+
+public sealed class KitchenOrderStatusUpdateDTOValidator
+    : AbstractValidator<KitchenOrderStatusUpdateDTO>
+{
+    public KitchenOrderStatusUpdateDTOValidator()
+    {
         RuleFor(dto => dto.Status)
-            .IsInEnum()
-            .WithMessage("Order status is invalid.");
+            .Must(status =>
+                status is HRestaurant.Enum.OrderStatus.Preparing
+                    or HRestaurant.Enum.OrderStatus.Ready)
+            .WithMessage(
+                "Kitchen status must be Preparing or Ready.");
     }
 }

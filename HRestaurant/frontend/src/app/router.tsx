@@ -126,7 +126,7 @@ export const router = createBrowserRouter([
           {
             element: (
               <RoleProtectedRoute
-                roles={["Admin", "Owner", "Manager", "Cashier", "Waiter"]}
+                roles={["SuperAdmin", "Manager", "Cashier", "Waiter"]}
               />
             ),
             children: [
@@ -140,12 +140,10 @@ export const router = createBrowserRouter([
             element: (
               <RoleProtectedRoute
                 roles={[
-                  "Admin",
-                  "Owner",
+                  "SuperAdmin",
+                  "RestaurantOwner",
                   "Manager",
-                  "Host",
                   "Waiter",
-                  "Customer",
                 ]}
               />
             ),
@@ -159,7 +157,7 @@ export const router = createBrowserRouter([
           {
             element: (
               <RoleProtectedRoute
-                roles={["Admin", "Owner", "Manager", "Chef"]}
+                roles={["SuperAdmin", "Manager", "Chef"]}
               />
             ),
             children: [
@@ -172,7 +170,12 @@ export const router = createBrowserRouter([
           {
             element: (
               <RoleProtectedRoute
-                roles={["Admin", "Owner", "Manager", "Waiter"]}
+                roles={[
+                  "SuperAdmin",
+                  "RestaurantOwner",
+                  "Manager",
+                  "Waiter",
+                ]}
               />
             ),
             children: [
@@ -185,7 +188,13 @@ export const router = createBrowserRouter([
           {
             element: (
               <RoleProtectedRoute
-                roles={["Admin", "Owner", "Manager", "Host"]}
+                roles={[
+                  "SuperAdmin",
+                  "RestaurantOwner",
+                  "Manager",
+                  "Waiter",
+                  "Cashier",
+                ]}
               />
             ),
             children: [

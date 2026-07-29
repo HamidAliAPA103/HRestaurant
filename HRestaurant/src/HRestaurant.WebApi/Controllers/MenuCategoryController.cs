@@ -1,6 +1,8 @@
 using HRestaurant.DTOS.MenuCategory;
 using HRestaurant.DTOS.Responses;
 using HRestaurant.Enum;
+using HRestaurant.Infrastructure.Authentication;
+using HRestaurant.Infrastructure.Authorization;
 using HRestaurant.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ public sealed class MenuCategoryController : ApiControllerBase
     }
 
     [HttpPost]
+    [PermissionAuthorize(Permissions.Menus.Manage)]
     public async Task<IActionResult> Create(
         MenuCategoryCreateDTO dto,
         CancellationToken cancellationToken)
@@ -27,6 +30,7 @@ public sealed class MenuCategoryController : ApiControllerBase
     }
 
     [HttpDelete]
+    [PermissionAuthorize(Permissions.Menus.Manage)]
     public async Task<IActionResult> Remove(
         Guid id,
         CancellationToken cancellationToken)
@@ -36,6 +40,7 @@ public sealed class MenuCategoryController : ApiControllerBase
     }
 
     [HttpGet]
+    [PermissionAuthorize(Permissions.Menus.Read)]
     public async Task<IActionResult> GetAll(
         ViewType type,
         [FromQuery] PaginationRequest pagination,
@@ -49,6 +54,7 @@ public sealed class MenuCategoryController : ApiControllerBase
     }
 
     [HttpPatch]
+    [PermissionAuthorize(Permissions.Menus.Manage)]
     public async Task<IActionResult> Update(
         Guid id,
         MenuCategoryUpdateDTO dto,
@@ -59,6 +65,7 @@ public sealed class MenuCategoryController : ApiControllerBase
     }
 
     [HttpPatch("toggle/{id:guid}")]
+    [PermissionAuthorize(Permissions.Menus.Manage)]
     public async Task<IActionResult> Toggle(
         Guid id,
         CancellationToken cancellationToken)
@@ -68,6 +75,7 @@ public sealed class MenuCategoryController : ApiControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [PermissionAuthorize(Permissions.Menus.Read)]
     public async Task<IActionResult> GetById(
         Guid id,
         CancellationToken cancellationToken)

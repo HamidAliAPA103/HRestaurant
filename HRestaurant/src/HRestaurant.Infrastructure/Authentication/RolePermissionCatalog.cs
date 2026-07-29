@@ -1,0 +1,66 @@
+namespace HRestaurant.Infrastructure.Authentication;
+
+public static class RolePermissionCatalog
+{
+    private static readonly IReadOnlyDictionary<
+        string,
+        IReadOnlyCollection<string>> PermissionMap =
+        new Dictionary<string, IReadOnlyCollection<string>>(
+            StringComparer.OrdinalIgnoreCase)
+        {
+            [AppRoles.SuperAdmin] = [Permissions.All],
+            [AppRoles.RestaurantOwner] =
+            [
+                Permissions.Restaurants.Read,
+                Permissions.Restaurants.Manage,
+                Permissions.Employees.Read,
+                Permissions.Employees.Manage,
+                Permissions.Menus.Read,
+                Permissions.Menus.Manage,
+                Permissions.Tables.Read,
+                Permissions.Tables.Manage,
+                Permissions.Reservations.Read,
+                Permissions.Reservations.Manage,
+                Permissions.Orders.Read,
+                Permissions.Orders.Delete,
+                Permissions.Reviews.Read,
+                Permissions.Reviews.Manage
+            ],
+            [AppRoles.Manager] = Permissions.AllValues,
+            [AppRoles.Cashier] =
+            [
+                Permissions.Employees.Read,
+                Permissions.Menus.Read,
+                Permissions.Tables.Read,
+                Permissions.Orders.Read,
+                Permissions.Orders.Create,
+                Permissions.Payments.Process
+            ],
+            [AppRoles.Waiter] =
+            [
+                Permissions.Employees.Read,
+                Permissions.Menus.Read,
+                Permissions.Tables.Read,
+                Permissions.Reservations.Read,
+                Permissions.Reservations.Manage,
+                Permissions.Orders.Read,
+                Permissions.Orders.Create,
+                Permissions.Orders.Update
+            ],
+            [AppRoles.Chef] =
+            [
+                Permissions.Menus.Read,
+                Permissions.Orders.Read,
+                Permissions.Orders.UpdateKitchenStatus
+            ]
+        };
+
+    public static IReadOnlyCollection<string> GetPermissions(string role)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(role);
+
+        return PermissionMap.TryGetValue(role, out var permissions)
+            ? permissions
+            : Array.Empty<string>();
+    }
+}

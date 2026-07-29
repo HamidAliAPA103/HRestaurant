@@ -1,12 +1,6 @@
-﻿using HRestaurant.Enum;
+namespace HRestaurant.DTOS.Order;
 
-namespace HRestaurant.DTOS.Order
+public sealed class OrderUpdateDTO
 {
-    public class OrderUpdateDTO
-    {
-        public Guid? TableID { get; set; }
-        public OrderStatus Status { get; set; }
-    }
+    public Guid? TableID { get; set; }
 }
-
-//todo:her seyin nece islediyini yoxla orderitem son qaldiqin

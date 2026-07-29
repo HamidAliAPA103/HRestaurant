@@ -3,12 +3,14 @@ using System.Text;
 using HRestaurant.Data;
 using HRestaurant.DTOS.Responses;
 using HRestaurant.Infrastructure.Authentication;
+using HRestaurant.Infrastructure.Authorization;
 using HRestaurant.Infrastructure.Identity;
 using HRestaurant.Repositories.Implementations;
 using HRestaurant.Repositories.Interfaces;
 using HRestaurant.Services.Implementations;
 using HRestaurant.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -136,7 +138,37 @@ public static class DependencyInjection
                 };
             });
 
-        services.AddAuthorization();
+        services.AddAuthorization(options =>
+        {
+            options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+
+            options.AddPolicy(
+                AuthorizationPolicies.EmployeeManagement,
+                policy => policy
+                    .RequireAuthenticatedUser()
+                    .RequireRole(
+                        AppRoles.SuperAdmin,
+                        AppRoles.RestaurantOwner,
+                        AppRoles.Manager));
+
+            options.AddPolicy(
+                AuthorizationPolicies.PaymentProcessing,
+                policy => policy
+                    .RequireAuthenticatedUser()
+                    .RequireRole(
+                        AppRoles.SuperAdmin,
+                        AppRoles.Cashier,
+                        AppRoles.Manager));
+        });
+
+        services.AddSingleton<
+            IAuthorizationPolicyProvider,
+            PermissionAuthorizationPolicyProvider>();
+        services.AddSingleton<
+            IAuthorizationHandler,
+            PermissionHandler>();
     }
 
     private static Task WriteUnauthorizedResponseAsync(

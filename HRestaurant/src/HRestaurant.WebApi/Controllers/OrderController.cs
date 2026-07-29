@@ -1,7 +1,10 @@
 using HRestaurant.DTOS.Order;
 using HRestaurant.DTOS.Responses;
 using HRestaurant.Enum;
+using HRestaurant.Infrastructure.Authentication;
+using HRestaurant.Infrastructure.Authorization;
 using HRestaurant.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HRestaurant.Controllers;
@@ -18,6 +21,7 @@ public sealed class OrderController : ApiControllerBase
     }
 
     [HttpPost]
+    [PermissionAuthorize(Permissions.Orders.Create)]
     public async Task<IActionResult> Create(
         OrderCreatDTO dto,
         CancellationToken cancellationToken)
@@ -27,6 +31,7 @@ public sealed class OrderController : ApiControllerBase
     }
 
     [HttpDelete]
+    [PermissionAuthorize(Permissions.Orders.Delete)]
     public async Task<IActionResult> Remove(
         Guid id,
         CancellationToken cancellationToken)
@@ -36,6 +41,7 @@ public sealed class OrderController : ApiControllerBase
     }
 
     [HttpGet]
+    [PermissionAuthorize(Permissions.Orders.Read)]
     public async Task<IActionResult> GetAll(
         ViewType type,
         [FromQuery] PaginationRequest pagination,
@@ -49,6 +55,7 @@ public sealed class OrderController : ApiControllerBase
     }
 
     [HttpPatch]
+    [PermissionAuthorize(Permissions.Orders.Update)]
     public async Task<IActionResult> Update(
         Guid id,
         OrderUpdateDTO dto,
@@ -59,6 +66,7 @@ public sealed class OrderController : ApiControllerBase
     }
 
     [HttpPatch("toggle/{id:guid}")]
+    [PermissionAuthorize(Permissions.Orders.Delete)]
     public async Task<IActionResult> Toggle(
         Guid id,
         CancellationToken cancellationToken)
@@ -68,11 +76,39 @@ public sealed class OrderController : ApiControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [PermissionAuthorize(Permissions.Orders.Read)]
     public async Task<IActionResult> GetById(
         Guid id,
         CancellationToken cancellationToken)
     {
         return FromResponse(
             await _service.GetByIdAsync(id, cancellationToken));
+    }
+
+    [HttpPatch("{id:guid}/kitchen-status")]
+    [PermissionAuthorize(Permissions.Orders.UpdateKitchenStatus)]
+    public async Task<IActionResult> UpdateKitchenStatus(
+        Guid id,
+        KitchenOrderStatusUpdateDTO dto,
+        CancellationToken cancellationToken)
+    {
+        return FromResponse(
+            await _service.UpdateKitchenStatusAsync(
+                id,
+                dto.Status,
+                cancellationToken));
+    }
+
+    [HttpPost("{id:guid}/payment")]
+    [Authorize(Policy = AuthorizationPolicies.PaymentProcessing)]
+    [PermissionAuthorize(Permissions.Payments.Process)]
+    public async Task<IActionResult> ProcessPayment(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        return FromResponse(
+            await _service.ProcessPaymentAsync(
+                id,
+                cancellationToken));
     }
 }

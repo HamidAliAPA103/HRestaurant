@@ -21,6 +21,7 @@ public sealed class OrderProfile : Profile
         CreateMap<OrderUpdateDTO, Order>()
             .IgnoreBaseEntityMembers()
             .ForMember(destination => destination.CustomerID, options => options.Ignore())
+            .ForMember(destination => destination.Status, options => options.Ignore())
             .ForMember(destination => destination.TotalPrices, options => options.Ignore())
             .ForMember(destination => destination.Customer, options => options.Ignore())
             .ForMember(destination => destination.Table, options => options.Ignore())
