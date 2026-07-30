@@ -422,6 +422,43 @@
   },
   {
     "ContainingType": "HRestaurant.Controllers.OrderController",
+    "Method": "UpdateKitchenStatus",
+    "RelativePath": "api/Order/{id}/kitchen-status",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "HRestaurant.DTOS.Order.KitchenOrderStatusUpdateDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HRestaurant.Controllers.OrderController",
+    "Method": "ProcessPayment",
+    "RelativePath": "api/Order/{id}/payment",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HRestaurant.Controllers.OrderController",
     "Method": "Toggle",
     "RelativePath": "api/Order/toggle/{id}",
     "HttpMethod": "PATCH",

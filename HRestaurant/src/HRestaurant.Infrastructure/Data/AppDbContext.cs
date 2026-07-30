@@ -25,6 +25,8 @@ public class AppDbContext
 
     public DbSet<Restaurant> Restaurants { get; set; }
 
+    public DbSet<RestaurantWorkingHour> RestaurantWorkingHours { get; set; }
+
     public DbSet<Review> Reviews { get; set; }
 
     public DbSet<Table> Tables { get; set; }
@@ -48,6 +50,52 @@ public class AppDbContext
         modelBuilder.Entity<OrderItem>()
             .Property(orderItem => orderItem.Prices)
             .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Restaurant>(entity =>
+        {
+            entity.Property(restaurant => restaurant.Name)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(restaurant => restaurant.Adres)
+                .HasMaxLength(250)
+                .IsRequired();
+
+            entity.Property(restaurant => restaurant.Number)
+                .HasMaxLength(15)
+                .IsRequired();
+
+            entity.Property(restaurant => restaurant.Currency)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .IsRequired();
+
+            entity.Property(restaurant => restaurant.TaxRate)
+                .HasPrecision(5, 2);
+        });
+
+        modelBuilder.Entity<RestaurantWorkingHour>(entity =>
+        {
+            entity.ToTable("RestaurantWorkingHours");
+
+            entity.HasIndex(workingHour => new
+            {
+                workingHour.RestaurantId,
+                workingHour.DayOfWeek
+            })
+                .IsUnique();
+
+            entity.Property(workingHour => workingHour.OpensAt)
+                .HasColumnType("time");
+
+            entity.Property(workingHour => workingHour.ClosesAt)
+                .HasColumnType("time");
+
+            entity.HasOne(workingHour => workingHour.Restaurant)
+                .WithMany(restaurant => restaurant.WorkingHours)
+                .HasForeignKey(workingHour => workingHour.RestaurantId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
         modelBuilder.Entity<MenuCategory>()
             .HasOne(category => category.Restaurant)

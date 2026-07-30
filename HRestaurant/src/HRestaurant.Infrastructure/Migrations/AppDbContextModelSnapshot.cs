@@ -394,24 +394,40 @@ namespace HRestaurant.Migrations
 
                     b.Property<string>("Adres")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<DateTime>("CreatAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(3)");
+
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Number")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<decimal>("TaxRate")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");
@@ -419,6 +435,47 @@ namespace HRestaurant.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Restaurants");
+                });
+
+            modelBuilder.Entity("HRestaurant.Models.RestaurantWorkingHour", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<TimeOnly?>("ClosesAt")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("CreatAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<TimeOnly?>("OpensAt")
+                        .HasColumnType("time");
+
+                    b.Property<Guid>("RestaurantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("RestaurantId", "DayOfWeek")
+                        .IsUnique();
+
+                    b.ToTable("RestaurantWorkingHours", (string)null);
                 });
 
             modelBuilder.Entity("HRestaurant.Models.Review", b =>
@@ -738,6 +795,17 @@ namespace HRestaurant.Migrations
                     b.Navigation("Table");
                 });
 
+            modelBuilder.Entity("HRestaurant.Models.RestaurantWorkingHour", b =>
+                {
+                    b.HasOne("HRestaurant.Models.Restaurant", "Restaurant")
+                        .WithMany("WorkingHours")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+                });
+
             modelBuilder.Entity("HRestaurant.Models.Review", b =>
                 {
                     b.HasOne("HRestaurant.Models.User", "Customer")
@@ -846,6 +914,8 @@ namespace HRestaurant.Migrations
                     b.Navigation("Reviews");
 
                     b.Navigation("Tables");
+
+                    b.Navigation("WorkingHours");
                 });
 
             modelBuilder.Entity("HRestaurant.Models.Table", b =>

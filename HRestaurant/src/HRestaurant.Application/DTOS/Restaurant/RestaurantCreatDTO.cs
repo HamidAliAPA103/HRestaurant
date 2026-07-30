@@ -1,9 +1,4 @@
-﻿namespace HRestaurant.DTOS.Restaurant
-{
-    public class RestaurantCreatDTO
-    {
-        public string Name { get; set; }
-        public string Adres { get; set; }
-        public string Number { get; set; }
-    }
-}
+namespace HRestaurant.DTOS.Restaurant;
+
+[Obsolete("Use RestaurantCreateDTO instead.")]
+public sealed class RestaurantCreatDTO : RestaurantCreateDTO;

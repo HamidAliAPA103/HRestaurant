@@ -9,19 +9,62 @@ public sealed class RestaurantProfile : Profile
 {
     public RestaurantProfile()
     {
+        CreateMap<RestaurantWorkingHour, RestaurantWorkingHourDTO>();
+
+        CreateMap<RestaurantWorkingHourDTO, RestaurantWorkingHour>()
+            .IgnoreBaseEntityMembers()
+            .ForMember(
+                destination => destination.RestaurantId,
+                options => options.Ignore())
+            .ForMember(
+                destination => destination.Restaurant,
+                options => options.Ignore());
+
         CreateMap<Restaurant, RestaurantGetDTO>();
 
-        CreateMap<RestaurantCreatDTO, Restaurant>()
+        CreateMap<RestaurantCreateDTO, Restaurant>()
             .IgnoreBaseEntityMembers()
-            .ForMember(destination => destination.Tables, options => options.Ignore())
-            .ForMember(destination => destination.Categories, options => options.Ignore())
-            .ForMember(destination => destination.Reviews, options => options.Ignore());
+            .ForMember(
+                destination => destination.IsActive,
+                options => options.MapFrom(_ => true))
+            .ForMember(
+                destination => destination.Tables,
+                options => options.Ignore())
+            .ForMember(
+                destination => destination.Categories,
+                options => options.Ignore())
+            .ForMember(
+                destination => destination.Reviews,
+                options => options.Ignore());
+
+#pragma warning disable CS0618
+        CreateMap<RestaurantCreatDTO, Restaurant>()
+            .IncludeBase<RestaurantCreateDTO, Restaurant>();
+#pragma warning restore CS0618
 
         CreateMap<RestaurantUpdateDTO, Restaurant>()
             .IgnoreBaseEntityMembers()
-            .ForMember(destination => destination.Tables, options => options.Ignore())
-            .ForMember(destination => destination.Categories, options => options.Ignore())
-            .ForMember(destination => destination.Reviews, options => options.Ignore())
+            .ForMember(
+                destination => destination.IsActive,
+                options => options.Ignore())
+            .ForMember(
+                destination => destination.Currency,
+                options => options.Ignore())
+            .ForMember(
+                destination => destination.TaxRate,
+                options => options.Ignore())
+            .ForMember(
+                destination => destination.Tables,
+                options => options.Ignore())
+            .ForMember(
+                destination => destination.Categories,
+                options => options.Ignore())
+            .ForMember(
+                destination => destination.Reviews,
+                options => options.Ignore())
+            .ForMember(
+                destination => destination.WorkingHours,
+                options => options.Ignore())
             .IgnoreNullSourceMembers();
     }
 }
