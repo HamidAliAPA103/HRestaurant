@@ -12,9 +12,19 @@ public sealed class RestaurantGetDTO
 
     public string Name { get; set; } = string.Empty;
 
+    public string Slug { get; set; } = string.Empty;
+
     public string Adres { get; set; } = string.Empty;
 
     public string Number { get; set; } = string.Empty;
+
+    public string? Email { get; set; }
+
+    public string? Description { get; set; }
+
+    public string? LogoUrl { get; set; }
+
+    public string? CoverImageUrl { get; set; }
 
     public bool IsActive { get; set; }
 

@@ -1,9 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using HRestaurant.Configuration;
 using HRestaurant.Data;
 using HRestaurant.DTOS.Responses;
+using HRestaurant.Enum;
 using HRestaurant.Infrastructure.Authentication;
 using HRestaurant.Infrastructure.Authorization;
+using HRestaurant.Infrastructure.BackgroundJobs;
 using HRestaurant.Infrastructure.Identity;
 using HRestaurant.Repositories.Implementations;
 using HRestaurant.Repositories.Interfaces;
@@ -41,6 +44,7 @@ public static class DependencyInjection
 
         AddIdentity(services);
         AddJwtAuthentication(services, configuration);
+        AddPublicReservationServices(services, configuration);
 
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -61,6 +65,51 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
 
         return services;
+    }
+
+    private static void AddPublicReservationServices(
+        IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var publicSettings = configuration
+            .GetSection(PublicReservationSettings.SectionName)
+            .Get<PublicReservationSettings>()
+            ?? new PublicReservationSettings();
+        ValidatePublicReservationSettings(publicSettings);
+        services.AddSingleton(publicSettings);
+
+        var emailSettings = configuration
+            .GetSection(ReservationEmailSettings.SectionName)
+            .Get<ReservationEmailSettings>()
+            ?? new ReservationEmailSettings();
+        ValidateEmailSettings(emailSettings);
+        services.AddSingleton(emailSettings);
+
+        services.AddScoped<
+            IPublicRestaurantService,
+            PublicRestaurantService>();
+        services.AddScoped<
+            ITableAvailabilityService,
+            TableAvailabilityService>();
+        services.AddScoped<
+            IPublicReservationService,
+            PublicReservationService>();
+        services.AddSingleton<
+            IReservationConfirmationService,
+            ReservationConfirmationService>();
+        services.AddSingleton<
+            IPublicRequestChallengeValidator,
+            DisabledPublicRequestChallengeValidator>();
+
+        services.AddSingleton<ReservationEmailQueue>();
+        services.AddSingleton<IReservationEmailQueue>(
+            provider => provider
+                .GetRequiredService<ReservationEmailQueue>());
+        services.AddScoped<
+            IReservationEmailSender,
+            SmtpReservationEmailSender>();
+        services.AddHostedService<
+            ReservationEmailBackgroundService>();
     }
 
     private static void AddIdentity(IServiceCollection services)
@@ -250,6 +299,74 @@ public static class DependencyInjection
         {
             throw new InvalidOperationException(
                 "Jwt:RefreshTokenDays must be between 1 and 365.");
+        }
+    }
+
+    private static void ValidatePublicReservationSettings(
+        PublicReservationSettings settings)
+    {
+        if (settings.MinimumDurationMinutes <= 0
+            || settings.MaximumDurationMinutes
+            < settings.MinimumDurationMinutes)
+        {
+            throw new InvalidOperationException(
+                "Public reservation duration settings are invalid.");
+        }
+
+        if (settings.DefaultDurationMinutes
+                < settings.MinimumDurationMinutes
+            || settings.DefaultDurationMinutes
+                > settings.MaximumDurationMinutes)
+        {
+            throw new InvalidOperationException(
+                "PublicReservations:DefaultDurationMinutes is invalid.");
+        }
+
+        if (settings.SlotIntervalMinutes <= 0
+            || settings.BufferMinutes < 0
+            || settings.MinimumGuestCount <= 0
+            || settings.MaximumGuestCount
+                < settings.MinimumGuestCount
+            || settings.CancellationCutoffMinutes < 0)
+        {
+            throw new InvalidOperationException(
+                "Public reservation limits are invalid.");
+        }
+
+        if (settings.InitialStatus is not (
+                ReservationStatus.Pending
+                or ReservationStatus.Confirmed))
+        {
+            throw new InvalidOperationException(
+                "PublicReservations:InitialStatus must be "
+                + "Pending or Confirmed.");
+        }
+
+        if (!Uri.TryCreate(
+                settings.PublicBaseUrl,
+                UriKind.Absolute,
+                out _))
+        {
+            throw new InvalidOperationException(
+                "PublicReservations:PublicBaseUrl must be an "
+                + "absolute URL.");
+        }
+    }
+
+    private static void ValidateEmailSettings(
+        ReservationEmailSettings settings)
+    {
+        if (!settings.Enabled)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(settings.Host)
+            || settings.Port is < 1 or > 65535
+            || string.IsNullOrWhiteSpace(settings.FromAddress))
+        {
+            throw new InvalidOperationException(
+                "Reservation email settings are invalid.");
         }
     }
 }

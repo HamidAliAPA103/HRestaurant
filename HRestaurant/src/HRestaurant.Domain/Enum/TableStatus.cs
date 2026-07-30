@@ -2,8 +2,10 @@
 {
     public enum TableStatus
     {
-        Empty,
-        Occupied,
-        Reserved
+        Empty = 0,
+        Available = Empty,
+        Occupied = 1,
+        Reserved = 2,
+        Disabled = 3
     }
 }

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "6KHMpX9GHQc=",
+  "dgSpecHash": "o4KjAOI6Djw=",
   "success": true,
   "projectFilePath": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.WebApi\\HRestaurant.WebApi.csproj",
   "expectedPackageFiles": [
@@ -67,6 +67,7 @@
     "C:\\Users\\ASUS\\.nuget\\packages\\serilog.sinks.debug\\2.0.0\\serilog.sinks.debug.2.0.0.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\serilog.sinks.file\\5.0.0\\serilog.sinks.file.5.0.0.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\swashbuckle.aspnetcore\\6.6.2\\swashbuckle.aspnetcore.6.6.2.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\swashbuckle.aspnetcore.annotations\\6.6.2\\swashbuckle.aspnetcore.annotations.6.6.2.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.6.2\\swashbuckle.aspnetcore.swagger.6.6.2.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.6.2\\swashbuckle.aspnetcore.swaggergen.6.6.2.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.6.2\\swashbuckle.aspnetcore.swaggerui.6.6.2.nupkg.sha512",

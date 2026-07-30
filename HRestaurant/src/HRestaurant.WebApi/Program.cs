@@ -5,10 +5,13 @@ using HRestaurant.Infrastructure.Identity;
 using HRestaurant.Mappings.Restaurants;
 using HRestaurant.Validators.Restaurants;
 using HRestaurant.WebApi.ExceptionHandling;
+using HRestaurant.WebApi.RateLimiting;
+using HRestaurant.WebApi.Swagger;
 using HRestaurant.WebApi.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Serilog.Events;
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
@@ -49,6 +52,7 @@ try
             };
         });
     builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddPublicRateLimiting();
     var allowedOrigins =
         builder.Configuration
             .GetSection("Cors:AllowedOrigins")
@@ -70,6 +74,9 @@ try
     });
     builder.Services.AddSwaggerGen(options =>
     {
+        options.EnableAnnotations();
+        options.OperationFilter<PublicApiExamplesOperationFilter>();
+
         const string bearerScheme = "Bearer";
 
         options.AddSecurityDefinition(
@@ -120,6 +127,21 @@ try
 
     app.UseSerilogRequestLogging(options =>
     {
+        options.GetLevel = (httpContext, _, exception) =>
+        {
+            if (httpContext.Request.Path.StartsWithSegments(
+                    "/api/public/reservations/track",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return LogEventLevel.Verbose;
+            }
+
+            return exception is not null
+                || httpContext.Response.StatusCode >= 500
+                ? LogEventLevel.Error
+                : LogEventLevel.Information;
+        };
+
         options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
         {
             diagnosticContext.Set(
@@ -149,7 +171,9 @@ try
 
     app.UseHttpsRedirection();
     app.UseStaticFiles();
+    app.UseRouting();
     app.UseCors("Frontend");
+    app.UseRateLimiter();
     app.UseAuthentication();
     app.UseAuthorization();
 

@@ -179,6 +179,110 @@ namespace HRestaurant.Migrations
                     b.ToTable("RefreshTokens", (string)null);
                 });
 
+            modelBuilder.Entity("HRestaurant.Models.Branch", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateTime>("CreatAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid>("RestaurantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(120)");
+
+                    b.Property<string>("TimeZoneId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("RestaurantId", "Slug")
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0");
+
+                    b.ToTable("Branches", (string)null);
+                });
+
+            modelBuilder.Entity("HRestaurant.Models.BranchWorkingHour", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BranchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<TimeOnly?>("ClosesAt")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("CreatAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<TimeOnly?>("OpensAt")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BranchId", "DayOfWeek")
+                        .IsUnique();
+
+                    b.ToTable("BranchWorkingHours", (string)null);
+                });
+
             modelBuilder.Entity("HRestaurant.Models.Menu", b =>
                 {
                     b.Property<Guid>("ID")
@@ -350,14 +454,45 @@ namespace HRestaurant.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("BranchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CancellationReason")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ConfirmationCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(10)");
+
                     b.Property<DateTime>("CreatAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<Guid?>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("GuestCount")
                         .HasColumnType("int");
@@ -365,8 +500,24 @@ namespace HRestaurant.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("PhoneNormalized")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<string>("PublicTrackingTokenHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(64)");
+
                     b.Property<DateTime>("ReservationTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("SpecialNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -379,11 +530,62 @@ namespace HRestaurant.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("ConfirmationCode")
+                        .IsUnique();
+
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("TableId");
+                    b.HasIndex("PublicTrackingTokenHash")
+                        .IsUnique();
+
+                    b.HasIndex("BranchId", "ReservationTime");
+
+                    b.HasIndex("TableId", "ReservationTime", "EndTime");
 
                     b.ToTable("Reservations");
+                });
+
+            modelBuilder.Entity("HRestaurant.Models.ReservationAuditLog", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("CreatAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IpAddressHash")
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<Guid>("ReservationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ReservationId");
+
+                    b.ToTable("ReservationAuditLogs", (string)null);
                 });
 
             modelBuilder.Entity("HRestaurant.Models.Restaurant", b =>
@@ -397,6 +599,10 @@ namespace HRestaurant.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<string>("CoverImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<DateTime>("CreatAt")
                         .HasColumnType("datetime2");
 
@@ -409,11 +615,23 @@ namespace HRestaurant.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<string>("LogoUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -425,6 +643,12 @@ namespace HRestaurant.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(120)");
+
                     b.Property<decimal>("TaxRate")
                         .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
@@ -433,6 +657,10 @@ namespace HRestaurant.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("Slug")
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("Restaurants");
                 });
@@ -526,20 +754,55 @@ namespace HRestaurant.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("BranchId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("CreatAt")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<double>("Length")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("PositionX")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("PositionY")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("PositionZ")
+                        .HasColumnType("float");
 
                     b.Property<Guid>("RestaurantID")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<double?>("RotationX")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("RotationY")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("RotationZ")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Shape")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("TableNumber")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<int>("Tutum")
                         .HasColumnType("int");
@@ -547,9 +810,16 @@ namespace HRestaurant.Migrations
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<double>("Width")
+                        .HasColumnType("float");
+
                     b.HasKey("ID");
 
                     b.HasIndex("RestaurantID");
+
+                    b.HasIndex("BranchId", "TableNumber")
+                        .IsUnique()
+                        .HasFilter("[BranchId] IS NOT NULL AND [IsDeleted] = 0");
 
                     b.ToTable("Tables");
                 });
@@ -714,6 +984,28 @@ namespace HRestaurant.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("HRestaurant.Models.Branch", b =>
+                {
+                    b.HasOne("HRestaurant.Models.Restaurant", "Restaurant")
+                        .WithMany("Branches")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("HRestaurant.Models.BranchWorkingHour", b =>
+                {
+                    b.HasOne("HRestaurant.Models.Branch", "Branch")
+                        .WithMany("WorkingHours")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+                });
+
             modelBuilder.Entity("HRestaurant.Models.Menu", b =>
                 {
                     b.HasOne("HRestaurant.Models.MenuCategory", "Category")
@@ -778,21 +1070,39 @@ namespace HRestaurant.Migrations
 
             modelBuilder.Entity("HRestaurant.Models.Reservation", b =>
                 {
+                    b.HasOne("HRestaurant.Models.Branch", "Branch")
+                        .WithMany("Reservations")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("HRestaurant.Models.User", "Customer")
                         .WithMany("Reservations")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("HRestaurant.Models.Table", "Table")
                         .WithMany("Reservations")
                         .HasForeignKey("TableId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Branch");
 
                     b.Navigation("Customer");
 
                     b.Navigation("Table");
+                });
+
+            modelBuilder.Entity("HRestaurant.Models.ReservationAuditLog", b =>
+                {
+                    b.HasOne("HRestaurant.Models.Reservation", "Reservation")
+                        .WithMany("AuditLogs")
+                        .HasForeignKey("ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reservation");
                 });
 
             modelBuilder.Entity("HRestaurant.Models.RestaurantWorkingHour", b =>
@@ -827,11 +1137,18 @@ namespace HRestaurant.Migrations
 
             modelBuilder.Entity("HRestaurant.Models.Table", b =>
                 {
+                    b.HasOne("HRestaurant.Models.Branch", "Branch")
+                        .WithMany("Tables")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("HRestaurant.Models.Restaurant", "Restaurant")
                         .WithMany("Tables")
                         .HasForeignKey("RestaurantID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Branch");
 
                     b.Navigation("Restaurant");
                 });
@@ -892,6 +1209,15 @@ namespace HRestaurant.Migrations
                     b.Navigation("RefreshTokens");
                 });
 
+            modelBuilder.Entity("HRestaurant.Models.Branch", b =>
+                {
+                    b.Navigation("Reservations");
+
+                    b.Navigation("Tables");
+
+                    b.Navigation("WorkingHours");
+                });
+
             modelBuilder.Entity("HRestaurant.Models.Menu", b =>
                 {
                     b.Navigation("OrderItems");
@@ -907,8 +1233,15 @@ namespace HRestaurant.Migrations
                     b.Navigation("Items");
                 });
 
+            modelBuilder.Entity("HRestaurant.Models.Reservation", b =>
+                {
+                    b.Navigation("AuditLogs");
+                });
+
             modelBuilder.Entity("HRestaurant.Models.Restaurant", b =>
                 {
+                    b.Navigation("Branches");
+
                     b.Navigation("Categories");
 
                     b.Navigation("Reviews");

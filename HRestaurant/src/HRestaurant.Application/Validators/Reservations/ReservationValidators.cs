@@ -18,6 +18,10 @@ public sealed class ReservationCreateDTOValidator
             .NotEmpty()
             .WithMessage("Table id is required.");
 
+        RuleFor(dto => dto.BranchId)
+            .NotEmpty()
+            .WithMessage("Branch id is required.");
+
         RuleFor(dto => dto.ReservationTime)
             .Must(value => IsNotInPast(value, timeProvider))
             .WithMessage("Reservation date cannot be in the past.");
@@ -25,6 +29,11 @@ public sealed class ReservationCreateDTOValidator
         RuleFor(dto => dto.GuestCount)
             .GreaterThanOrEqualTo(1)
             .WithMessage("Guest count must be at least 1.");
+
+        RuleFor(dto => dto.DurationMinutes)
+            .InclusiveBetween(30, 240)
+            .WithMessage(
+                "Duration must be between 30 and 240 minutes.");
 
         RuleFor(dto => dto.Status)
             .IsInEnum()
@@ -66,6 +75,10 @@ public sealed class ReservationUpdateDTOValidator
             .NotEmpty()
             .WithMessage("Table id is required.");
 
+        RuleFor(dto => dto.BranchId)
+            .NotEmpty()
+            .WithMessage("Branch id is required.");
+
         RuleFor(dto => dto.ReservationTime)
             .Must(value => IsNotInPast(value, timeProvider))
             .WithMessage("Reservation date cannot be in the past.");
@@ -73,6 +86,11 @@ public sealed class ReservationUpdateDTOValidator
         RuleFor(dto => dto.GuestCount)
             .GreaterThanOrEqualTo(1)
             .WithMessage("Guest count must be at least 1.");
+
+        RuleFor(dto => dto.DurationMinutes)
+            .InclusiveBetween(30, 240)
+            .WithMessage(
+                "Duration must be between 30 and 240 minutes.");
 
         RuleFor(dto => dto.Status)
             .IsInEnum()

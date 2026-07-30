@@ -10,6 +10,7 @@ import { LoadingState } from "@/shared/components/StatePanel";
 import { NotFoundPage } from "@/shared/pages/NotFoundPage";
 import { DashboardLayout } from "@/widgets/dashboard-layout/DashboardLayout";
 import { managementRoles } from "@/widgets/dashboard-layout/navigation";
+import { publicRoutes } from "@/routes/public-routes";
 
 const DashboardPage = lazy(() =>
   import("@/features/dashboard/pages/DashboardPage").then((module) => ({
@@ -76,6 +77,7 @@ function lazyPage(page: ReactNode) {
 }
 
 export const router = createBrowserRouter([
+  ...publicRoutes,
   {
     path: "/login",
     element: <LoginPage />,

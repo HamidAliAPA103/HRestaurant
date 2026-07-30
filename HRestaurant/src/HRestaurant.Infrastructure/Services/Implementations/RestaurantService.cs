@@ -1,4 +1,6 @@
 using AutoMapper;
+using System.Globalization;
+using System.Text;
 using HRestaurant.Data;
 using HRestaurant.DTOS.Responses;
 using HRestaurant.DTOS.Restaurant;
@@ -51,7 +53,17 @@ public sealed class RestaurantService : IRestaurantService
         restaurant.Name = dto.Name.Trim();
         restaurant.Adres = dto.Adres.Trim();
         restaurant.Number = dto.Number.Trim();
+        restaurant.Email = NormalizeEmail(dto.Email);
+        restaurant.Description = PublicInputSanitizer.Sanitize(
+            dto.Description,
+            2000);
+        restaurant.LogoUrl = NormalizeUrl(dto.LogoUrl);
+        restaurant.CoverImageUrl = NormalizeUrl(
+            dto.CoverImageUrl);
         restaurant.Currency = NormalizeCurrency(dto.Currency);
+        restaurant.Slug = await CreateUniqueSlugAsync(
+            dto.Slug ?? dto.Name,
+            cancellationToken);
         restaurant.CreatAt = UtcNow;
         restaurant.IsActive = true;
 
@@ -59,6 +71,10 @@ public sealed class RestaurantService : IRestaurantService
         {
             restaurant.WorkingHours = CreateDefaultWorkingHours();
         }
+
+        restaurant.Branches.Add(CreateDefaultBranch(
+            restaurant,
+            dto.WorkingHours));
 
         await _dbContext.Restaurants.AddAsync(
             restaurant,
@@ -166,6 +182,29 @@ public sealed class RestaurantService : IRestaurantService
         if (dto.Number is not null)
         {
             restaurant.Number = dto.Number.Trim();
+        }
+
+        if (dto.Email is not null)
+        {
+            restaurant.Email = NormalizeEmail(dto.Email);
+        }
+
+        if (dto.Description is not null)
+        {
+            restaurant.Description = PublicInputSanitizer.Sanitize(
+                dto.Description,
+                2000);
+        }
+
+        if (dto.LogoUrl is not null)
+        {
+            restaurant.LogoUrl = NormalizeUrl(dto.LogoUrl);
+        }
+
+        if (dto.CoverImageUrl is not null)
+        {
+            restaurant.CoverImageUrl = NormalizeUrl(
+                dto.CoverImageUrl);
         }
 
         restaurant.UpdateAt = UtcNow;
@@ -392,8 +431,139 @@ public sealed class RestaurantService : IRestaurantService
             .ToList();
     }
 
+    private Branch CreateDefaultBranch(
+        Restaurant restaurant,
+        IReadOnlyCollection<RestaurantWorkingHourDTO> workingHours)
+    {
+        var branchHours = workingHours.Count == 0
+            ? System.Enum.GetValues<DayOfWeek>()
+                .Select(day => new BranchWorkingHour
+                {
+                    DayOfWeek = day,
+                    IsClosed = true,
+                    CreatAt = UtcNow
+                })
+                .ToList()
+            : workingHours
+                .Select(entry => new BranchWorkingHour
+                {
+                    DayOfWeek = entry.DayOfWeek,
+                    OpensAt = entry.OpensAt,
+                    ClosesAt = entry.ClosesAt,
+                    IsClosed = entry.IsClosed,
+                    CreatAt = UtcNow
+                })
+                .ToList();
+
+        return new Branch
+        {
+            Name = restaurant.Name,
+            Slug = "main",
+            Address = restaurant.Adres,
+            Phone = restaurant.Number,
+            Email = restaurant.Email,
+            TimeZoneId = "Asia/Baku",
+            IsActive = true,
+            CreatAt = UtcNow,
+            WorkingHours = branchHours
+        };
+    }
+
+    private async Task<string> CreateUniqueSlugAsync(
+        string value,
+        CancellationToken cancellationToken)
+    {
+        var baseSlug = Slugify(value);
+        var slug = baseSlug;
+
+        for (var attempt = 0; attempt < 20; attempt++)
+        {
+            var exists = await _dbContext.Restaurants
+                .AsNoTracking()
+                .AnyAsync(
+                    restaurant =>
+                        restaurant.Slug == slug
+                        && !restaurant.IsDeleted,
+                    cancellationToken);
+
+            if (!exists)
+            {
+                return slug;
+            }
+
+            slug =
+                $"{baseSlug}-{Guid.NewGuid():N}"[..Math.Min(
+                    baseSlug.Length + 7,
+                    120)];
+        }
+
+        throw new ConflictException(
+            "A unique restaurant slug could not be generated.");
+    }
+
+    private static string Slugify(string value)
+    {
+        var transliterated = value
+            .Trim()
+            .ToLowerInvariant()
+            .Replace('ə', 'e')
+            .Replace('ı', 'i')
+            .Replace('ö', 'o')
+            .Replace('ü', 'u')
+            .Replace('ş', 's')
+            .Replace('ç', 'c')
+            .Replace('ğ', 'g');
+        var normalized = transliterated.Normalize(
+            NormalizationForm.FormD);
+        var builder = new StringBuilder(normalized.Length);
+        var previousWasHyphen = false;
+
+        foreach (var character in normalized)
+        {
+            if (CharUnicodeInfo.GetUnicodeCategory(character)
+                == UnicodeCategory.NonSpacingMark)
+            {
+                continue;
+            }
+
+            if (char.IsAsciiLetterOrDigit(character))
+            {
+                builder.Append(character);
+                previousWasHyphen = false;
+            }
+            else if (!previousWasHyphen && builder.Length > 0)
+            {
+                builder.Append('-');
+                previousWasHyphen = true;
+            }
+        }
+
+        var slug = builder.ToString().Trim('-');
+
+        if (slug.Length == 0)
+        {
+            slug = "restaurant";
+        }
+
+        return slug[..Math.Min(slug.Length, 100)];
+    }
+
     private static string NormalizeCurrency(string currency)
     {
         return currency.Trim().ToUpperInvariant();
+    }
+
+    private static string? NormalizeEmail(string? email)
+    {
+        return string.IsNullOrWhiteSpace(email)
+            ? null
+            : email.Trim().ToLowerInvariant();
+    }
+
+    private static string? NormalizeUrl(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? null
+            : value.Trim();
     }
 }

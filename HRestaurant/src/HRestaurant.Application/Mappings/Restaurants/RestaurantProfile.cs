@@ -28,6 +28,9 @@ public sealed class RestaurantProfile : Profile
                 destination => destination.IsActive,
                 options => options.MapFrom(_ => true))
             .ForMember(
+                destination => destination.Branches,
+                options => options.Ignore())
+            .ForMember(
                 destination => destination.Tables,
                 options => options.Ignore())
             .ForMember(
@@ -48,6 +51,9 @@ public sealed class RestaurantProfile : Profile
                 destination => destination.IsActive,
                 options => options.Ignore())
             .ForMember(
+                destination => destination.Slug,
+                options => options.Ignore())
+            .ForMember(
                 destination => destination.Currency,
                 options => options.Ignore())
             .ForMember(
@@ -55,6 +61,9 @@ public sealed class RestaurantProfile : Profile
                 options => options.Ignore())
             .ForMember(
                 destination => destination.Tables,
+                options => options.Ignore())
+            .ForMember(
+                destination => destination.Branches,
                 options => options.Ignore())
             .ForMember(
                 destination => destination.Categories,

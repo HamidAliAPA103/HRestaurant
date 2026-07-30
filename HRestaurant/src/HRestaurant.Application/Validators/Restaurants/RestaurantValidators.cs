@@ -16,6 +16,14 @@ public sealed class RestaurantCreateDTOValidator
             .WithMessage(
                 $"Restaurant name cannot exceed {ValidationConstants.NameMaximumLength} characters.");
 
+        RuleFor(dto => dto.Slug)
+            .MaximumLength(120)
+            .WithMessage("Slug cannot exceed 120 characters.")
+            .Matches("^[A-Za-z0-9-]+$")
+            .WithMessage(
+                "Slug can contain letters, numbers and hyphens only.")
+            .When(dto => !string.IsNullOrWhiteSpace(dto.Slug));
+
         RuleFor(dto => dto.Adres)
             .NotEmpty()
             .WithMessage("Restaurant address cannot be empty.")
@@ -33,6 +41,27 @@ public sealed class RestaurantCreateDTOValidator
                 $"Phone length must be between {ValidationConstants.PhoneMinimumLength} and {ValidationConstants.PhoneMaximumLength} characters.")
             .Matches(ValidationConstants.PhonePattern)
             .WithMessage("Phone format is invalid.");
+
+        RuleFor(dto => dto.Email)
+            .EmailAddress()
+            .WithMessage("Email format is invalid.")
+            .MaximumLength(254)
+            .WithMessage("Email cannot exceed 254 characters.")
+            .When(dto => !string.IsNullOrWhiteSpace(dto.Email));
+
+        RuleFor(dto => dto.Description)
+            .MaximumLength(2000)
+            .WithMessage(
+                "Description cannot exceed 2000 characters.");
+
+        RuleFor(dto => dto.LogoUrl)
+            .MaximumLength(500)
+            .WithMessage("Logo URL cannot exceed 500 characters.");
+
+        RuleFor(dto => dto.CoverImageUrl)
+            .MaximumLength(500)
+            .WithMessage(
+                "Cover image URL cannot exceed 500 characters.");
 
         RuleFor(dto => dto.Currency)
             .NotEmpty()
@@ -88,7 +117,11 @@ public sealed class RestaurantUpdateDTOValidator
             .Must(dto =>
                 dto.Name is not null
                 || dto.Adres is not null
-                || dto.Number is not null)
+                || dto.Number is not null
+                || dto.Email is not null
+                || dto.Description is not null
+                || dto.LogoUrl is not null
+                || dto.CoverImageUrl is not null)
             .WithMessage(
                 "At least one restaurant field must be supplied.");
 
@@ -119,6 +152,30 @@ public sealed class RestaurantUpdateDTOValidator
             .Matches(ValidationConstants.PhonePattern)
             .WithMessage("Phone format is invalid.")
             .When(dto => dto.Number is not null);
+
+        RuleFor(dto => dto.Email)
+            .EmailAddress()
+            .WithMessage("Email format is invalid.")
+            .MaximumLength(254)
+            .WithMessage("Email cannot exceed 254 characters.")
+            .When(dto => !string.IsNullOrWhiteSpace(dto.Email));
+
+        RuleFor(dto => dto.Description)
+            .MaximumLength(2000)
+            .WithMessage(
+                "Description cannot exceed 2000 characters.")
+            .When(dto => dto.Description is not null);
+
+        RuleFor(dto => dto.LogoUrl)
+            .MaximumLength(500)
+            .WithMessage("Logo URL cannot exceed 500 characters.")
+            .When(dto => dto.LogoUrl is not null);
+
+        RuleFor(dto => dto.CoverImageUrl)
+            .MaximumLength(500)
+            .WithMessage(
+                "Cover image URL cannot exceed 500 characters.")
+            .When(dto => dto.CoverImageUrl is not null);
     }
 }
 

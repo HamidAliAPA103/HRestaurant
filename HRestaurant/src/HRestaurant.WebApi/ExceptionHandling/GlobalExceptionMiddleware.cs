@@ -49,7 +49,7 @@ public sealed class GlobalExceptionMiddleware
                 + "Method: {RequestMethod}, Path: {RequestPath}, "
                 + "TraceId: {TraceId}",
                 httpContext.Request.Method,
-                httpContext.Request.Path,
+                GetSafeRequestPath(httpContext),
                 GetTraceId(httpContext));
         }
         catch (Exception exception)
@@ -62,7 +62,7 @@ public sealed class GlobalExceptionMiddleware
                     + "Method: {RequestMethod}, Path: {RequestPath}, "
                     + "TraceId: {TraceId}",
                     httpContext.Request.Method,
-                    httpContext.Request.Path,
+                    GetSafeRequestPath(httpContext),
                     GetTraceId(httpContext));
 
                 throw;
@@ -117,7 +117,7 @@ public sealed class GlobalExceptionMiddleware
                 exception,
                 message,
                 httpContext.Request.Method,
-                httpContext.Request.Path,
+                GetSafeRequestPath(httpContext),
                 statusCode,
                 traceId,
                 exception.GetType().FullName);
@@ -129,7 +129,7 @@ public sealed class GlobalExceptionMiddleware
             exception,
             message,
             httpContext.Request.Method,
-            httpContext.Request.Path,
+            GetSafeRequestPath(httpContext),
             statusCode,
             traceId,
             exception.GetType().FullName);
@@ -223,6 +223,16 @@ public sealed class GlobalExceptionMiddleware
     private static string GetTraceId(HttpContext httpContext)
     {
         return httpContext.TraceIdentifier;
+    }
+
+    private static string GetSafeRequestPath(
+        HttpContext httpContext)
+    {
+        return httpContext.Request.Path.StartsWithSegments(
+            "/api/public/reservations/track",
+            StringComparison.OrdinalIgnoreCase)
+            ? "/api/public/reservations/track/{trackingToken}"
+            : httpContext.Request.Path.Value ?? string.Empty;
     }
 
     private sealed record ExceptionDetails(

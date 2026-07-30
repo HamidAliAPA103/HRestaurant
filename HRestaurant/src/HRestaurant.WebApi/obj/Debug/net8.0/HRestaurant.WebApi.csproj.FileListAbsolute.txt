@@ -199,3 +199,4 @@ C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\n
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\HRestaurant.WebApi.pdb
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\HRestaurant.WebApi.genruntimeconfig.cache
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\ref\HRestaurant.WebApi.dll
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\bin\Debug\net8.0\Swashbuckle.AspNetCore.Annotations.dll

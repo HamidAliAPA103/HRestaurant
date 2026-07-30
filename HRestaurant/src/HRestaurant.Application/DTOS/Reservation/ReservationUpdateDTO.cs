@@ -5,8 +5,10 @@ namespace HRestaurant.DTOS.Reservation
     public class ReservationUpdateDTO
     {
         public Guid CustomerId { get; set; }
+        public Guid BranchId { get; set; }
         public Guid TableId { get; set; }
         public DateTime ReservationTime { get; set; }
+        public int DurationMinutes { get; set; } = 120;
         public int GuestCount { get; set; }
         public ReservationStatus Status { get; set; } = ReservationStatus.Pending;
     }

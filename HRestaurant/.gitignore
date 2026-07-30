@@ -1,0 +1,18 @@
+# .NET build artifacts
+**/bin/
+**/obj/
+
+# Local tools and isolated build outputs
+.public-api-artifacts/
+.public-tools/
+
+# Frontend build and dependency artifacts
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/tsconfig.tsbuildinfo
+
+# Local environment files
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local

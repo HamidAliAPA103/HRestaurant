@@ -14,12 +14,14 @@ public sealed class TableProfile : Profile
         CreateMap<TableCreateDTO, Table>()
             .IgnoreBaseEntityMembers()
             .ForMember(destination => destination.Restaurant, options => options.Ignore())
+            .ForMember(destination => destination.Branch, options => options.Ignore())
             .ForMember(destination => destination.Orders, options => options.Ignore())
             .ForMember(destination => destination.Reservations, options => options.Ignore());
 
         CreateMap<TableUpdateDTO, Table>()
             .IgnoreBaseEntityMembers()
             .ForMember(destination => destination.Restaurant, options => options.Ignore())
+            .ForMember(destination => destination.Branch, options => options.Ignore())
             .ForMember(destination => destination.Orders, options => options.Ignore())
             .ForMember(destination => destination.Reservations, options => options.Ignore());
     }
