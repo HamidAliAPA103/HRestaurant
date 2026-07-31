@@ -13,6 +13,20 @@ public sealed class PublicApiExamplesOperationFilter
         OperationFilterContext context)
     {
         if (context.MethodInfo.DeclaringType
+            == typeof(PublicTableLayoutController))
+        {
+            operation.Security.Clear();
+            SetResponseExample(
+                operation,
+                "200",
+                SuccessResponse(
+                    "Public table layout retrieved successfully.",
+                    new OpenApiArray { PublicTableLayoutExample() }));
+            AddCommonErrorExamples(operation);
+            return;
+        }
+
+        if (context.MethodInfo.DeclaringType
             == typeof(PublicRestaurantController))
         {
             operation.Security.Clear();
@@ -380,9 +394,41 @@ public sealed class PublicApiExamplesOperationFilter
             ["rotationZ"] = new OpenApiDouble(0),
             ["width"] = new OpenApiDouble(1.8),
             ["length"] = new OpenApiDouble(1.2),
+            ["height"] = new OpenApiDouble(0.75),
             ["status"] = new OpenApiString("Available"),
             ["isAvailable"] = new OpenApiBoolean(true),
             ["unavailableReason"] = new OpenApiNull()
+        };
+    }
+
+    private static OpenApiObject PublicTableLayoutExample()
+    {
+        return new OpenApiObject
+        {
+            ["id"] = new OpenApiString(
+                "0ad04f21-68be-4f06-bbd8-889704f2fcf3"),
+            ["tableNumber"] = new OpenApiString("T-12"),
+            ["capacity"] = new OpenApiInteger(4),
+            ["shape"] = new OpenApiString("Rectangle"),
+            ["position"] = new OpenApiObject
+            {
+                ["x"] = new OpenApiDouble(2),
+                ["y"] = new OpenApiDouble(0),
+                ["z"] = new OpenApiDouble(3)
+            },
+            ["rotation"] = new OpenApiObject
+            {
+                ["x"] = new OpenApiDouble(0),
+                ["y"] = new OpenApiDouble(0.5),
+                ["z"] = new OpenApiDouble(0)
+            },
+            ["dimensions"] = new OpenApiObject
+            {
+                ["width"] = new OpenApiDouble(1.8),
+                ["length"] = new OpenApiDouble(1.2),
+                ["height"] = new OpenApiDouble(0.75)
+            },
+            ["publicStatus"] = new OpenApiString("Available")
         };
     }
 

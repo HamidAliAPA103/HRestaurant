@@ -3,6 +3,7 @@ export type PublicTableStatus =
   | "Selected"
   | "Reserved"
   | "Occupied"
+  | "Cleaning"
   | "Disabled"
   | "CapacityNotSuitable";
 
@@ -54,9 +55,21 @@ export interface PublicRestaurantTable {
   rotationZ: number;
   width: number;
   length: number;
+  height: number;
   status: PublicTableStatus;
   isAvailable: boolean;
   unavailableReason: PublicTableStatus | null;
+}
+
+export interface PublicTableLayout {
+  id: string;
+  tableNumber: string;
+  capacity: number;
+  shape: "Round" | "Square" | "Rectangle";
+  position: { x: number; y: number; z: number };
+  rotation: { x: number; y: number; z: number };
+  dimensions: { width: number; length: number; height: number };
+  publicStatus: string;
 }
 
 export interface TableAvailabilityRequest {

@@ -2,6 +2,8 @@ import { Bounds, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useMemo } from "react";
 import type { PublicRestaurantTable } from "@/types/public";
+import { HallFloor } from "./HallFloor";
+import { HallWalls } from "./HallWalls";
 import { RestaurantTable3D } from "./RestaurantTable3D";
 
 interface RestaurantHall3DProps {
@@ -45,13 +47,8 @@ export function RestaurantHall3D({
           args={["#fff6e9", "#786c60", 0.8]}
           position={[0, 10, 0]}
         />
-        <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[24, 18]} />
-          <meshStandardMaterial color="#d7cbbc" roughness={0.95} />
-        </mesh>
-        <Wall position={[0, 2.5, -8.8]} size={[24, 5, 0.25]} />
-        <Wall position={[-11.8, 2.5, 0]} size={[0.25, 5, 18]} />
-        <Wall position={[11.8, 2.5, 0]} size={[0.25, 5, 18]} />
+        <HallFloor />
+        <HallWalls />
         <Suspense fallback={null}>
           <Bounds fit clip observe margin={1.25}>
             <group>
@@ -79,20 +76,6 @@ export function RestaurantHall3D({
         />
       </Canvas>
     </div>
-  );
-}
-
-interface WallProps {
-  position: [number, number, number];
-  size: [number, number, number];
-}
-
-function Wall({ position, size }: WallProps) {
-  return (
-    <mesh receiveShadow position={position}>
-      <boxGeometry args={size} />
-      <meshStandardMaterial color="#c9baaa" roughness={0.92} />
-    </mesh>
   );
 }
 

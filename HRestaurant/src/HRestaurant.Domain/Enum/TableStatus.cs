@@ -6,6 +6,7 @@
         Available = Empty,
         Occupied = 1,
         Reserved = 2,
-        Disabled = 3
+        Disabled = 3,
+        Cleaning = 4
     }
 }

@@ -9,6 +9,7 @@ import type {
   PublicReservationLookupRequest,
   PublicRestaurant,
   PublicRestaurantTable,
+  PublicTableLayout,
   TableAvailabilityRequest,
 } from "@/types/public";
 
@@ -53,6 +54,12 @@ export function getAvailableTables(
     publicApiClient.get(`/public/branches/${branchId}/tables`, {
       params: request,
     }),
+  );
+}
+
+export function getPublicTableLayout(branchId: string) {
+  return unwrap<PublicTableLayout[]>(
+    publicApiClient.get(`/public/branches/${branchId}/tables/layout`),
   );
 }
 

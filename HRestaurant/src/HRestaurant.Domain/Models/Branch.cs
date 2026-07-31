@@ -38,5 +38,7 @@ public sealed class Branch : BaseEntity
 
     public List<User> Employees { get; set; } = new();
 
-    public List<Shift> Shifts { get; set; } = new();
+        public List<Shift> Shifts { get; set; } = new();
+        public List<InventoryItem> InventoryItems { get; set; } = new();
+        public List<InventoryNotification> InventoryNotifications { get; set; } = new();
 }

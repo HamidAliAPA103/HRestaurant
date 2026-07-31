@@ -266,6 +266,11 @@ public sealed class TableAvailabilityService
             return "Disabled";
         }
 
+        if (table.Status == TableStatus.Cleaning)
+        {
+            return "Cleaning";
+        }
+
         if (table.Status == TableStatus.Occupied)
         {
             return "Occupied";

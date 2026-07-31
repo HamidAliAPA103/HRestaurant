@@ -408,6 +408,149 @@ namespace HRestaurant.Migrations
                     b.ToTable("Ingredients", (string)null);
                 });
 
+            modelBuilder.Entity("HRestaurant.Models.InventoryItem", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BatchNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("BranchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("CurrentQuantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateOnly?>("ExpirationDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("IngredientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("MinimumQuantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("PurchasePrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("RestaurantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid?>("SupplierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("SupplierId");
+
+                    b.HasIndex("BranchId", "CurrentQuantity", "MinimumQuantity");
+
+                    b.HasIndex("BranchId", "IsDeleted", "IsActive");
+
+                    b.HasIndex("ExpirationDate", "IsDeleted", "IsActive");
+
+                    b.HasIndex("IngredientId", "BranchId", "BatchNumber");
+
+                    b.HasIndex("RestaurantId", "IsDeleted", "IsActive");
+
+                    b.ToTable("InventoryItems", (string)null);
+                });
+
+            modelBuilder.Entity("HRestaurant.Models.InventoryNotification", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BranchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("InventoryItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsResolved")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("ReadAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ResolvedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RestaurantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("InventoryItemId", "Type")
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0 AND [IsRead] = 0 AND [IsResolved] = 0");
+
+                    b.HasIndex("BranchId", "IsRead", "IsResolved", "CreatAt");
+
+                    b.HasIndex("RestaurantId", "IsRead", "IsResolved", "CreatAt");
+
+                    b.ToTable("InventoryNotifications", (string)null);
+                });
+
             modelBuilder.Entity("HRestaurant.Models.Menu", b =>
                 {
                     b.Property<Guid>("ID")
@@ -1000,6 +1143,132 @@ namespace HRestaurant.Migrations
                     b.ToTable("Shifts", (string)null);
                 });
 
+            modelBuilder.Entity("HRestaurant.Models.StockTransaction", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("InventoryItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("NewQuantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("PreviousQuantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("ReferenceNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("TransactionType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CreatedByUserId", "CreatAt");
+
+                    b.HasIndex("InventoryItemId", "CreatAt");
+
+                    b.ToTable("StockTransactions", (string)null);
+                });
+
+            modelBuilder.Entity("HRestaurant.Models.Supplier", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("ContactPerson")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("NormalizedName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid>("RestaurantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("RestaurantId", "NormalizedName")
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0");
+
+                    b.HasIndex("RestaurantId", "IsDeleted", "IsActive");
+
+                    b.ToTable("Suppliers", (string)null);
+                });
+
             modelBuilder.Entity("HRestaurant.Models.Table", b =>
                 {
                     b.Property<Guid>("ID")
@@ -1014,6 +1283,9 @@ namespace HRestaurant.Migrations
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<double>("Height")
+                        .HasColumnType("float");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1354,6 +1626,67 @@ namespace HRestaurant.Migrations
                     b.Navigation("Restaurant");
                 });
 
+            modelBuilder.Entity("HRestaurant.Models.InventoryItem", b =>
+                {
+                    b.HasOne("HRestaurant.Models.Branch", "Branch")
+                        .WithMany("InventoryItems")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HRestaurant.Models.Ingredient", "Ingredient")
+                        .WithMany("InventoryItems")
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HRestaurant.Models.Restaurant", "Restaurant")
+                        .WithMany("InventoryItems")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HRestaurant.Models.Supplier", "Supplier")
+                        .WithMany("InventoryItems")
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Ingredient");
+
+                    b.Navigation("Restaurant");
+
+                    b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("HRestaurant.Models.InventoryNotification", b =>
+                {
+                    b.HasOne("HRestaurant.Models.Branch", "Branch")
+                        .WithMany("InventoryNotifications")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HRestaurant.Models.InventoryItem", "InventoryItem")
+                        .WithMany("Notifications")
+                        .HasForeignKey("InventoryItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HRestaurant.Models.Restaurant", "Restaurant")
+                        .WithMany("InventoryNotifications")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("InventoryItem");
+
+                    b.Navigation("Restaurant");
+                });
+
             modelBuilder.Entity("HRestaurant.Models.Menu", b =>
                 {
                     b.HasOne("HRestaurant.Models.MenuCategory", "Category")
@@ -1525,6 +1858,34 @@ namespace HRestaurant.Migrations
                     b.Navigation("Restaurant");
                 });
 
+            modelBuilder.Entity("HRestaurant.Models.StockTransaction", b =>
+                {
+                    b.HasOne("HRestaurant.Infrastructure.Identity.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HRestaurant.Models.InventoryItem", "InventoryItem")
+                        .WithMany("Transactions")
+                        .HasForeignKey("InventoryItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("InventoryItem");
+                });
+
+            modelBuilder.Entity("HRestaurant.Models.Supplier", b =>
+                {
+                    b.HasOne("HRestaurant.Models.Restaurant", "Restaurant")
+                        .WithMany("Suppliers")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+                });
+
             modelBuilder.Entity("HRestaurant.Models.Table", b =>
                 {
                     b.HasOne("HRestaurant.Models.Branch", "Branch")
@@ -1625,6 +1986,10 @@ namespace HRestaurant.Migrations
                 {
                     b.Navigation("Employees");
 
+                    b.Navigation("InventoryItems");
+
+                    b.Navigation("InventoryNotifications");
+
                     b.Navigation("Reservations");
 
                     b.Navigation("Shifts");
@@ -1636,7 +2001,16 @@ namespace HRestaurant.Migrations
 
             modelBuilder.Entity("HRestaurant.Models.Ingredient", b =>
                 {
+                    b.Navigation("InventoryItems");
+
                     b.Navigation("MenuItems");
+                });
+
+            modelBuilder.Entity("HRestaurant.Models.InventoryItem", b =>
+                {
+                    b.Navigation("Notifications");
+
+                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("HRestaurant.Models.Menu", b =>
@@ -1671,9 +2045,15 @@ namespace HRestaurant.Migrations
 
                     b.Navigation("Ingredients");
 
+                    b.Navigation("InventoryItems");
+
+                    b.Navigation("InventoryNotifications");
+
                     b.Navigation("Reviews");
 
                     b.Navigation("Shifts");
+
+                    b.Navigation("Suppliers");
 
                     b.Navigation("Tables");
 
@@ -1683,6 +2063,11 @@ namespace HRestaurant.Migrations
             modelBuilder.Entity("HRestaurant.Models.Shift", b =>
                 {
                     b.Navigation("EmployeeShifts");
+                });
+
+            modelBuilder.Entity("HRestaurant.Models.Supplier", b =>
+                {
+                    b.Navigation("InventoryItems");
                 });
 
             modelBuilder.Entity("HRestaurant.Models.Table", b =>

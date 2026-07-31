@@ -18,4 +18,6 @@ public sealed class Ingredient : BaseEntity
     public Restaurant Restaurant { get; set; } = null!;
 
     public List<MenuItemIngredient> MenuItems { get; set; } = new();
+
+    public List<InventoryItem> InventoryItems { get; set; } = new();
 }

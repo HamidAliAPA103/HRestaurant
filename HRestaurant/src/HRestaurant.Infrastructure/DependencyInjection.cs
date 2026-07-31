@@ -45,6 +45,7 @@ public static class DependencyInjection
         AddIdentity(services);
         AddJwtAuthentication(services, configuration);
         AddPublicReservationServices(services, configuration);
+        AddInventoryServices(services, configuration);
 
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -60,6 +61,10 @@ public static class DependencyInjection
         services.AddScoped<IReservationService, ReservationService>();
         services.AddScoped<IReviewService, ReviewService>();
         services.AddScoped<ITableService, TableService>();
+        services.AddScoped<ISupplierService, SupplierService>();
+        services.AddScoped<IInventoryService, InventoryService>();
+        services.AddScoped<IInventoryNotificationService, InventoryNotificationService>();
+        services.AddScoped<IInventoryAlertService, InventoryAlertService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ITokenService, TokenService>();
@@ -68,6 +73,22 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
 
         return services;
+    }
+
+    private static void AddInventoryServices(
+        IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var settings = configuration.GetSection(InventoryAlertSettings.SectionName)
+            .Get<InventoryAlertSettings>() ?? new InventoryAlertSettings();
+        if (settings.CheckIntervalMinutes is < 1 or > 1440)
+            throw new InvalidOperationException(
+                "InventoryAlerts:CheckIntervalMinutes must be between 1 and 1440.");
+        if (settings.ExpiringSoonDays is < 1 or > 365)
+            throw new InvalidOperationException(
+                "InventoryAlerts:ExpiringSoonDays must be between 1 and 365.");
+        services.AddSingleton(settings);
+        services.AddHostedService<InventoryAlertBackgroundService>();
     }
 
     private static void AddPublicReservationServices(

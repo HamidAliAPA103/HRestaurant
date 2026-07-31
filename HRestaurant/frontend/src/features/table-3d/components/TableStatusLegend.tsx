@@ -6,6 +6,7 @@ const statuses: PublicTableStatus[] = [
   "Selected",
   "Reserved",
   "Occupied",
+  "Cleaning",
   "Disabled",
   "CapacityNotSuitable",
 ];

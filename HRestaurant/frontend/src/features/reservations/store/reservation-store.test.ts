@@ -15,6 +15,7 @@ const table: PublicRestaurantTable = {
   rotationZ: 0,
   width: 1.8,
   length: 1.8,
+  height: 0.75,
   status: "Available",
   isAvailable: true,
   unavailableReason: null,

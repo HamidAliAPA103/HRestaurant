@@ -26,6 +26,8 @@ public sealed class PublicRestaurantTableDto
 
     public double Length { get; set; }
 
+    public double Height { get; set; }
+
     public string Status { get; set; } = string.Empty;
 
     public bool IsAvailable { get; set; }

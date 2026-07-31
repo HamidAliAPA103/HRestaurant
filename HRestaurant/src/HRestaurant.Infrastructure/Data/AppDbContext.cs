@@ -29,6 +29,14 @@ public class AppDbContext
 
     public DbSet<MenuItemIngredient> MenuItemIngredients { get; set; }
 
+    public DbSet<Supplier> Suppliers { get; set; }
+
+    public DbSet<InventoryItem> InventoryItems { get; set; }
+
+    public DbSet<StockTransaction> StockTransactions { get; set; }
+
+    public DbSet<InventoryNotification> InventoryNotifications { get; set; }
+
     public DbSet<Order> Orders { get; set; }
 
     public DbSet<OrderItem> OrderItems { get; set; }

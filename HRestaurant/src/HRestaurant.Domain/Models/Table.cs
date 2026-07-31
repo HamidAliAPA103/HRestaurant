@@ -19,6 +19,7 @@ namespace HRestaurant.Models
         public double? RotationZ { get; set; }
         public double Width { get; set; } = 1.8;
         public double Length { get; set; } = 1.8;
+        public double Height { get; set; } = 0.75;
         public bool IsActive { get; set; } = true;
         public Restaurant Restaurant { get; set; } = null!;
         public Branch? Branch { get; set; }

@@ -21,6 +21,13 @@ public static class RolePermissionCatalog
                 Permissions.Menus.Manage,
                 Permissions.Shifts.Read,
                 Permissions.Shifts.Manage,
+                Permissions.Suppliers.Read,
+                Permissions.Suppliers.Manage,
+                Permissions.Inventory.Read,
+                Permissions.Inventory.Manage,
+                Permissions.Inventory.Adjust,
+                Permissions.Notifications.Read,
+                Permissions.Notifications.Manage,
                 Permissions.Tables.Read,
                 Permissions.Tables.Manage,
                 Permissions.Reservations.Read,
@@ -54,6 +61,8 @@ public static class RolePermissionCatalog
             [AppRoles.Chef] =
             [
                 Permissions.Menus.Read,
+                Permissions.Inventory.Read,
+                Permissions.Notifications.Read,
                 Permissions.Orders.Read,
                 Permissions.Orders.UpdateKitchenStatus
             ]

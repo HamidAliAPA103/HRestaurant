@@ -15,12 +15,14 @@ public sealed class IngredientProfile : Profile
             .ForMember(x => x.NormalizedName, o => o.Ignore())
             .ForMember(x => x.IsActive, o => o.MapFrom(_ => true))
             .ForMember(x => x.Restaurant, o => o.Ignore())
-            .ForMember(x => x.MenuItems, o => o.Ignore());
+            .ForMember(x => x.MenuItems, o => o.Ignore())
+            .ForMember(x => x.InventoryItems, o => o.Ignore());
         CreateMap<IngredientUpdateDTO, Ingredient>()
             .IgnoreBaseEntityMembers()
             .ForMember(x => x.RestaurantId, o => o.Ignore())
             .ForMember(x => x.NormalizedName, o => o.Ignore())
             .ForMember(x => x.Restaurant, o => o.Ignore())
-            .ForMember(x => x.MenuItems, o => o.Ignore());
+            .ForMember(x => x.MenuItems, o => o.Ignore())
+            .ForMember(x => x.InventoryItems, o => o.Ignore());
     }
 }

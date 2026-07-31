@@ -34,6 +34,25 @@ public static class Permissions
         public const string Manage = "shifts.manage";
     }
 
+    public static class Suppliers
+    {
+        public const string Read = "suppliers.read";
+        public const string Manage = "suppliers.manage";
+    }
+
+    public static class Inventory
+    {
+        public const string Read = "inventory.read";
+        public const string Manage = "inventory.manage";
+        public const string Adjust = "inventory.adjust";
+    }
+
+    public static class Notifications
+    {
+        public const string Read = "inventory-notifications.read";
+        public const string Manage = "inventory-notifications.manage";
+    }
+
     public static class Tables
     {
         public const string Read = "tables.read";
@@ -79,6 +98,13 @@ public static class Permissions
         Menus.Manage,
         Shifts.Read,
         Shifts.Manage,
+        Suppliers.Read,
+        Suppliers.Manage,
+        Inventory.Read,
+        Inventory.Manage,
+        Inventory.Adjust,
+        Notifications.Read,
+        Notifications.Manage,
         Tables.Read,
         Tables.Manage,
         Reservations.Read,
