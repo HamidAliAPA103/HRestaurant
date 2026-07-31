@@ -1,5 +1,6 @@
 using FluentValidation;
 using HRestaurant.DTOS.MenuCategory;
+using HRestaurant.DTOS.Responses;
 using HRestaurant.Validators.Common;
 
 namespace HRestaurant.Validators.MenuCategories;
@@ -9,16 +10,14 @@ public sealed class MenuCategoryCreateDTOValidator
 {
     public MenuCategoryCreateDTOValidator()
     {
-        RuleFor(dto => dto.ResdaranId)
-            .NotEmpty()
-            .WithMessage("Restaurant id is required.");
-
-        RuleFor(dto => dto.Name)
-            .NotEmpty()
-            .WithMessage("Category name cannot be empty.")
-            .MaximumLength(ValidationConstants.NameMaximumLength)
-            .WithMessage(
-                $"Category name cannot exceed {ValidationConstants.NameMaximumLength} characters.");
+        RuleFor(x => x.ResdaranId).NotEmpty();
+        RuleFor(x => x.Name).NotEmpty()
+            .MaximumLength(ValidationConstants.NameMaximumLength);
+        RuleFor(x => x.Description).MaximumLength(1000)
+            .When(x => x.Description is not null);
+        RuleFor(x => x.ImageUrl).MaximumLength(500)
+            .When(x => x.ImageUrl is not null);
+        RuleFor(x => x.DisplayOrder).GreaterThanOrEqualTo(0);
     }
 }
 
@@ -27,12 +26,32 @@ public sealed class MenuCategoryUpdateDTOValidator
 {
     public MenuCategoryUpdateDTOValidator()
     {
-        RuleFor(dto => dto.Name)
-            .NotEmpty()
-            .WithMessage("Category name cannot be empty.")
+        RuleFor(x => x.Name).NotEmpty()
             .MaximumLength(ValidationConstants.NameMaximumLength)
-            .WithMessage(
-                $"Category name cannot exceed {ValidationConstants.NameMaximumLength} characters.")
-            .When(dto => dto.Name is not null);
+            .When(x => x.Name is not null);
+        RuleFor(x => x.Description).MaximumLength(1000)
+            .When(x => x.Description is not null);
+        RuleFor(x => x.ImageUrl).MaximumLength(500)
+            .When(x => x.ImageUrl is not null);
+        RuleFor(x => x.DisplayOrder).GreaterThanOrEqualTo(0)
+            .When(x => x.DisplayOrder.HasValue);
     }
+}
+
+public sealed class MenuCategoryListRequestValidator
+    : AbstractValidator<MenuCategoryListRequest>
+{
+    public MenuCategoryListRequestValidator()
+    {
+        RuleFor(x => x.PageNumber).GreaterThanOrEqualTo(1);
+        RuleFor(x => x.PageSize)
+            .InclusiveBetween(1, PaginationRequest.MaxPageSize);
+    }
+}
+
+public sealed class MenuCategoryDisplayOrderDTOValidator
+    : AbstractValidator<MenuCategoryDisplayOrderDTO>
+{
+    public MenuCategoryDisplayOrderDTOValidator() =>
+        RuleFor(x => x.DisplayOrder).GreaterThanOrEqualTo(0);
 }

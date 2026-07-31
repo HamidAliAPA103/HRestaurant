@@ -54,6 +54,8 @@ public static class DependencyInjection
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IMenuService, MenuService>();
         services.AddScoped<IMenuCategoryService, MenuCategoryService>();
+        services.AddScoped<IIngredientService, IngredientService>();
+        services.AddScoped<IShiftService, ShiftService>();
         services.AddScoped<IOrderItemService, OrderItemService>();
         services.AddScoped<IReservationService, ReservationService>();
         services.AddScoped<IReviewService, ReviewService>();

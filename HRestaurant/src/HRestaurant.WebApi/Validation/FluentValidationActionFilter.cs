@@ -107,12 +107,17 @@ public sealed class FluentValidationActionFilter : IAsyncActionFilter
         return new MenuCreateDTO
         {
             Image = request.Image is null
-                ? null!
+                ? null
                 : CreateFileUploadDTO(request.Image),
+            ImageUrl = request.ImageUrl,
+            Name = request.Name,
             Price = request.Price,
+            DiscountPercentage = request.DiscountPercentage,
+            PreparationTimeMinutes = request.PreparationTimeMinutes,
             Desc = request.Desc,
             CategoryId = request.CategoryId,
-            Nutrition = request.Nutrition
+            Nutrition = request.Nutrition,
+            Ingredients = request.Ingredients
         };
     }
 
@@ -125,9 +130,14 @@ public sealed class FluentValidationActionFilter : IAsyncActionFilter
                 ? null
                 : CreateFileUploadDTO(request.Image),
             ImageURL = request.ImageURL,
+            Name = request.Name,
             Price = request.Price,
+            DiscountPercentage = request.DiscountPercentage,
+            PreparationTimeMinutes = request.PreparationTimeMinutes,
+            CategoryId = request.CategoryId,
             Desc = request.Desc,
-            Nutrition = request.Nutrition
+            Nutrition = request.Nutrition,
+            Ingredients = request.Ingredients
         };
     }
 

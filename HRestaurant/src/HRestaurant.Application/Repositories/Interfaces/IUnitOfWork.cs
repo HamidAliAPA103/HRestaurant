@@ -15,6 +15,9 @@ public interface IUnitOfWork : IAsyncDisposable
     IGenericRepository<OrderItem> OrderItems { get; }
     IGenericRepository<Review> Reviews { get; }
     IGenericRepository<User> Users { get; }
+    IGenericRepository<Shift> Shifts { get; }
+    IGenericRepository<EmployeeShift> EmployeeShifts { get; }
+    IGenericRepository<Ingredient> Ingredients { get; }
 
     IGenericRepository<TEntity> Repository<TEntity>()
         where TEntity : BaseEntity;

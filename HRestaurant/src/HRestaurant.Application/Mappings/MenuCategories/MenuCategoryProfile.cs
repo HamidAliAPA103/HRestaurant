@@ -13,14 +13,18 @@ public sealed class MenuCategoryProfile : Profile
 
         CreateMap<MenuCategoryCreateDTO, MenuCategory>()
             .IgnoreBaseEntityMembers()
-            .ForMember(destination => destination.Restaurant, options => options.Ignore())
-            .ForMember(destination => destination.Menus, options => options.Ignore());
+            .ForMember(x => x.NormalizedName, o => o.Ignore())
+            .ForMember(x => x.IsActive, o => o.MapFrom(_ => true))
+            .ForMember(x => x.Restaurant, o => o.Ignore())
+            .ForMember(x => x.Menus, o => o.Ignore());
 
         CreateMap<MenuCategoryUpdateDTO, MenuCategory>()
             .IgnoreBaseEntityMembers()
-            .ForMember(destination => destination.ResdaranId, options => options.Ignore())
-            .ForMember(destination => destination.Restaurant, options => options.Ignore())
-            .ForMember(destination => destination.Menus, options => options.Ignore())
+            .ForMember(x => x.ResdaranId, o => o.Ignore())
+            .ForMember(x => x.NormalizedName, o => o.Ignore())
+            .ForMember(x => x.IsActive, o => o.Ignore())
+            .ForMember(x => x.Restaurant, o => o.Ignore())
+            .ForMember(x => x.Menus, o => o.Ignore())
             .IgnoreNullSourceMembers();
     }
 }

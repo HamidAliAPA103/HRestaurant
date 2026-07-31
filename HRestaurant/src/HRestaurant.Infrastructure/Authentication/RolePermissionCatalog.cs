@@ -19,6 +19,8 @@ public static class RolePermissionCatalog
                 Permissions.Employees.Manage,
                 Permissions.Menus.Read,
                 Permissions.Menus.Manage,
+                Permissions.Shifts.Read,
+                Permissions.Shifts.Manage,
                 Permissions.Tables.Read,
                 Permissions.Tables.Manage,
                 Permissions.Reservations.Read,

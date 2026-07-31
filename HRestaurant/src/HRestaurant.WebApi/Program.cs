@@ -76,6 +76,7 @@ try
     {
         options.EnableAnnotations();
         options.OperationFilter<PublicApiExamplesOperationFilter>();
+        options.OperationFilter<ManagementApiExamplesOperationFilter>();
 
         const string bearerScheme = "Bearer";
 

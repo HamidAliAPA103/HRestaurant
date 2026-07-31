@@ -19,6 +19,9 @@ namespace HRestaurant.Models
         public List<Table> Tables { get; set; } = new();
         public List<MenuCategory> Categories { get; set; } = new();
         public List<Review> Reviews { get; set; } = new();
+        public List<User> Employees { get; set; } = new();
+        public List<Shift> Shifts { get; set; } = new();
+        public List<Ingredient> Ingredients { get; set; } = new();
         public List<RestaurantWorkingHour> WorkingHours { get; set; } =
             new();
     }

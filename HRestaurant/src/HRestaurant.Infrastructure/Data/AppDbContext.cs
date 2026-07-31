@@ -21,6 +21,14 @@ public class AppDbContext
 
     public DbSet<BranchWorkingHour> BranchWorkingHours { get; set; }
 
+    public DbSet<Shift> Shifts { get; set; }
+
+    public DbSet<EmployeeShift> EmployeeShifts { get; set; }
+
+    public DbSet<Ingredient> Ingredients { get; set; }
+
+    public DbSet<MenuItemIngredient> MenuItemIngredients { get; set; }
+
     public DbSet<Order> Orders { get; set; }
 
     public DbSet<OrderItem> OrderItems { get; set; }
@@ -48,10 +56,6 @@ public class AppDbContext
         modelBuilder.ApplyConfigurationsFromAssembly(
             typeof(AppDbContext).Assembly);
 
-        modelBuilder.Entity<Menu>()
-            .Property(menu => menu.Price)
-            .HasPrecision(18, 2);
-
         modelBuilder.Entity<Order>()
             .Property(order => order.TotalPrices)
             .HasPrecision(18, 2);
@@ -59,11 +63,6 @@ public class AppDbContext
         modelBuilder.Entity<OrderItem>()
             .Property(orderItem => orderItem.Prices)
             .HasPrecision(18, 2);
-
-        modelBuilder.Entity<MenuCategory>()
-            .HasOne(category => category.Restaurant)
-            .WithMany()
-            .HasForeignKey(category => category.ResdaranId);
 
         modelBuilder.Entity<Table>(entity =>
         {
@@ -183,9 +182,6 @@ public class AppDbContext
                 .HasForeignKey(audit => audit.ReservationId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
-
-        modelBuilder.Entity<User>()
-            .ToTable("Users");
 
         modelBuilder.Entity<AppUser>(entity =>
         {

@@ -49,6 +49,15 @@ public sealed class UnitOfWork : IUnitOfWork
     public IGenericRepository<User> Users =>
         Repository<User>();
 
+    public IGenericRepository<Shift> Shifts =>
+        Repository<Shift>();
+
+    public IGenericRepository<EmployeeShift> EmployeeShifts =>
+        Repository<EmployeeShift>();
+
+    public IGenericRepository<Ingredient> Ingredients =>
+        Repository<Ingredient>();
+
     public IGenericRepository<TEntity> Repository<TEntity>()
         where TEntity : BaseEntity
     {

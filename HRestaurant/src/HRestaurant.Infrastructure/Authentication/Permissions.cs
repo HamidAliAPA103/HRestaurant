@@ -28,6 +28,12 @@ public static class Permissions
         public const string Manage = "menus.manage";
     }
 
+    public static class Shifts
+    {
+        public const string Read = "shifts.read";
+        public const string Manage = "shifts.manage";
+    }
+
     public static class Tables
     {
         public const string Read = "tables.read";
@@ -71,6 +77,8 @@ public static class Permissions
         Employees.Manage,
         Menus.Read,
         Menus.Manage,
+        Shifts.Read,
+        Shifts.Manage,
         Tables.Read,
         Tables.Manage,
         Reservations.Read,

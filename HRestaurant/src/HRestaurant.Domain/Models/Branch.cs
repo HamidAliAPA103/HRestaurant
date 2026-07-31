@@ -35,4 +35,8 @@ public sealed class Branch : BaseEntity
     public List<Table> Tables { get; set; } = new();
 
     public List<Reservation> Reservations { get; set; } = new();
+
+    public List<User> Employees { get; set; } = new();
+
+    public List<Shift> Shifts { get; set; } = new();
 }

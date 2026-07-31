@@ -38,7 +38,10 @@ public sealed class RestaurantProfile : Profile
                 options => options.Ignore())
             .ForMember(
                 destination => destination.Reviews,
-                options => options.Ignore());
+                options => options.Ignore())
+            .ForMember(destination => destination.Employees, options => options.Ignore())
+            .ForMember(destination => destination.Shifts, options => options.Ignore())
+            .ForMember(destination => destination.Ingredients, options => options.Ignore());
 
 #pragma warning disable CS0618
         CreateMap<RestaurantCreatDTO, Restaurant>()
@@ -74,6 +77,9 @@ public sealed class RestaurantProfile : Profile
             .ForMember(
                 destination => destination.WorkingHours,
                 options => options.Ignore())
+            .ForMember(destination => destination.Employees, options => options.Ignore())
+            .ForMember(destination => destination.Shifts, options => options.Ignore())
+            .ForMember(destination => destination.Ingredients, options => options.Ignore())
             .IgnoreNullSourceMembers();
     }
 }

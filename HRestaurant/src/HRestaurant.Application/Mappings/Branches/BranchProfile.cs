@@ -51,7 +51,9 @@ public sealed class BranchProfile : Profile
                 options => options.Ignore())
             .ForMember(
                 destination => destination.Reservations,
-                options => options.Ignore());
+                options => options.Ignore())
+            .ForMember(destination => destination.Employees, options => options.Ignore())
+            .ForMember(destination => destination.Shifts, options => options.Ignore());
 
         CreateMap<BranchUpdateDTO, Branch>()
             .IgnoreBaseEntityMembers()
@@ -81,6 +83,8 @@ public sealed class BranchProfile : Profile
                 options => options.Ignore())
             .ForMember(
                 destination => destination.Reservations,
-                options => options.Ignore());
+                options => options.Ignore())
+            .ForMember(destination => destination.Employees, options => options.Ignore())
+            .ForMember(destination => destination.Shifts, options => options.Ignore());
     }
 }

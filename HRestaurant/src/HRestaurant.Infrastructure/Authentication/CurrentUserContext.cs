@@ -23,6 +23,12 @@ public sealed class CurrentUserContext : ICurrentUserContext
     public bool IsSuperAdmin =>
         GetCurrentUser().IsInRole(AppRoles.SuperAdmin);
 
+    public bool IsRestaurantOwner =>
+        GetCurrentUser().IsInRole(AppRoles.RestaurantOwner);
+
+    public bool IsManager =>
+        GetCurrentUser().IsInRole(AppRoles.Manager);
+
     private ClaimsPrincipal GetCurrentUser()
     {
         var user = _httpContextAccessor.HttpContext?.User;

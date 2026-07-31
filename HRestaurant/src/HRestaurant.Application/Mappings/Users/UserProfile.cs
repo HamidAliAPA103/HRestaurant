@@ -9,19 +9,41 @@ public sealed class UserProfile : Profile
 {
     public UserProfile()
     {
-        CreateMap<User, UserGetDTO>();
+        CreateMap<User, UserGetDTO>()
+            .ForMember(x => x.RestaurantId,
+                o => o.MapFrom(x => x.RestaurantId ?? Guid.Empty))
+            .ForMember(x => x.BranchId,
+                o => o.MapFrom(x => x.BranchId ?? Guid.Empty))
+            .ForMember(x => x.BranchName,
+                o => o.MapFrom(x => x.Branch == null ? string.Empty : x.Branch.Name));
 
         CreateMap<UserCreateDTO, User>()
             .IgnoreBaseEntityMembers()
-            .ForMember(destination => destination.Orders, options => options.Ignore())
-            .ForMember(destination => destination.Reservations, options => options.Ignore())
-            .ForMember(destination => destination.Reviews, options => options.Ignore());
+            .ForMember(x => x.NormalizedEmail, o => o.Ignore())
+            .ForMember(x => x.NormalizedPhone, o => o.Ignore())
+            .ForMember(x => x.AppUserId, o => o.Ignore())
+            .ForMember(x => x.IsActive, o => o.MapFrom(_ => true))
+            .ForMember(x => x.Restaurant, o => o.Ignore())
+            .ForMember(x => x.Branch, o => o.Ignore())
+            .ForMember(x => x.EmployeeShifts, o => o.Ignore())
+            .ForMember(x => x.Orders, o => o.Ignore())
+            .ForMember(x => x.Reservations, o => o.Ignore())
+            .ForMember(x => x.Reviews, o => o.Ignore());
 
         CreateMap<UserUpdateDTO, User>()
             .IgnoreBaseEntityMembers()
-            .ForMember(destination => destination.Orders, options => options.Ignore())
-            .ForMember(destination => destination.Reservations, options => options.Ignore())
-            .ForMember(destination => destination.Reviews, options => options.Ignore())
+            .ForMember(x => x.RestaurantId, o => o.Ignore())
+            .ForMember(x => x.BranchId, o => o.Ignore())
+            .ForMember(x => x.AppUserId, o => o.Ignore())
+            .ForMember(x => x.NormalizedEmail, o => o.Ignore())
+            .ForMember(x => x.NormalizedPhone, o => o.Ignore())
+            .ForMember(x => x.IsActive, o => o.Ignore())
+            .ForMember(x => x.Restaurant, o => o.Ignore())
+            .ForMember(x => x.Branch, o => o.Ignore())
+            .ForMember(x => x.EmployeeShifts, o => o.Ignore())
+            .ForMember(x => x.Orders, o => o.Ignore())
+            .ForMember(x => x.Reservations, o => o.Ignore())
+            .ForMember(x => x.Reviews, o => o.Ignore())
             .IgnoreNullSourceMembers();
     }
 }

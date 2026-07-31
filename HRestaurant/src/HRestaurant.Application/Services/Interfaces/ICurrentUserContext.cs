@@ -7,4 +7,8 @@ public interface ICurrentUserContext
     Guid RestaurantId { get; }
 
     bool IsSuperAdmin { get; }
+
+    bool IsRestaurantOwner { get; }
+
+    bool IsManager { get; }
 }

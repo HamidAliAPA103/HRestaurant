@@ -157,6 +157,11 @@ public sealed class AuthService : IAuthService
             return InvalidCredentials();
         }
 
+        if (!await IsEmployeeAccountEnabledAsync(user.Id, cancellationToken))
+        {
+            return InvalidCredentials();
+        }
+
         var signInResult =
             await _signInManager.CheckPasswordSignInAsync(
                 user,
@@ -223,6 +228,20 @@ public sealed class AuthService : IAuthService
 
         if (!storedToken.IsActive(nowUtc))
         {
+            return InvalidRefreshToken();
+        }
+
+        if (!await IsEmployeeAccountEnabledAsync(
+                storedToken.UserId,
+                cancellationToken))
+        {
+            await RevokeAllActiveTokensAsync(
+                storedToken.UserId,
+                nowUtc,
+                "Employee account disabled.",
+                cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
             return InvalidRefreshToken();
         }
 
@@ -398,6 +417,20 @@ public sealed class AuthService : IAuthService
             token.RevokedAtUtc = nowUtc;
             token.RevocationReason = reason;
         }
+    }
+
+    private async Task<bool> IsEmployeeAccountEnabledAsync(
+        Guid appUserId,
+        CancellationToken cancellationToken)
+    {
+        var employeeState = await _dbContext.BusinessUsers
+            .AsNoTracking()
+            .Where(employee => employee.AppUserId == appUserId)
+            .Select(employee => new { employee.IsDeleted, employee.IsActive })
+            .SingleOrDefaultAsync(cancellationToken);
+
+        return employeeState is null
+            || (!employeeState.IsDeleted && employeeState.IsActive);
     }
 
     private static TokenUser ToTokenUser(AppUser user)
