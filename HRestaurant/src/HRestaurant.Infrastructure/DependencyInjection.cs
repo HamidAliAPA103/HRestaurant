@@ -50,6 +50,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<IRestaurantService, RestaurantService>();
+        services.AddScoped<IBranchService, BranchService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IMenuService, MenuService>();
         services.AddScoped<IMenuCategoryService, MenuCategoryService>();

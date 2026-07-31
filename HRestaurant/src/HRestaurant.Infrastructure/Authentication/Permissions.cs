@@ -10,6 +10,12 @@ public static class Permissions
         public const string Manage = "restaurants.manage";
     }
 
+    public static class Branches
+    {
+        public const string Read = "branches.read";
+        public const string Manage = "branches.manage";
+    }
+
     public static class Employees
     {
         public const string Read = "employees.read";
@@ -59,6 +65,8 @@ public static class Permissions
     [
         Restaurants.Read,
         Restaurants.Manage,
+        Branches.Read,
+        Branches.Manage,
         Employees.Read,
         Employees.Manage,
         Menus.Read,

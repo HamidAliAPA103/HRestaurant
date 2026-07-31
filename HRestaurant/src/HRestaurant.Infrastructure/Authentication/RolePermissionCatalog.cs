@@ -13,6 +13,8 @@ public static class RolePermissionCatalog
             [
                 Permissions.Restaurants.Read,
                 Permissions.Restaurants.Manage,
+                Permissions.Branches.Read,
+                Permissions.Branches.Manage,
                 Permissions.Employees.Read,
                 Permissions.Employees.Manage,
                 Permissions.Menus.Read,

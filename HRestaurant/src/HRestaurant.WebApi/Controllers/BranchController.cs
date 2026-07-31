@@ -1,5 +1,5 @@
+using HRestaurant.DTOS.Branch;
 using HRestaurant.DTOS.Responses;
-using HRestaurant.DTOS.Restaurant;
 using HRestaurant.Infrastructure.Authentication;
 using HRestaurant.Infrastructure.Authorization;
 using HRestaurant.Services.Interfaces;
@@ -12,7 +12,7 @@ namespace HRestaurant.Controllers;
     Roles = AppRoles.SuperAdmin
         + "," + AppRoles.RestaurantOwner
         + "," + AppRoles.Manager)]
-[PermissionAuthorize(Permissions.Restaurants.Read)]
+[PermissionAuthorize(Permissions.Branches.Read)]
 [Produces("application/json")]
 [ProducesResponseType(
     typeof(ApiResponse<object>),
@@ -24,27 +24,36 @@ namespace HRestaurant.Controllers;
     typeof(ApiResponse<object>),
     StatusCodes.Status500InternalServerError)]
 [Route("api/[controller]")]
-public sealed class RestaurantController : ApiControllerBase
+public sealed class BranchController : ApiControllerBase
 {
-    private readonly IRestaurantService _service;
+    private const string OwnerRoles =
+        AppRoles.SuperAdmin + "," + AppRoles.RestaurantOwner;
 
-    public RestaurantController(IRestaurantService service)
+    private readonly IBranchService _service;
+
+    public BranchController(IBranchService service)
     {
         ArgumentNullException.ThrowIfNull(service);
         _service = service;
     }
 
     [HttpPost]
-    [Authorize(Roles = AppRoles.SuperAdmin)]
-    [PermissionAuthorize(Permissions.Restaurants.Manage)]
+    [Authorize(Roles = OwnerRoles)]
+    [PermissionAuthorize(Permissions.Branches.Manage)]
     [ProducesResponseType(
         typeof(ApiResponse<Guid>),
         StatusCodes.Status201Created)]
     [ProducesResponseType(
         typeof(ApiResponse<object>),
         StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(
+        typeof(ApiResponse<object>),
+        StatusCodes.Status404NotFound)]
+    [ProducesResponseType(
+        typeof(ApiResponse<object>),
+        StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Create(
-        RestaurantCreateDTO dto,
+        BranchCreateDTO dto,
         CancellationToken cancellationToken)
     {
         return FromResponse(
@@ -53,22 +62,44 @@ public sealed class RestaurantController : ApiControllerBase
 
     [HttpGet]
     [ProducesResponseType(
-        typeof(PagedResponse<RestaurantGetDTO>),
+        typeof(PagedResponse<BranchGetDTO>),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
         typeof(ApiResponse<object>),
         StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAll(
-        [FromQuery] RestaurantListRequest request,
+        [FromQuery] BranchListRequest request,
         CancellationToken cancellationToken)
     {
         return FromResponse(
             await _service.GetAllAsync(request, cancellationToken));
     }
 
+    [HttpGet("restaurant/{restaurantId:guid}")]
+    [ProducesResponseType(
+        typeof(PagedResponse<BranchGetDTO>),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        typeof(ApiResponse<object>),
+        StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(
+        typeof(ApiResponse<object>),
+        StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetByRestaurant(
+        Guid restaurantId,
+        [FromQuery] BranchListRequest request,
+        CancellationToken cancellationToken)
+    {
+        return FromResponse(
+            await _service.GetByRestaurantAsync(
+                restaurantId,
+                request,
+                cancellationToken));
+    }
+
     [HttpGet("{id:guid}")]
     [ProducesResponseType(
-        typeof(ApiResponse<RestaurantGetDTO>),
+        typeof(ApiResponse<BranchGetDTO>),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
         typeof(ApiResponse<object>),
@@ -81,24 +112,8 @@ public sealed class RestaurantController : ApiControllerBase
             await _service.GetByIdAsync(id, cancellationToken));
     }
 
-    [HttpGet("current")]
-    [ProducesResponseType(
-        typeof(ApiResponse<RestaurantGetDTO>),
-        StatusCodes.Status200OK)]
-    [ProducesResponseType(
-        typeof(ApiResponse<object>),
-        StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetCurrent(
-        CancellationToken cancellationToken)
-    {
-        return FromResponse(
-            await _service.GetCurrentAsync(cancellationToken));
-    }
-
-    [HttpPatch("{id:guid}")]
-    [Authorize(
-        Roles = AppRoles.SuperAdmin + "," + AppRoles.RestaurantOwner)]
-    [PermissionAuthorize(Permissions.Restaurants.Manage)]
+    [HttpPut("{id:guid}")]
+    [PermissionAuthorize(Permissions.Branches.Manage)]
     [ProducesResponseType(
         typeof(ApiResponse<object>),
         StatusCodes.Status200OK)]
@@ -113,20 +128,16 @@ public sealed class RestaurantController : ApiControllerBase
         StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Update(
         Guid id,
-        RestaurantUpdateDTO dto,
+        BranchUpdateDTO dto,
         CancellationToken cancellationToken)
     {
         return FromResponse(
-            await _service.UpdateAsync(
-                id,
-                dto,
-                cancellationToken));
+            await _service.UpdateAsync(id, dto, cancellationToken));
     }
 
     [HttpDelete("{id:guid}")]
-    [Authorize(
-        Roles = AppRoles.SuperAdmin + "," + AppRoles.RestaurantOwner)]
-    [PermissionAuthorize(Permissions.Restaurants.Manage)]
+    [Authorize(Roles = OwnerRoles)]
+    [PermissionAuthorize(Permissions.Branches.Manage)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(
         typeof(ApiResponse<object>),
@@ -140,9 +151,7 @@ public sealed class RestaurantController : ApiControllerBase
     }
 
     [HttpPatch("{id:guid}/activate")]
-    [Authorize(
-        Roles = AppRoles.SuperAdmin + "," + AppRoles.RestaurantOwner)]
-    [PermissionAuthorize(Permissions.Restaurants.Manage)]
+    [PermissionAuthorize(Permissions.Branches.Manage)]
     [ProducesResponseType(
         typeof(ApiResponse<object>),
         StatusCodes.Status200OK)]
@@ -161,18 +170,13 @@ public sealed class RestaurantController : ApiControllerBase
     }
 
     [HttpPatch("{id:guid}/deactivate")]
-    [Authorize(
-        Roles = AppRoles.SuperAdmin + "," + AppRoles.RestaurantOwner)]
-    [PermissionAuthorize(Permissions.Restaurants.Manage)]
+    [PermissionAuthorize(Permissions.Branches.Manage)]
     [ProducesResponseType(
         typeof(ApiResponse<object>),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
         typeof(ApiResponse<object>),
         StatusCodes.Status404NotFound)]
-    [ProducesResponseType(
-        typeof(ApiResponse<object>),
-        StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Deactivate(
         Guid id,
         CancellationToken cancellationToken)
@@ -181,10 +185,54 @@ public sealed class RestaurantController : ApiControllerBase
             await _service.DeactivateAsync(id, cancellationToken));
     }
 
+    [HttpPut("{id:guid}/manager")]
+    [Authorize(Roles = OwnerRoles)]
+    [PermissionAuthorize(Permissions.Branches.Manage)]
+    [ProducesResponseType(
+        typeof(ApiResponse<object>),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        typeof(ApiResponse<object>),
+        StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(
+        typeof(ApiResponse<object>),
+        StatusCodes.Status404NotFound)]
+    [ProducesResponseType(
+        typeof(ApiResponse<object>),
+        StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> AssignManager(
+        Guid id,
+        BranchManagerAssignmentDTO dto,
+        CancellationToken cancellationToken)
+    {
+        return FromResponse(
+            await _service.AssignManagerAsync(
+                id,
+                dto,
+                cancellationToken));
+    }
+
+    [HttpDelete("{id:guid}/manager")]
+    [Authorize(Roles = OwnerRoles)]
+    [PermissionAuthorize(Permissions.Branches.Manage)]
+    [ProducesResponseType(
+        typeof(ApiResponse<object>),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        typeof(ApiResponse<object>),
+        StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> RemoveManager(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        return FromResponse(
+            await _service.RemoveManagerAsync(id, cancellationToken));
+    }
+
     [HttpGet("{id:guid}/working-hours")]
     [ProducesResponseType(
         typeof(ApiResponse<
-            IReadOnlyCollection<RestaurantWorkingHourDTO>>),
+            IReadOnlyCollection<BranchWorkingHourDTO>>),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
         typeof(ApiResponse<object>),
@@ -194,15 +242,11 @@ public sealed class RestaurantController : ApiControllerBase
         CancellationToken cancellationToken)
     {
         return FromResponse(
-            await _service.GetWorkingHoursAsync(
-                id,
-                cancellationToken));
+            await _service.GetWorkingHoursAsync(id, cancellationToken));
     }
 
     [HttpPut("{id:guid}/working-hours")]
-    [Authorize(
-        Roles = AppRoles.SuperAdmin + "," + AppRoles.RestaurantOwner)]
-    [PermissionAuthorize(Permissions.Restaurants.Manage)]
+    [PermissionAuthorize(Permissions.Branches.Manage)]
     [ProducesResponseType(
         typeof(ApiResponse<object>),
         StatusCodes.Status200OK)]
@@ -212,44 +256,13 @@ public sealed class RestaurantController : ApiControllerBase
     [ProducesResponseType(
         typeof(ApiResponse<object>),
         StatusCodes.Status404NotFound)]
-    [ProducesResponseType(
-        typeof(ApiResponse<object>),
-        StatusCodes.Status409Conflict)]
     public async Task<IActionResult> UpdateWorkingHours(
         Guid id,
-        RestaurantWorkingHoursUpdateDTO dto,
+        BranchWorkingHoursUpdateDTO dto,
         CancellationToken cancellationToken)
     {
         return FromResponse(
             await _service.UpdateWorkingHoursAsync(
-                id,
-                dto,
-                cancellationToken));
-    }
-
-    [HttpPut("{id:guid}/settings")]
-    [Authorize(
-        Roles = AppRoles.SuperAdmin + "," + AppRoles.RestaurantOwner)]
-    [PermissionAuthorize(Permissions.Restaurants.Manage)]
-    [ProducesResponseType(
-        typeof(ApiResponse<object>),
-        StatusCodes.Status200OK)]
-    [ProducesResponseType(
-        typeof(ApiResponse<object>),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(ApiResponse<object>),
-        StatusCodes.Status404NotFound)]
-    [ProducesResponseType(
-        typeof(ApiResponse<object>),
-        StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> UpdateSettings(
-        Guid id,
-        RestaurantSettingsUpdateDTO dto,
-        CancellationToken cancellationToken)
-    {
-        return FromResponse(
-            await _service.UpdateSettingsAsync(
                 id,
                 dto,
                 cancellationToken));

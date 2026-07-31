@@ -1,12 +1,9 @@
 using AutoMapper;
-using System.Globalization;
-using System.Text;
 using HRestaurant.Data;
 using HRestaurant.DTOS.Responses;
 using HRestaurant.DTOS.Restaurant;
 using HRestaurant.Enum;
 using HRestaurant.Exceptions;
-using HRestaurant.Extensions;
 using HRestaurant.Models;
 using HRestaurant.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -87,11 +84,27 @@ public sealed class RestaurantService : IRestaurantService
     }
 
     public Task<PagedResponse<RestaurantGetDTO>> GetAllAsync(
-        ViewType type,
-        PaginationRequest pagination,
+        RestaurantListRequest request,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(pagination);
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (request.PageNumber < 1
+            || request.PageSize is < 1 or > PaginationRequest.MaxPageSize)
+        {
+            throw new ValidationException(
+                new Dictionary<string, string[]>
+                {
+                    [nameof(request.PageNumber)] =
+                    [
+                        "PageNumber must be at least 1."
+                    ],
+                    [nameof(request.PageSize)] =
+                    [
+                        $"PageSize must be between 1 and {PaginationRequest.MaxPageSize}."
+                    ]
+                });
+        }
 
         var query = RestaurantQuery();
 
@@ -102,7 +115,7 @@ public sealed class RestaurantService : IRestaurantService
                 restaurant.ID == restaurantId);
         }
 
-        query = type switch
+        query = request.Type switch
         {
             ViewType.deleted =>
                 query.Where(restaurant => restaurant.IsDeleted),
@@ -111,9 +124,22 @@ public sealed class RestaurantService : IRestaurantService
             _ => query
         };
 
-        return query.ToPagedResponseAsync<Restaurant, RestaurantGetDTO>(
-            _mapper,
-            pagination,
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            var search = request.Search.Trim();
+            query = query.Where(restaurant =>
+                restaurant.Name.Contains(search));
+        }
+
+        if (request.IsActive.HasValue)
+        {
+            query = query.Where(restaurant =>
+                restaurant.IsActive == request.IsActive.Value);
+        }
+
+        return CreatePagedResponseAsync(
+            query,
+            request,
             cancellationToken);
     }
 
@@ -343,7 +369,68 @@ public sealed class RestaurantService : IRestaurantService
     {
         return _dbContext.Restaurants
             .AsNoTracking()
-            .Include(restaurant => restaurant.WorkingHours);
+            .Include(restaurant => restaurant.WorkingHours)
+            .AsSplitQuery();
+    }
+
+    private async Task<PagedResponse<RestaurantGetDTO>>
+        CreatePagedResponseAsync(
+            IQueryable<Restaurant> query,
+            RestaurantListRequest request,
+            CancellationToken cancellationToken)
+    {
+        var totalCount = await query.CountAsync(cancellationToken);
+        var skip = (long)(request.PageNumber - 1) * request.PageSize;
+        List<Restaurant> restaurants;
+
+        if (skip >= totalCount)
+        {
+            restaurants = [];
+        }
+        else
+        {
+            var sortByName = string.Equals(
+                request.SortBy?.Trim() ?? "createdAt",
+                "name",
+                StringComparison.OrdinalIgnoreCase);
+            var ascending = string.Equals(
+                request.SortDirection?.Trim() ?? "desc",
+                "asc",
+                StringComparison.OrdinalIgnoreCase);
+
+            IOrderedQueryable<Restaurant> orderedQuery =
+                (sortByName, ascending) switch
+                {
+                    (true, true) => query.OrderBy(entity => entity.Name),
+                    (true, false) =>
+                        query.OrderByDescending(entity => entity.Name),
+                    (false, true) =>
+                        query.OrderBy(entity => entity.CreatAt),
+                    _ => query.OrderByDescending(entity => entity.CreatAt)
+                };
+
+            restaurants = await orderedQuery
+                .ThenBy(entity => entity.ID)
+                .Skip((int)skip)
+                .Take(request.PageSize)
+                .ToListAsync(cancellationToken);
+        }
+
+        var data = _mapper.Map<List<RestaurantGetDTO>>(restaurants);
+
+        foreach (var restaurant in data)
+        {
+            restaurant.WorkingHours = restaurant.WorkingHours
+                .OrderBy(entry => entry.DayOfWeek)
+                .ToList();
+        }
+
+        return PagedResponse<RestaurantGetDTO>.Create(
+            data,
+            request.PageNumber,
+            request.PageSize,
+            totalCount,
+            "Restaurants retrieved successfully.");
     }
 
     private async Task<Restaurant> GetForMutationAsync(
@@ -458,6 +545,7 @@ public sealed class RestaurantService : IRestaurantService
         return new Branch
         {
             Name = restaurant.Name,
+            NormalizedName = restaurant.Name.Trim().ToUpperInvariant(),
             Slug = "main",
             Address = restaurant.Adres,
             Phone = restaurant.Number,
@@ -473,7 +561,10 @@ public sealed class RestaurantService : IRestaurantService
         string value,
         CancellationToken cancellationToken)
     {
-        var baseSlug = Slugify(value);
+        var baseSlug = SlugUtility.Create(
+            value,
+            "restaurant",
+            100);
         var slug = baseSlug;
 
         for (var attempt = 0; attempt < 20; attempt++)
@@ -499,53 +590,6 @@ public sealed class RestaurantService : IRestaurantService
 
         throw new ConflictException(
             "A unique restaurant slug could not be generated.");
-    }
-
-    private static string Slugify(string value)
-    {
-        var transliterated = value
-            .Trim()
-            .ToLowerInvariant()
-            .Replace('ə', 'e')
-            .Replace('ı', 'i')
-            .Replace('ö', 'o')
-            .Replace('ü', 'u')
-            .Replace('ş', 's')
-            .Replace('ç', 'c')
-            .Replace('ğ', 'g');
-        var normalized = transliterated.Normalize(
-            NormalizationForm.FormD);
-        var builder = new StringBuilder(normalized.Length);
-        var previousWasHyphen = false;
-
-        foreach (var character in normalized)
-        {
-            if (CharUnicodeInfo.GetUnicodeCategory(character)
-                == UnicodeCategory.NonSpacingMark)
-            {
-                continue;
-            }
-
-            if (char.IsAsciiLetterOrDigit(character))
-            {
-                builder.Append(character);
-                previousWasHyphen = false;
-            }
-            else if (!previousWasHyphen && builder.Length > 0)
-            {
-                builder.Append('-');
-                previousWasHyphen = true;
-            }
-        }
-
-        var slug = builder.ToString().Trim('-');
-
-        if (slug.Length == 0)
-        {
-            slug = "restaurant";
-        }
-
-        return slug[..Math.Min(slug.Length, 100)];
     }
 
     private static string NormalizeCurrency(string currency)

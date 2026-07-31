@@ -1,28 +1,30 @@
+using HRestaurant.DTOS.Branch;
 using HRestaurant.DTOS.Responses;
-using HRestaurant.DTOS.Restaurant;
 
 namespace HRestaurant.Services.Interfaces;
 
-public interface IRestaurantService
+public interface IBranchService
 {
     Task<ApiResponse<Guid>> CreateAsync(
-        RestaurantCreateDTO dto,
+        BranchCreateDTO dto,
         CancellationToken cancellationToken = default);
 
-    Task<PagedResponse<RestaurantGetDTO>> GetAllAsync(
-        RestaurantListRequest request,
+    Task<PagedResponse<BranchGetDTO>> GetAllAsync(
+        BranchListRequest request,
         CancellationToken cancellationToken = default);
 
-    Task<ApiResponse<RestaurantGetDTO>> GetByIdAsync(
+    Task<PagedResponse<BranchGetDTO>> GetByRestaurantAsync(
+        Guid restaurantId,
+        BranchListRequest request,
+        CancellationToken cancellationToken = default);
+
+    Task<ApiResponse<BranchGetDTO>> GetByIdAsync(
         Guid id,
-        CancellationToken cancellationToken = default);
-
-    Task<ApiResponse<RestaurantGetDTO>> GetCurrentAsync(
         CancellationToken cancellationToken = default);
 
     Task<ApiResponse<object?>> UpdateAsync(
         Guid id,
-        RestaurantUpdateDTO dto,
+        BranchUpdateDTO dto,
         CancellationToken cancellationToken = default);
 
     Task<ApiResponse<object?>> SoftDeleteAsync(
@@ -37,18 +39,22 @@ public interface IRestaurantService
         Guid id,
         CancellationToken cancellationToken = default);
 
-    Task<ApiResponse<IReadOnlyCollection<RestaurantWorkingHourDTO>>>
+    Task<ApiResponse<object?>> AssignManagerAsync(
+        Guid id,
+        BranchManagerAssignmentDTO dto,
+        CancellationToken cancellationToken = default);
+
+    Task<ApiResponse<object?>> RemoveManagerAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
+
+    Task<ApiResponse<IReadOnlyCollection<BranchWorkingHourDTO>>>
         GetWorkingHoursAsync(
             Guid id,
             CancellationToken cancellationToken = default);
 
     Task<ApiResponse<object?>> UpdateWorkingHoursAsync(
         Guid id,
-        RestaurantWorkingHoursUpdateDTO dto,
-        CancellationToken cancellationToken = default);
-
-    Task<ApiResponse<object?>> UpdateSettingsAsync(
-        Guid id,
-        RestaurantSettingsUpdateDTO dto,
+        BranchWorkingHoursUpdateDTO dto,
         CancellationToken cancellationToken = default);
 }

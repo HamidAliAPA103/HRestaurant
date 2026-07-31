@@ -45,6 +45,9 @@ public class AppDbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(AppDbContext).Assembly);
+
         modelBuilder.Entity<Menu>()
             .Property(menu => menu.Price)
             .HasPrecision(18, 2);
@@ -56,138 +59,6 @@ public class AppDbContext
         modelBuilder.Entity<OrderItem>()
             .Property(orderItem => orderItem.Prices)
             .HasPrecision(18, 2);
-
-        modelBuilder.Entity<Restaurant>(entity =>
-        {
-            entity.Property(restaurant => restaurant.Name)
-                .HasMaxLength(100)
-                .IsRequired();
-
-            entity.Property(restaurant => restaurant.Adres)
-                .HasMaxLength(250)
-                .IsRequired();
-
-            entity.Property(restaurant => restaurant.Slug)
-                .HasMaxLength(120)
-                .IsUnicode(false)
-                .IsRequired();
-
-            entity.HasIndex(restaurant => restaurant.Slug)
-                .IsUnique()
-                .HasFilter("[IsDeleted] = 0");
-
-            entity.Property(restaurant => restaurant.Number)
-                .HasMaxLength(15)
-                .IsRequired();
-
-            entity.Property(restaurant => restaurant.Email)
-                .HasMaxLength(254);
-
-            entity.Property(restaurant => restaurant.Description)
-                .HasMaxLength(2000);
-
-            entity.Property(restaurant => restaurant.LogoUrl)
-                .HasMaxLength(500);
-
-            entity.Property(restaurant => restaurant.CoverImageUrl)
-                .HasMaxLength(500);
-
-            entity.Property(restaurant => restaurant.Currency)
-                .HasMaxLength(3)
-                .IsUnicode(false)
-                .IsRequired();
-
-            entity.Property(restaurant => restaurant.TaxRate)
-                .HasPrecision(5, 2);
-        });
-
-        modelBuilder.Entity<Branch>(entity =>
-        {
-            entity.ToTable("Branches");
-
-            entity.Property(branch => branch.Name)
-                .HasMaxLength(100)
-                .IsRequired();
-
-            entity.Property(branch => branch.Slug)
-                .HasMaxLength(120)
-                .IsUnicode(false)
-                .IsRequired();
-
-            entity.Property(branch => branch.Address)
-                .HasMaxLength(250)
-                .IsRequired();
-
-            entity.Property(branch => branch.Phone)
-                .HasMaxLength(20);
-
-            entity.Property(branch => branch.Email)
-                .HasMaxLength(254);
-
-            entity.Property(branch => branch.TimeZoneId)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .IsRequired();
-
-            entity.HasIndex(branch => new
-            {
-                branch.RestaurantId,
-                branch.Slug
-            })
-                .IsUnique()
-                .HasFilter("[IsDeleted] = 0");
-
-            entity.HasOne(branch => branch.Restaurant)
-                .WithMany(restaurant => restaurant.Branches)
-                .HasForeignKey(branch => branch.RestaurantId)
-                .OnDelete(DeleteBehavior.Restrict);
-        });
-
-        modelBuilder.Entity<BranchWorkingHour>(entity =>
-        {
-            entity.ToTable("BranchWorkingHours");
-
-            entity.HasIndex(workingHour => new
-            {
-                workingHour.BranchId,
-                workingHour.DayOfWeek
-            })
-                .IsUnique();
-
-            entity.Property(workingHour => workingHour.OpensAt)
-                .HasColumnType("time");
-
-            entity.Property(workingHour => workingHour.ClosesAt)
-                .HasColumnType("time");
-
-            entity.HasOne(workingHour => workingHour.Branch)
-                .WithMany(branch => branch.WorkingHours)
-                .HasForeignKey(workingHour => workingHour.BranchId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<RestaurantWorkingHour>(entity =>
-        {
-            entity.ToTable("RestaurantWorkingHours");
-
-            entity.HasIndex(workingHour => new
-            {
-                workingHour.RestaurantId,
-                workingHour.DayOfWeek
-            })
-                .IsUnique();
-
-            entity.Property(workingHour => workingHour.OpensAt)
-                .HasColumnType("time");
-
-            entity.Property(workingHour => workingHour.ClosesAt)
-                .HasColumnType("time");
-
-            entity.HasOne(workingHour => workingHour.Restaurant)
-                .WithMany(restaurant => restaurant.WorkingHours)
-                .HasForeignKey(workingHour => workingHour.RestaurantId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
 
         modelBuilder.Entity<MenuCategory>()
             .HasOne(category => category.Restaurant)
