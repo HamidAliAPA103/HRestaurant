@@ -64,14 +64,6 @@ public class AppDbContext
         modelBuilder.ApplyConfigurationsFromAssembly(
             typeof(AppDbContext).Assembly);
 
-        modelBuilder.Entity<Order>()
-            .Property(order => order.TotalPrices)
-            .HasPrecision(18, 2);
-
-        modelBuilder.Entity<OrderItem>()
-            .Property(orderItem => orderItem.Prices)
-            .HasPrecision(18, 2);
-
         modelBuilder.Entity<Table>(entity =>
         {
             entity.Property(table => table.TableNumber)

@@ -34,8 +34,9 @@ const orderStatus = {
   [OrderStatus.Confirmed]: { label: "Təsdiqlənib", tone: "info" },
   [OrderStatus.Preparing]: { label: "Hazırlanır", tone: "warning" },
   [OrderStatus.Ready]: { label: "Hazırdır", tone: "success" },
-  [OrderStatus.Delivered]: { label: "Çatdırılıb", tone: "success" },
+  [OrderStatus.Served]: { label: "Servis edilib", tone: "success" },
   [OrderStatus.Cancelled]: { label: "Ləğv edilib", tone: "danger" },
+  [OrderStatus.Completed]: { label: "Tamamlanıb", tone: "success" },
 } as const;
 
 const salesBars = [42, 58, 48, 72, 67, 88, 76, 91, 84, 100, 86, 94];
@@ -78,7 +79,7 @@ export function DashboardPage() {
   const tables = tablesQuery.data?.data ?? [];
   const revenue = orders
     .filter((order) => order.status !== OrderStatus.Cancelled)
-    .reduce((sum, order) => sum + order.totalPrices, 0);
+    .reduce((sum, order) => sum + order.totalAmount, 0);
   const activeOrders = orders.filter((order) =>
     [
       OrderStatus.Pending,
@@ -323,7 +324,7 @@ export function DashboardPage() {
                       <td className="font-bold text-[#302a26]">
                         {shortId(order.id)}
                       </td>
-                      <td>{order.tableID ? shortId(order.tableID) : "Takeaway"}</td>
+                      <td>{order.tableId ? order.tableNumber ?? shortId(order.tableId) : "Takeaway"}</td>
                       <td>
                         <span className="inline-flex items-center gap-1.5">
                           <Clock3 className="h-3.5 w-3.5 text-[#a0978f]" />
@@ -336,7 +337,7 @@ export function DashboardPage() {
                         </Badge>
                       </td>
                       <td className="font-bold text-[#302a26]">
-                        {formatCurrency(order.totalPrices)}
+                        {formatCurrency(order.totalAmount)}
                       </td>
                     </tr>
                   );

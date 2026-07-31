@@ -81,7 +81,7 @@ export function CustomerPage() {
                 customers.filter(
                   (customer) =>
                     orders.filter(
-                      (order) => order.customerID === customer.id,
+                      (order) => order.customerId === customer.id,
                     ).length >= 3,
                 ).length
               }
@@ -100,7 +100,7 @@ export function CustomerPage() {
                   .filter(
                     (order) => order.status !== OrderStatus.Cancelled,
                   )
-                  .reduce((sum, order) => sum + order.totalPrices, 0),
+                  .reduce((sum, order) => sum + order.totalAmount, 0),
               )}
             </div>
             <div className="text-xs text-[#877d75]">Müştəri dövriyyəsi</div>
@@ -133,10 +133,10 @@ export function CustomerPage() {
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {customers.map((customer) => {
             const customerOrders = orders.filter(
-              (order) => order.customerID === customer.id,
+              (order) => order.customerId === customer.id,
             );
             const spend = customerOrders.reduce(
-              (sum, order) => sum + order.totalPrices,
+              (sum, order) => sum + order.totalAmount,
               0,
             );
             return (

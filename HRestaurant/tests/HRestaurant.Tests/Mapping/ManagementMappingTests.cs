@@ -4,6 +4,8 @@ using HRestaurant.Mappings.Ingredients;
 using HRestaurant.Mappings.Inventory;
 using HRestaurant.Mappings.MenuCategories;
 using HRestaurant.Mappings.Menus;
+using HRestaurant.Mappings.OrderItems;
+using HRestaurant.Mappings.Orders;
 using HRestaurant.Mappings.Restaurants;
 using HRestaurant.Mappings.Shifts;
 using HRestaurant.Mappings.Suppliers;
@@ -26,6 +28,8 @@ public sealed class ManagementMappingTests
                 expression.AddProfile<UserProfile>();
                 expression.AddProfile<MenuCategoryProfile>();
                 expression.AddProfile<MenuProfile>();
+                expression.AddProfile<OrderProfile>();
+                expression.AddProfile<OrderItemProfile>();
                 expression.AddProfile<IngredientProfile>();
                 expression.AddProfile<ShiftProfile>();
                 expression.AddProfile<SupplierProfile>();

@@ -1,38 +1,44 @@
 using FluentValidation;
 using HRestaurant.DTOS.OrderItem;
 
-namespace HRestaurant.Validators.OrderItems;
+namespace HRestaurant.Validators.Orders;
 
-public sealed class OrderItemCreateDTOValidator
-    : AbstractValidator<OrderItemCreatDTO>
+public sealed class OrderItemCreateDTOValidator : AbstractValidator<OrderItemCreatDTO>
 {
     public OrderItemCreateDTOValidator()
     {
-        RuleFor(dto => dto.MenuId)
-            .NotEmpty()
-            .WithMessage("Menu item id is required.");
-
-        RuleFor(dto => dto.Say)
-            .GreaterThanOrEqualTo(1)
-            .WithMessage("Order item quantity must be at least 1.");
-
-        RuleFor(dto => dto.Prices)
-            .GreaterThan(0)
-            .WithMessage("Price must be greater than zero.");
+        RuleFor(x => x.MenuItemId).NotEmpty();
+        RuleFor(x => x.Quantity).GreaterThan(0);
+        RuleFor(x => x.KitchenNote).MaximumLength(300).When(x => x.KitchenNote is not null);
     }
 }
 
-public sealed class OrderItemUpdateDTOValidator
-    : AbstractValidator<OrderItemUpdateDTO>
+public sealed class OrderItemUpdateDTOValidator : AbstractValidator<OrderItemUpdateDTO>
 {
     public OrderItemUpdateDTOValidator()
     {
-        RuleFor(dto => dto.Say)
-            .GreaterThanOrEqualTo(1)
-            .WithMessage("Order item quantity must be at least 1.");
+        RuleFor(x => x.Quantity).GreaterThan(0);
+        RuleFor(x => x.RowVersion).NotEmpty();
+    }
+}
 
-        RuleFor(dto => dto.Prices)
-            .GreaterThan(0)
-            .WithMessage("Price must be greater than zero.");
+public sealed class OrderItemAddDTOValidator : AbstractValidator<OrderItemAddDTO>
+{
+    public OrderItemAddDTOValidator()
+    {
+        RuleFor(x => x.MenuItemId).NotEmpty();
+        RuleFor(x => x.Quantity).GreaterThan(0);
+        RuleFor(x => x.KitchenNote).MaximumLength(300).When(x => x.KitchenNote is not null);
+        RuleFor(x => x.RowVersion).NotEmpty();
+    }
+}
+
+public sealed class OrderItemKitchenNoteDTOValidator
+    : AbstractValidator<OrderItemKitchenNoteDTO>
+{
+    public OrderItemKitchenNoteDTOValidator()
+    {
+        RuleFor(x => x.KitchenNote).MaximumLength(300).When(x => x.KitchenNote is not null);
+        RuleFor(x => x.RowVersion).NotEmpty();
     }
 }

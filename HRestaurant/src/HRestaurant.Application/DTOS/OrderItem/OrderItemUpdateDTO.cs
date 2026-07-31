@@ -1,8 +1,13 @@
-﻿namespace HRestaurant.DTOS.OrderItem
+namespace HRestaurant.DTOS.OrderItem;
+
+public sealed class OrderItemUpdateDTO
 {
-    public class OrderItemUpdateDTO
-    {
-        public int Say { get; set; }
-        public decimal Prices { get; set; }
-    }
+    public int Quantity { get; set; }
+    public byte[] RowVersion { get; set; } = [];
+}
+
+public sealed class OrderItemKitchenNoteDTO
+{
+    public string? KitchenNote { get; set; }
+    public byte[] RowVersion { get; set; } = [];
 }

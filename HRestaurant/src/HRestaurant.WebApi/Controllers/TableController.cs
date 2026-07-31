@@ -8,13 +8,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HRestaurant.Controllers;
 
-[Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.RestaurantOwner + "," + AppRoles.Manager)]
+[Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.RestaurantOwner + "," + AppRoles.Manager
+    + "," + AppRoles.Cashier + "," + AppRoles.Waiter)]
 [PermissionAuthorize(Permissions.Tables.Read)]
 [Produces("application/json")]
 [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
 [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status403Forbidden)]
 [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
 [Route("api/tables")]
+[Route("api/Table")]
 public sealed class TableController : ApiControllerBase
 {
     private readonly ITableService _service;

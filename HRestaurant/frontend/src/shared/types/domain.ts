@@ -19,9 +19,12 @@ export interface RestaurantInput {
 }
 
 export interface User extends BaseEntity {
+  restaurantId?: string;
+  branchId?: string;
   email: string;
   name: string;
   role: string;
+  isActive?: boolean;
 }
 
 export interface UserInput {
@@ -30,30 +33,57 @@ export interface UserInput {
   role: string;
 }
 
+export interface BranchSummary {
+  id: string;
+  restaurantId: string;
+  name: string;
+  isActive: boolean;
+}
+
 export interface MenuCategory extends BaseEntity {
   resdaranId: string;
   name: string;
 }
 
 export interface MenuItem extends BaseEntity {
+  restaurantId: string;
   categoryId: string;
+  categoryName: string;
+  name: string;
   image: string;
   imageURL: string;
   price: number;
+  finalPrice: number;
+  discountPercentage: number;
+  preparationTimeMinutes: number;
+  isAvailable: boolean;
+  isPopular: boolean;
   desc: string;
   nutrition: string;
 }
 
 export enum TableStatus {
-  Empty = 0,
+  Available = 0,
   Occupied = 1,
   Reserved = 2,
+  Disabled = 3,
+  Cleaning = 4,
 }
 
 export interface DiningTable extends BaseEntity {
-  restaurantID: string;
-  tutum: number;
+  restaurantId: string;
+  branchId: string;
+  branchName: string;
+  tableNumber: string;
+  capacity: number;
   status: TableStatus;
+  isActive: boolean;
+}
+
+export enum OrderType {
+  DineIn = 0,
+  Takeaway = 1,
+  Delivery = 2,
 }
 
 export enum OrderStatus {
@@ -61,28 +91,86 @@ export enum OrderStatus {
   Confirmed = 1,
   Preparing = 2,
   Ready = 3,
-  Delivered = 4,
-  Cancelled = 5,
+  Served = 4,
+  Completed = 5,
+  Cancelled = 6,
 }
 
 export interface Order extends BaseEntity {
-  customerID: string;
-  tableID?: string | null;
+  restaurantId: string;
+  branchId: string;
+  branchName: string;
+  tableId?: string | null;
+  tableNumber?: string | null;
+  waiterId?: string | null;
+  waiterName?: string | null;
+  customerId?: string | null;
+  customerName?: string | null;
+  orderNumber: string;
+  orderType: OrderType;
   status: OrderStatus;
-  totalPrices: number;
+  subtotal: number;
+  discountAmount: number;
+  taxAmount: number;
+  totalAmount: number;
+  notes?: string | null;
+  isPriority: boolean;
+  isPaid: boolean;
+  rowVersion: string;
+  items: OrderItem[];
 }
 
-export interface OrderItemInput {
-  orderId: string;
-  menuId: string;
-  say: number;
-  prices: number;
+export interface OrderItem {
+  id: string;
+  menuItemId: string;
+  menuItemName: string;
+  unitPrice: number;
+  quantity: number;
+  discountAmount: number;
+  totalPrice: number;
+  kitchenNote?: string | null;
+  status: number;
 }
 
-export interface OrderInput {
-  customerID: string;
-  tableID?: string | null;
-  items: OrderItemInput[];
+export interface OrderCreateInput {
+  restaurantId: string;
+  branchId: string;
+  tableId?: string | null;
+  customerId?: string | null;
+  orderType: OrderType;
+  notes?: string;
+  discountPercentage: number;
+  isPriority: boolean;
+  items: Array<{
+    menuItemId: string;
+    quantity: number;
+    kitchenNote?: string;
+  }>;
+}
+
+export interface KitchenOrder {
+  id: string;
+  restaurantId: string;
+  branchId: string;
+  orderNumber: string;
+  status: OrderStatus;
+  tableNumber?: string | null;
+  waiterName?: string | null;
+  kitchenNotes: string[];
+  items: OrderItem[];
+  preparationDurationMinutes: number;
+  isDelayed: boolean;
+  isPriority: boolean;
+  createdAt: string;
+  rowVersion: string;
+}
+
+export interface KitchenDashboard {
+  pendingCount: number;
+  preparingCount: number;
+  readyCount: number;
+  averagePreparationMinutes: number;
+  orders: KitchenOrder[];
 }
 
 export enum ReservationStatus {

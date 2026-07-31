@@ -11,4 +11,6 @@ public interface ICurrentUserContext
     bool IsRestaurantOwner { get; }
 
     bool IsManager { get; }
+
+    bool IsInRole(string role);
 }

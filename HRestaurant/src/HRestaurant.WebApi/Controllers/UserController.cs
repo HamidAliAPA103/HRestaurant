@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HRestaurant.Controllers;
 
-[Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.RestaurantOwner + "," + AppRoles.Manager)]
+[Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.RestaurantOwner + "," + AppRoles.Manager
+    + "," + AppRoles.Cashier + "," + AppRoles.Waiter)]
 [PermissionAuthorize(Permissions.Employees.Read)]
 [Produces("application/json")]
 [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]

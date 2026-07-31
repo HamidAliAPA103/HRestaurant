@@ -27,6 +27,7 @@ public sealed class UserProfile : Profile
             .ForMember(x => x.Branch, o => o.Ignore())
             .ForMember(x => x.EmployeeShifts, o => o.Ignore())
             .ForMember(x => x.Orders, o => o.Ignore())
+            .ForMember(x => x.WaiterOrders, o => o.Ignore())
             .ForMember(x => x.Reservations, o => o.Ignore())
             .ForMember(x => x.Reviews, o => o.Ignore());
 
@@ -42,6 +43,7 @@ public sealed class UserProfile : Profile
             .ForMember(x => x.Branch, o => o.Ignore())
             .ForMember(x => x.EmployeeShifts, o => o.Ignore())
             .ForMember(x => x.Orders, o => o.Ignore())
+            .ForMember(x => x.WaiterOrders, o => o.Ignore())
             .ForMember(x => x.Reservations, o => o.Ignore())
             .ForMember(x => x.Reviews, o => o.Ignore())
             .IgnoreNullSourceMembers();

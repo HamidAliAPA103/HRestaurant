@@ -22,7 +22,7 @@ import {
 } from "@/shared/types/domain";
 
 const statusMeta = {
-  [TableStatus.Empty]: {
+  [TableStatus.Available]: {
     label: "Boş",
     card: "border-[#cae5d2] bg-[#f2fbf5]",
     icon: "bg-[#dff2e5] text-[#3b8153]",
@@ -39,6 +39,18 @@ const statusMeta = {
     card: "border-[#efd9aa] bg-[#fffbf0]",
     icon: "bg-[#fff0c9] text-[#a97019]",
     dot: "bg-[#dfa03e]",
+  },
+  [TableStatus.Disabled]: {
+    label: "Deaktiv",
+    card: "border-[#d6d0ca] bg-[#f5f3f1]",
+    icon: "bg-[#e8e4df] text-[#6b625b]",
+    dot: "bg-[#8b8178]",
+  },
+  [TableStatus.Cleaning]: {
+    label: "Təmizlənir",
+    card: "border-[#bad9e8] bg-[#f2f9fc]",
+    icon: "bg-[#dceef6] text-[#37728f]",
+    dot: "bg-[#4d9abd]",
   },
 };
 
@@ -147,7 +159,7 @@ export function TableLayoutPage() {
                   <div className="mt-2 flex items-center justify-between text-xs">
                     <span className="flex items-center gap-1 text-[#776e66]">
                       <Users className="h-3.5 w-3.5" />
-                      {table.tutum} nəfər
+                      {table.capacity} nəfər
                     </span>
                     <span className="font-bold text-[#5d554e]">{meta.label}</span>
                   </div>

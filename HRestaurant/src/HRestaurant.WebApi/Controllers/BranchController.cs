@@ -11,7 +11,9 @@ namespace HRestaurant.Controllers;
 [Authorize(
     Roles = AppRoles.SuperAdmin
         + "," + AppRoles.RestaurantOwner
-        + "," + AppRoles.Manager)]
+        + "," + AppRoles.Manager
+        + "," + AppRoles.Cashier
+        + "," + AppRoles.Waiter)]
 [PermissionAuthorize(Permissions.Branches.Read)]
 [Produces("application/json")]
 [ProducesResponseType(

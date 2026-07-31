@@ -29,6 +29,8 @@ public sealed class CurrentUserContext : ICurrentUserContext
     public bool IsManager =>
         GetCurrentUser().IsInRole(AppRoles.Manager);
 
+    public bool IsInRole(string role) => GetCurrentUser().IsInRole(role);
+
     private ClaimsPrincipal GetCurrentUser()
     {
         var user = _httpContextAccessor.HttpContext?.User;

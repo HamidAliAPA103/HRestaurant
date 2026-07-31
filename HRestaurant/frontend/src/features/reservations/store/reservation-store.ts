@@ -99,6 +99,6 @@ export const useReservationStore = create<ReservationState>((set) => ({
   setCustomerInformation: (customerInformation) =>
     set({ customerInformation }),
   setCurrentStep: (currentStep) => set({ currentStep }),
-  setSuccess: (success) => set({ success }),
+  setSuccess: (success) => set({ success, currentStep: 7 }),
   reset: () => set(initialState),
 }));

@@ -13,7 +13,8 @@ namespace HRestaurant.Services.Implementations;
 public sealed class TableService : ITableService
 {
     private static readonly OrderStatus[] ActiveOrderStatuses =
-        [OrderStatus.Pending, OrderStatus.Confirmed, OrderStatus.Preparing, OrderStatus.Ready];
+        [OrderStatus.Pending, OrderStatus.Confirmed, OrderStatus.Preparing,
+            OrderStatus.Ready, OrderStatus.Served];
     private static readonly ReservationStatus[] ActiveReservationStatuses =
         [ReservationStatus.Pending, ReservationStatus.Confirmed, ReservationStatus.Seated];
 
@@ -120,7 +121,7 @@ public sealed class TableService : ITableService
     {
         var entity = await GetForMutationAsync(id, cancellationToken);
         var activeOrder = await _db.Orders.AsNoTracking().AnyAsync(x =>
-            x.TableID == id && !x.IsDeleted && ActiveOrderStatuses.Contains(x.Status),
+            x.TableId == id && !x.IsDeleted && ActiveOrderStatuses.Contains(x.Status),
             cancellationToken);
         var activeReservation = await _db.Reservations.AsNoTracking().AnyAsync(x =>
             x.TableId == id && !x.IsDeleted && ActiveReservationStatuses.Contains(x.Status),

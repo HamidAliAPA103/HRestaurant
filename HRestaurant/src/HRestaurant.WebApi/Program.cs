@@ -2,12 +2,14 @@ using AutoMapper;
 using FluentValidation;
 using HRestaurant.Infrastructure;
 using HRestaurant.Infrastructure.Identity;
+using HRestaurant.Services.Interfaces;
 using HRestaurant.Mappings.Restaurants;
 using HRestaurant.Validators.Restaurants;
 using HRestaurant.WebApi.ExceptionHandling;
 using HRestaurant.WebApi.RateLimiting;
 using HRestaurant.WebApi.Swagger;
 using HRestaurant.WebApi.Validation;
+using HRestaurant.WebApi.Realtime;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -53,6 +55,8 @@ try
         });
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddPublicRateLimiting();
+    builder.Services.AddSignalR();
+    builder.Services.AddScoped<IKitchenNotifier, SignalRKitchenNotifier>();
     var allowedOrigins =
         builder.Configuration
             .GetSection("Cors:AllowedOrigins")
@@ -179,6 +183,7 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
+    app.MapHub<KitchenHub>("/hubs/kitchen");
 
     app.Run();
 }

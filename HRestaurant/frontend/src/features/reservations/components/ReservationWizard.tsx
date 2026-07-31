@@ -38,12 +38,14 @@ interface ReservationWizardProps {
   restaurant: PublicRestaurant;
 }
 
-const stepTitles = [
+const reservationStepTitles = [
   "Filial",
   "Tarix və vaxt",
-  "Masa",
-  "Məlumatlar",
-  "Təsdiq",
+  "Qonaq sayı",
+  "3D masa seçimi",
+  "Müştəri məlumatları",
+  "Yekun",
+  "Uğurlu",
 ];
 
 export function ReservationWizard({
@@ -118,13 +120,13 @@ export function ReservationWizard({
     onError: (error) => {
       if (getPublicApiError(error).status === 409) {
         state.selectTable(null);
-        state.setCurrentStep(3);
+        state.setCurrentStep(4);
         void tableQuery.refetch();
       }
     },
   });
 
-  if (state.success) {
+  if (state.success && state.currentStep === 7) {
     return (
       <ReservationSuccess
         reservation={state.success}
@@ -160,9 +162,9 @@ export function ReservationWizard({
 
       <ol
         aria-label="Rezervasiya addımları"
-        className="mx-auto mb-8 grid max-w-4xl grid-cols-5 gap-1 sm:gap-3"
+        className="mx-auto mb-8 grid max-w-5xl grid-cols-7 gap-1 sm:gap-3"
       >
-        {stepTitles.map((title, index) => {
+        {reservationStepTitles.map((title, index) => {
           const step = index + 1;
           const completed = step < state.currentStep;
           const active = step === state.currentStep;
@@ -228,10 +230,6 @@ export function ReservationWizard({
                   onDurationChange={state.setDurationMinutes}
                 />
               </div>
-              <GuestCountSelector
-                value={state.guestCount}
-                onChange={state.setGuestCount}
-              />
             </div>
             <WizardActions
               canContinue={Boolean(state.startTime)}
@@ -242,6 +240,23 @@ export function ReservationWizard({
         )}
 
         {state.currentStep === 3 && (
+          <WizardPanel
+            title="Qonaq sayı"
+            description="Masa tutumunu düzgün hesablamaq üçün qonaqların sayını seçin."
+          >
+            <GuestCountSelector
+              value={state.guestCount}
+              onChange={state.setGuestCount}
+            />
+            <WizardActions
+              canContinue={state.guestCount > 0}
+              onBack={() => state.setCurrentStep(2)}
+              onContinue={() => state.setCurrentStep(4)}
+            />
+          </WizardPanel>
+        )}
+
+        {state.currentStep === 4 && (
           <WizardPanel
             title="Masanızı seçin"
             description="Zalı böyüdə, döndərə və masaların üzərinə toxuna bilərsiniz."
@@ -308,29 +323,29 @@ export function ReservationWizard({
             </div>
             <WizardActions
               canContinue={Boolean(state.selectedTable)}
-              onBack={() => state.setCurrentStep(2)}
-              onContinue={() => state.setCurrentStep(4)}
+              onBack={() => state.setCurrentStep(3)}
+              onContinue={() => state.setCurrentStep(5)}
             />
           </WizardPanel>
         )}
 
-        {state.currentStep === 4 && (
+        {state.currentStep === 5 && (
           <WizardPanel
             title="Əlaqə məlumatları"
             description="Rezervasiyanı təsdiqləmək üçün məlumatlarınızı daxil edin."
           >
             <CustomerInformationForm
               initialValue={state.customerInformation}
-              onBack={() => state.setCurrentStep(3)}
+              onBack={() => state.setCurrentStep(4)}
               onSubmit={(value: CustomerInformationFormValue) => {
                 state.setCustomerInformation(value);
-                state.setCurrentStep(5);
+                state.setCurrentStep(6);
               }}
             />
           </WizardPanel>
         )}
 
-        {state.currentStep === 5 &&
+        {state.currentStep === 6 &&
           state.selectedBranch &&
           state.selectedTable &&
           state.customerInformation && (
@@ -358,7 +373,7 @@ export function ReservationWizard({
               <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
                 <button
                   type="button"
-                  onClick={() => state.setCurrentStep(4)}
+                  onClick={() => state.setCurrentStep(5)}
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-[#d6ccc1] px-5 py-3 font-bold"
                 >
                   <ArrowLeft className="h-4 w-4" />

@@ -44,7 +44,8 @@ public sealed class RestaurantProfile : Profile
             .ForMember(destination => destination.Ingredients, options => options.Ignore())
             .ForMember(destination => destination.Suppliers, options => options.Ignore())
             .ForMember(destination => destination.InventoryItems, options => options.Ignore())
-            .ForMember(destination => destination.InventoryNotifications, options => options.Ignore());
+            .ForMember(destination => destination.InventoryNotifications, options => options.Ignore())
+            .ForMember(destination => destination.Orders, options => options.Ignore());
 
 #pragma warning disable CS0618
         CreateMap<RestaurantCreatDTO, Restaurant>()
@@ -86,6 +87,7 @@ public sealed class RestaurantProfile : Profile
             .ForMember(destination => destination.Suppliers, options => options.Ignore())
             .ForMember(destination => destination.InventoryItems, options => options.Ignore())
             .ForMember(destination => destination.InventoryNotifications, options => options.Ignore())
+            .ForMember(destination => destination.Orders, options => options.Ignore())
             .IgnoreNullSourceMembers();
     }
 }

@@ -51,7 +51,7 @@ export function getAvailableTables(
   request: TableAvailabilityRequest,
 ) {
   return unwrap<PublicRestaurantTable[]>(
-    publicApiClient.get(`/public/branches/${branchId}/tables`, {
+    publicApiClient.get(`/public/branches/${branchId}/available-tables`, {
       params: request,
     }),
   );

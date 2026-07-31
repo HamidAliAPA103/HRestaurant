@@ -22,6 +22,7 @@ namespace HRestaurant.Models
         public Branch? Branch { get; set; }
         public List<EmployeeShift> EmployeeShifts { get; set; } = new();
         public List<Order> Orders { get; set; } = new ();
+        public List<Order> WaiterOrders { get; set; } = new ();
         public List<Reservation> Reservations { get; set; } = new ();
         public List<Review> Reviews { get; set; } = new ();
     }

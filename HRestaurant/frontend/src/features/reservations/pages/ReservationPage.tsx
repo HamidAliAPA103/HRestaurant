@@ -282,7 +282,7 @@ export function ReservationPage() {
                 <option value="">Masa seçin</option>
                 {(tablesQuery.data?.data ?? []).map((table, index) => (
                   <option key={table.id} value={table.id}>
-                    Masa {index + 1} · {table.tutum} nəfər
+                    Masa {table.tableNumber || index + 1} · {table.capacity} nəfər
                   </option>
                 ))}
               </select>

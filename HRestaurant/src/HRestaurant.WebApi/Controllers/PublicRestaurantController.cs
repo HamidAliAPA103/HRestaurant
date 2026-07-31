@@ -89,6 +89,7 @@ public sealed class PublicRestaurantController : ApiControllerBase
                 cancellationToken));
     }
 
+    [HttpGet("branches/{branchId:guid}/available-tables")]
     [HttpGet("branches/{branchId:guid}/tables")]
     [SwaggerOperation(
         Summary = "Get table availability",

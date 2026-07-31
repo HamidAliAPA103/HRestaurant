@@ -46,6 +46,7 @@ public static class DependencyInjection
         AddJwtAuthentication(services, configuration);
         AddPublicReservationServices(services, configuration);
         AddInventoryServices(services, configuration);
+        AddOrderServices(services, configuration);
 
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -73,6 +74,18 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
 
         return services;
+    }
+
+    private static void AddOrderServices(
+        IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var settings = configuration.GetSection(OrderWorkflowSettings.SectionName)
+            .Get<OrderWorkflowSettings>() ?? new OrderWorkflowSettings();
+        if (settings.DelayedAfterMinutes is < 1 or > 1440)
+            throw new InvalidOperationException(
+                "OrderWorkflow:DelayedAfterMinutes must be between 1 and 1440.");
+        services.AddSingleton(settings);
     }
 
     private static void AddInventoryServices(
@@ -207,6 +220,14 @@ public static class DependencyInjection
 
                 options.Events = new JwtBearerEvents
                 {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        if (!string.IsNullOrWhiteSpace(accessToken)
+                            && context.HttpContext.Request.Path.StartsWithSegments("/hubs/kitchen"))
+                            context.Token = accessToken;
+                        return Task.CompletedTask;
+                    },
                     OnChallenge = WriteUnauthorizedResponseAsync,
                     OnForbidden = WriteForbiddenResponseAsync
                 };

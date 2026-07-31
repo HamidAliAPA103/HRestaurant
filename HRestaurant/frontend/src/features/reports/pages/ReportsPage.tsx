@@ -67,7 +67,7 @@ export function ReportsPage() {
   const orders = ordersQuery.data?.data ?? [];
   const revenue = orders
     .filter((order) => order.status !== OrderStatus.Cancelled)
-    .reduce((sum, order) => sum + order.totalPrices, 0);
+    .reduce((sum, order) => sum + order.totalAmount, 0);
   const average = orders.length ? revenue / orders.length : 0;
   const customers = (usersQuery.data?.data ?? []).filter(
     (user) => user.role.toLowerCase() === "customer",
@@ -190,7 +190,7 @@ export function ReportsPage() {
             {[
               {
                 label: "Çatdırılıb",
-                status: OrderStatus.Delivered,
+                status: OrderStatus.Served,
                 color: "#58a36c",
               },
               {
@@ -263,7 +263,7 @@ export function ReportsPage() {
             {orders.length
               ? Math.round(
                   (orders.filter(
-                    (order) => order.status === OrderStatus.Delivered,
+                    (order) => order.status === OrderStatus.Served,
                   ).length /
                     orders.length) *
                     100,

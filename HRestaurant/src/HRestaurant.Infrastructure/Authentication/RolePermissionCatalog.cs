@@ -33,13 +33,18 @@ public static class RolePermissionCatalog
                 Permissions.Reservations.Read,
                 Permissions.Reservations.Manage,
                 Permissions.Orders.Read,
+                Permissions.Orders.Create,
+                Permissions.Orders.Update,
                 Permissions.Orders.Delete,
+                Permissions.Orders.UpdateKitchenStatus,
+                Permissions.Payments.Process,
                 Permissions.Reviews.Read,
                 Permissions.Reviews.Manage
             ],
             [AppRoles.Manager] = Permissions.AllValues,
             [AppRoles.Cashier] =
             [
+                Permissions.Branches.Read,
                 Permissions.Employees.Read,
                 Permissions.Menus.Read,
                 Permissions.Tables.Read,
@@ -49,6 +54,7 @@ public static class RolePermissionCatalog
             ],
             [AppRoles.Waiter] =
             [
+                Permissions.Branches.Read,
                 Permissions.Employees.Read,
                 Permissions.Menus.Read,
                 Permissions.Tables.Read,

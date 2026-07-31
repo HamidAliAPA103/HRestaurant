@@ -25,6 +25,7 @@ namespace HRestaurant.Models
         public List<Supplier> Suppliers { get; set; } = new();
         public List<InventoryItem> InventoryItems { get; set; } = new();
         public List<InventoryNotification> InventoryNotifications { get; set; } = new();
+        public List<Order> Orders { get; set; } = new();
         public List<RestaurantWorkingHour> WorkingHours { get; set; } =
             new();
     }

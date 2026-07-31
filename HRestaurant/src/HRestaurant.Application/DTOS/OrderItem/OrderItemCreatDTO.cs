@@ -1,10 +1,17 @@
-﻿namespace HRestaurant.DTOS.OrderItem
+namespace HRestaurant.DTOS.OrderItem;
+
+public sealed class OrderItemCreatDTO
 {
-    public class OrderItemCreatDTO
-    {
-        public Guid OrderId { get; set; }
-        public Guid MenuId { get; set; }
-        public int Say { get; set; }
-        public decimal Prices { get; set; }
-    }
+    public Guid OrderId { get; set; }
+    public Guid MenuItemId { get; set; }
+    public int Quantity { get; set; }
+    public string? KitchenNote { get; set; }
+}
+
+public sealed class OrderItemAddDTO
+{
+    public Guid MenuItemId { get; set; }
+    public int Quantity { get; set; }
+    public string? KitchenNote { get; set; }
+    public byte[] RowVersion { get; set; } = [];
 }
