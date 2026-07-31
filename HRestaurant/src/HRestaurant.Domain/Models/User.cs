@@ -18,6 +18,11 @@ namespace HRestaurant.Models
         public string? AvatarUrl { get; set; }
         public string? EmergencyContact { get; set; }
         public bool IsActive { get; set; } = true;
+        public DateOnly? Birthday { get; set; }
+        public string? Notes { get; set; }
+        public int TotalOrders { get; set; }
+        public decimal TotalSpent { get; set; }
+        public DateTime? LastVisitDate { get; set; }
         public Restaurant? Restaurant { get; set; }
         public Branch? Branch { get; set; }
         public List<EmployeeShift> EmployeeShifts { get; set; } = new();
@@ -25,5 +30,6 @@ namespace HRestaurant.Models
         public List<Order> WaiterOrders { get; set; } = new ();
         public List<Reservation> Reservations { get; set; } = new ();
         public List<Review> Reviews { get; set; } = new ();
+        public LoyaltyAccount? LoyaltyAccount { get; set; }
     }
 }

@@ -15,6 +15,7 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
         entity.Property(x => x.OrderDiscountPercentage).HasPrecision(5, 2);
         entity.Property(x => x.TaxAmount).HasPrecision(18, 2);
         entity.Property(x => x.TotalAmount).HasPrecision(18, 2);
+        entity.Property(x => x.PaidAmount).HasPrecision(18, 2);
         entity.Property(x => x.Notes).HasMaxLength(500);
         entity.Property(x => x.CancelReason).HasMaxLength(300);
         entity.Property(x => x.RowVersion).IsRowVersion().IsConcurrencyToken();

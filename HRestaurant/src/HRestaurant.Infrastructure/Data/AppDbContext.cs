@@ -41,6 +41,16 @@ public class AppDbContext
 
     public DbSet<OrderItem> OrderItems { get; set; }
 
+    public DbSet<Payment> Payments { get; set; }
+
+    public DbSet<Refund> Refunds { get; set; }
+
+    public DbSet<LoyaltyAccount> LoyaltyAccounts { get; set; }
+
+    public DbSet<LoyaltyTransaction> LoyaltyTransactions { get; set; }
+
+    public DbSet<AuditLog> AuditLogs { get; set; }
+
     public DbSet<Reservation> Reservations { get; set; }
 
     public DbSet<ReservationAuditLog> ReservationAuditLogs { get; set; }

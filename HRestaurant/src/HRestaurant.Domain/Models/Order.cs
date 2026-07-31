@@ -28,6 +28,8 @@ public sealed class Order : BaseEntity
     public DateTime? InventoryReturnedAt { get; set; }
     public bool IsPriority { get; set; }
     public bool IsPaid { get; set; }
+    public decimal PaidAmount { get; set; }
+    public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
     public bool RefundRequired { get; set; }
     public DateTime? RefundedAt { get; set; }
     public byte[] RowVersion { get; set; } = [];
@@ -37,4 +39,6 @@ public sealed class Order : BaseEntity
     public User? Waiter { get; set; }
     public Table? Table { get; set; }
     public List<OrderItem> Items { get; set; } = [];
+    public List<Payment> Payments { get; set; } = [];
+    public List<LoyaltyTransaction> LoyaltyTransactions { get; set; } = [];
 }

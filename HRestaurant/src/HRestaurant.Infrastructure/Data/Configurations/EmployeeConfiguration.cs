@@ -20,10 +20,13 @@ public sealed class EmployeeConfiguration : IEntityTypeConfiguration<User>
         entity.Property(x => x.HireDate).HasColumnType("date");
         entity.Property(x => x.AvatarUrl).HasMaxLength(500);
         entity.Property(x => x.EmergencyContact).HasMaxLength(150);
+        entity.Property(x => x.Birthday).HasColumnType("date");
+        entity.Property(x => x.Notes).HasMaxLength(1000);
+        entity.Property(x => x.TotalSpent).HasPrecision(18, 2);
 
-        entity.HasIndex(x => x.NormalizedEmail).IsUnique()
-            .HasFilter("[RestaurantId] IS NOT NULL");
-        entity.HasIndex(x => x.NormalizedPhone).IsUnique()
+        entity.HasIndex(x => new { x.RestaurantId, x.NormalizedEmail }).IsUnique()
+            .HasFilter("[RestaurantId] IS NOT NULL AND [NormalizedEmail] <> ''");
+        entity.HasIndex(x => new { x.RestaurantId, x.NormalizedPhone }).IsUnique()
             .HasFilter("[RestaurantId] IS NOT NULL AND [NormalizedPhone] IS NOT NULL");
         entity.HasIndex(x => x.AppUserId).IsUnique()
             .HasFilter("[AppUserId] IS NOT NULL");
