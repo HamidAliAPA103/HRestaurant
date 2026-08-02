@@ -1,4 +1,5 @@
 using AutoMapper;
+using System.Globalization;
 using FluentValidation;
 using HRestaurant.Infrastructure;
 using HRestaurant.Infrastructure.Identity;
@@ -22,6 +23,9 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
+    CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+    CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Host.UseSerilog((context, services, configuration) =>

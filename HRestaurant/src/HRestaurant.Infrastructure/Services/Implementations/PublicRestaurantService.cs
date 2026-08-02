@@ -32,6 +32,25 @@ public sealed class PublicRestaurantService
         _timeProvider = timeProvider;
     }
 
+    public async Task<ApiResponse<IReadOnlyCollection<PublicRestaurantDto>>> GetAllAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var restaurants = await _dbContext.Restaurants
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Include(restaurant => restaurant.WorkingHours)
+            .Include(restaurant => restaurant.Branches)
+                .ThenInclude(branch => branch.WorkingHours)
+            .Where(restaurant => restaurant.IsActive && !restaurant.IsDeleted)
+            .OrderBy(restaurant => restaurant.Name)
+            .ToArrayAsync(cancellationToken);
+
+        var result = restaurants.Select(MapRestaurant).ToArray();
+        return ApiResponse.Ok<IReadOnlyCollection<PublicRestaurantDto>>(
+            result,
+            "Public restaurants retrieved successfully.");
+    }
+
     public async Task<ApiResponse<PublicRestaurantDto>> GetBySlugAsync(
         string slug,
         CancellationToken cancellationToken = default)
@@ -39,22 +58,7 @@ public sealed class PublicRestaurantService
         var restaurant = await GetRestaurantAsync(
             slug,
             cancellationToken);
-        var dto = _mapper.Map<PublicRestaurantDto>(restaurant);
-        var branches = MapBranches(restaurant.Branches);
-
-        dto.WorkingHours = restaurant.WorkingHours
-            .Where(entry => !entry.IsDeleted)
-            .OrderBy(entry => entry.DayOfWeek)
-            .Select(entry =>
-                _mapper.Map<PublicWorkingHourDto>(entry))
-            .ToArray();
-        dto.Branches = branches;
-        dto.IsOpenNow = branches.Any(branch => branch.IsOpenNow)
-            || (branches.Count == 0
-                && ReservationSchedule.IsOpenNow(
-                    restaurant.WorkingHours,
-                    _timeProvider.GetUtcNow().UtcDateTime,
-                    DefaultTimeZoneId));
+        var dto = MapRestaurant(restaurant);
 
         return ApiResponse.Ok(
             dto,
@@ -74,6 +78,53 @@ public sealed class PublicRestaurantService
         return ApiResponse.Ok<IReadOnlyCollection<PublicBranchDto>>(
             MapBranches(restaurant.Branches),
             "Public branches retrieved successfully.");
+    }
+
+    public async Task<ApiResponse<IReadOnlyCollection<PublicMenuCategoryDto>>> GetMenuAsync(
+        string restaurantSlug,
+        CancellationToken cancellationToken = default)
+    {
+        var restaurant = await GetRestaurantAsync(restaurantSlug, cancellationToken);
+        var categories = await _dbContext.MenuCategories
+            .AsNoTracking()
+            .Where(category =>
+                category.ResdaranId == restaurant.ID
+                && category.IsActive
+                && !category.IsDeleted)
+            .OrderBy(category => category.DisplayOrder)
+            .ThenBy(category => category.Name)
+            .Select(category => new PublicMenuCategoryDto
+            {
+                Id = category.ID,
+                Name = category.Name,
+                Description = category.Description,
+                DisplayOrder = category.DisplayOrder,
+                Items = category.Menus
+                    .Where(item => !item.IsDeleted)
+                    .OrderByDescending(item => item.IsPopular)
+                    .ThenBy(item => item.Name)
+                    .Select(item => new PublicMenuItemDto
+                    {
+                        Id = item.ID,
+                        CategoryId = item.CategoryId,
+                        Name = item.Name,
+                        Description = item.Desc,
+                        Nutrition = item.Nutrition,
+                        ImageUrl = item.ImageURL,
+                        Price = item.Price,
+                        DiscountPercentage = item.DiscountPercentage,
+                        FinalPrice = item.FinalPrice,
+                        PreparationTimeMinutes = item.PreparationTimeMinutes,
+                        IsAvailable = item.IsAvailable,
+                        IsPopular = item.IsPopular
+                    })
+                    .ToArray()
+            })
+            .ToArrayAsync(cancellationToken);
+
+        return ApiResponse.Ok<IReadOnlyCollection<PublicMenuCategoryDto>>(
+            categories,
+            "Public menu retrieved successfully.");
     }
 
     private async Task<Restaurant> GetRestaurantAsync(
@@ -129,5 +180,24 @@ public sealed class PublicRestaurantService
                 return dto;
             })
             .ToArray();
+    }
+
+    private PublicRestaurantDto MapRestaurant(Restaurant restaurant)
+    {
+        var dto = _mapper.Map<PublicRestaurantDto>(restaurant);
+        var branches = MapBranches(restaurant.Branches);
+        dto.WorkingHours = restaurant.WorkingHours
+            .Where(entry => !entry.IsDeleted)
+            .OrderBy(entry => entry.DayOfWeek)
+            .Select(entry => _mapper.Map<PublicWorkingHourDto>(entry))
+            .ToArray();
+        dto.Branches = branches;
+        dto.IsOpenNow = branches.Any(branch => branch.IsOpenNow)
+            || (branches.Count == 0
+                && ReservationSchedule.IsOpenNow(
+                    restaurant.WorkingHours,
+                    _timeProvider.GetUtcNow().UtcDateTime,
+                    DefaultTimeZoneId));
+        return dto;
     }
 }

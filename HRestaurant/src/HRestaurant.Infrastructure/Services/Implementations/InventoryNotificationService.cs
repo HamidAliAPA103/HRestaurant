@@ -39,6 +39,19 @@ public sealed class InventoryNotificationService : IInventoryNotificationService
         return GetListAsync(request, cancellationToken);
     }
 
+    public async Task<ApiResponse<InventoryNotificationGetDTO>> GetByIdAsync(
+        Guid id, CancellationToken cancellationToken = default)
+    {
+        var query = ApplyAccess(_db.InventoryNotifications.AsNoTracking()
+                .Include(x => x.InventoryItem).ThenInclude(x => x!.Ingredient)
+                .Where(x => x.ID == id && !x.IsDeleted),
+            null, null, cancellationToken, out var accessTask);
+        await accessTask;
+        var entity = await query.FirstOrDefaultAsync(cancellationToken)
+            ?? throw new NotFoundException("Notification", id);
+        return ApiResponse.Ok(_mapper.Map<InventoryNotificationGetDTO>(entity));
+    }
+
     public async Task<ApiResponse<int>> GetUnreadCountAsync(
         Guid? branchId, CancellationToken cancellationToken = default)
     {
@@ -98,7 +111,7 @@ public sealed class InventoryNotificationService : IInventoryNotificationService
         InventoryNotificationListRequest request, CancellationToken cancellationToken)
     {
         var query = _db.InventoryNotifications.AsNoTracking()
-            .Include(x => x.InventoryItem).ThenInclude(x => x.Ingredient)
+            .Include(x => x.InventoryItem).ThenInclude(x => x!.Ingredient)
             .Where(x => !x.IsDeleted);
         query = ApplyAccess(query, request.RestaurantId, request.BranchId,
             cancellationToken, out var accessTask);

@@ -1,19 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, Minus, Plus, Search, ShoppingBag, Trash2, UtensilsCrossed } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { branchApi, branchKeys } from "@/api/branchApi";
+import { customerApi, customerKeys } from "@/api/customerApi";
+import { menuItemApi, menuItemKeys } from "@/api/menuItemApi";
+import { orderApi, orderKeys } from "@/api/orderApi";
+import { tableApi, tableKeys } from "@/api/tableApi";
 import { useAuthStore } from "@/features/auth/store/auth-store";
-import { createResource, listResource } from "@/shared/api/resources";
 import { Button } from "@/shared/components/Button";
 import { ErrorState, LoadingState } from "@/shared/components/StatePanel";
 import { formatCurrency, getErrorMessage } from "@/shared/lib/utils";
 import {
   OrderType,
   TableStatus,
-  type BranchSummary,
-  type DiningTable,
   type MenuItem,
   type OrderCreateInput,
-  type User,
 } from "@/shared/types/domain";
 
 interface CartItem { item: MenuItem; quantity: number; kitchenNote: string }
@@ -32,14 +33,14 @@ export function PosOrderPage() {
   const [success, setSuccess] = useState("");
   const queryClient = useQueryClient();
 
-  const menuQuery = useQuery({ queryKey: ["menu", "pos"], queryFn: () => listResource<MenuItem>("/Menu") });
+  const menuQuery = useQuery({ queryKey: [...menuItemKeys.all, "pos"], queryFn: ({ signal }) => menuItemApi.list({ pageSize: 100, isAvailable: true, signal }) });
   const branchesQuery = useQuery({
-    queryKey: ["branches", "pos", restaurantId],
-    queryFn: () => listResource<BranchSummary>("/Branch", { pageSize: 100 }),
+    queryKey: [...branchKeys.all, "pos", restaurantId],
+    queryFn: ({ signal }) => branchApi.list({ pageSize: 100, signal }),
     enabled: Boolean(restaurantId),
   });
-  const tablesQuery = useQuery({ queryKey: ["tables", "pos"], queryFn: () => listResource<DiningTable>("/tables") });
-  const customersQuery = useQuery({ queryKey: ["users", "customers", "pos"], queryFn: () => listResource<User>("/User") });
+  const tablesQuery = useQuery({ queryKey: [...tableKeys.all, "pos", branchId], queryFn: ({ signal }) => tableApi.list({ branchId, pageSize: 100, isActive: true, status: TableStatus.Available, signal }), enabled: Boolean(branchId) });
+  const customersQuery = useQuery({ queryKey: [...customerKeys.all, "pos"], queryFn: ({ signal }) => customerApi.list({ pageSize: 100, signal }) });
 
   const branches = (branchesQuery.data?.data ?? []).filter((branch) =>
     branch.restaurantId === restaurantId && branch.isActive);
@@ -54,10 +55,8 @@ export function PosOrderPage() {
     && (category === "all" || item.categoryName === category)
     && `${item.name} ${item.desc}`.toLocaleLowerCase("az").includes(search.toLocaleLowerCase("az"))),
   [menuQuery.data?.data, category, search]);
-  const customers = (customersQuery.data?.data ?? []).filter((user) =>
-    user.role.toLowerCase() === "customer" && (!user.restaurantId || user.restaurantId === restaurantId));
-  const tables = (tablesQuery.data?.data ?? []).filter((table) =>
-    table.branchId === branchId && table.isActive && table.status === TableStatus.Available);
+  const customers = customersQuery.data?.data ?? [];
+  const tables = tablesQuery.data?.data ?? [];
   const subtotal = cart.reduce((sum, entry) =>
     sum + (entry.item.finalPrice || entry.item.price) * entry.quantity, 0);
   const estimatedTotal = subtotal * (1 - discount / 100);
@@ -79,13 +78,14 @@ export function PosOrderPage() {
           kitchenNote: kitchenNote || undefined,
         })),
       };
-      return createResource<OrderCreateInput>("/orders", input);
+      return orderApi.create(input);
     },
-    onSuccess: (response) => {
-      setSuccess(`Sifariş yaradıldı: ${response.data ?? ""}`);
+    onSuccess: async (response) => {
+      const createdOrder = response.data ? await orderApi.get(response.data) : null;
+      setSuccess(createdOrder ? `${createdOrder.orderNumber} yaradıldı · yekun ${formatCurrency(createdOrder.totalAmount)}` : "Sifariş yaradıldı.");
       setCart([]); setTableId(""); setCustomerId(""); setDiscount(0); setNotes("");
-      queryClient.invalidateQueries({ queryKey: ["orders"] });
-      queryClient.invalidateQueries({ queryKey: ["tables"] });
+      await queryClient.invalidateQueries({ queryKey: orderKeys.all });
+      await queryClient.invalidateQueries({ queryKey: tableKeys.all });
     },
   });
 
@@ -119,7 +119,7 @@ export function PosOrderPage() {
               className="h-12 w-full rounded-xl border border-[#ded8d0] bg-[#faf8f5] pl-11 pr-4 text-sm outline-none" />
           </label>
           <div className="flex gap-2 overflow-x-auto">
-            {["all", ...categories].map((name) => <button key={name} onClick={() => setCategory(name)}
+            {["all", ...categories].map((name) => <button type="button" key={name} onClick={() => setCategory(name)}
               className={`whitespace-nowrap rounded-xl px-3 py-2 text-xs font-semibold ${category === name ? "bg-[#26201c] text-white" : "bg-[#f1ede7]"}`}>
               {name === "all" ? "Hamısı" : name}
             </button>)}
@@ -128,7 +128,7 @@ export function PosOrderPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {menu.map((item) => {
             const selected = cart.find((entry) => entry.item.id === item.id);
-            return <button key={item.id} onClick={() => changeQuantity(item, 1)} className="card group overflow-hidden text-left transition hover:-translate-y-1">
+            return <button type="button" key={item.id} onClick={() => changeQuantity(item, 1)} className="card group overflow-hidden text-left transition hover:-translate-y-1">
               <div className="relative h-32 overflow-hidden bg-[#eee9e2]">
                 {item.imageURL ? <img src={item.imageURL} alt={item.name} className="h-full w-full object-cover" />
                   : <div className="grid h-full place-items-center"><UtensilsCrossed className="h-7 w-7" /></div>}
@@ -157,7 +157,7 @@ export function PosOrderPage() {
                 <option value="">Masa seçin</option>{tables.map((table) => <option key={table.id} value={table.id}>{table.tableNumber} · {table.capacity} nəfər</option>)}
               </select>}
               <select value={customerId} onChange={(event) => setCustomerId(event.target.value)} className="h-10 rounded-xl border px-3 text-xs">
-                <option value="">Müştəri (istəyə bağlı)</option>{customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.name}</option>)}
+                <option value="">Müştəri (istəyə bağlı)</option>{customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.fullName}</option>)}
               </select>
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -169,8 +169,8 @@ export function PosOrderPage() {
             {cart.length === 0 ? <div className="grid h-full min-h-52 place-items-center text-center"><div><ShoppingBag className="mx-auto h-8 w-8" /><p className="mt-3 text-sm font-bold">Səbət boşdur</p></div></div>
               : cart.map(({ item, quantity, kitchenNote }) => <div key={item.id} className="rounded-2xl border p-3">
                 <div className="flex items-center gap-3"><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold">{item.name}</p><p className="text-xs text-[#e85d3f]">{formatCurrency((item.finalPrice || item.price) * quantity)}</p></div>
-                  <button onClick={() => setCart((current) => current.filter((entry) => entry.item.id !== item.id))} aria-label="Məhsulu sil"><Trash2 className="h-4 w-4" /></button></div>
-                <div className="mt-3 flex items-center gap-2"><button onClick={() => changeQuantity(item, -1)}><Minus className="h-4 w-4" /></button><span className="w-6 text-center text-xs font-bold">{quantity}</span><button onClick={() => changeQuantity(item, 1)}><Plus className="h-4 w-4" /></button>
+                  <button type="button" onClick={() => setCart((current) => current.filter((entry) => entry.item.id !== item.id))} aria-label="Məhsulu sil"><Trash2 className="h-4 w-4" /></button></div>
+                <div className="mt-3 flex items-center gap-2"><button type="button" aria-label="Miqdarı azalt" onClick={() => changeQuantity(item, -1)}><Minus className="h-4 w-4" /></button><span className="w-6 text-center text-xs font-bold">{quantity}</span><button type="button" aria-label="Miqdarı artır" onClick={() => changeQuantity(item, 1)}><Plus className="h-4 w-4" /></button>
                   <input value={kitchenNote} onChange={(event) => setCart((current) => current.map((entry) => entry.item.id === item.id ? { ...entry, kitchenNote: event.target.value } : entry))} placeholder="Mətbəx qeydi" className="ml-auto h-8 min-w-0 flex-1 rounded-lg border px-2 text-xs" />
                 </div>
               </div>)}

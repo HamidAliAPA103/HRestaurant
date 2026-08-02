@@ -100,3 +100,54 @@ public sealed class LogoutRequestValidator
             .WithMessage("Refresh token is invalid.");
     }
 }
+
+public sealed class ForgotPasswordRequestValidator
+    : AbstractValidator<ForgotPasswordRequest>
+{
+    public ForgotPasswordRequestValidator() => RuleFor(request => request.Email)
+        .NotEmpty()
+        .EmailAddress()
+        .MaximumLength(ValidationConstants.EmailMaximumLength);
+}
+
+public sealed class ResetPasswordRequestValidator
+    : AbstractValidator<ResetPasswordRequest>
+{
+    public ResetPasswordRequestValidator()
+    {
+        RuleFor(request => request.Email)
+            .NotEmpty()
+            .EmailAddress()
+            .MaximumLength(ValidationConstants.EmailMaximumLength);
+        RuleFor(request => request.Token).NotEmpty().MaximumLength(2048);
+        RuleFor(request => request.NewPassword)
+            .NotEmpty()
+            .MinimumLength(8)
+            .MaximumLength(128)
+            .Matches("[A-Z]")
+            .Matches("[a-z]")
+            .Matches("[0-9]")
+            .Matches("[^a-zA-Z0-9]");
+        RuleFor(request => request.ConfirmPassword)
+            .Equal(request => request.NewPassword);
+    }
+}
+
+public sealed class VerifyEmailRequestValidator
+    : AbstractValidator<VerifyEmailRequest>
+{
+    public VerifyEmailRequestValidator()
+    {
+        RuleFor(request => request.UserId).NotEmpty();
+        RuleFor(request => request.Token).NotEmpty().MaximumLength(2048);
+    }
+}
+
+public sealed class ResendVerificationRequestValidator
+    : AbstractValidator<ResendVerificationRequest>
+{
+    public ResendVerificationRequestValidator() => RuleFor(request => request.Email)
+        .NotEmpty()
+        .EmailAddress()
+        .MaximumLength(ValidationConstants.EmailMaximumLength);
+}

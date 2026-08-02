@@ -36,6 +36,8 @@ public sealed class OrderProfile : Profile
             .ForMember(x => x.InventoryConsumedAt, o => o.Ignore())
             .ForMember(x => x.InventoryReturnedAt, o => o.Ignore())
             .ForMember(x => x.IsPaid, o => o.Ignore())
+            .ForMember(x => x.PaidAmount, o => o.Ignore())
+            .ForMember(x => x.PaymentStatus, o => o.Ignore())
             .ForMember(x => x.RefundRequired, o => o.Ignore())
             .ForMember(x => x.RefundedAt, o => o.Ignore())
             .ForMember(x => x.RowVersion, o => o.Ignore())
@@ -44,7 +46,9 @@ public sealed class OrderProfile : Profile
             .ForMember(x => x.Customer, o => o.Ignore())
             .ForMember(x => x.Waiter, o => o.Ignore())
             .ForMember(x => x.Table, o => o.Ignore())
-            .ForMember(x => x.Items, o => o.Ignore());
+            .ForMember(x => x.Items, o => o.Ignore())
+            .ForMember(x => x.Payments, o => o.Ignore())
+            .ForMember(x => x.LoyaltyTransactions, o => o.Ignore());
 
         CreateMap<OrderUpdateDTO, Order>()
             .IgnoreBaseEntityMembers()

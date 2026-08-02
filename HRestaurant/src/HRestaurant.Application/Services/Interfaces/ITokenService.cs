@@ -15,7 +15,9 @@ public interface ITokenService
 public sealed record TokenUser(
     Guid Id,
     string Email,
-    Guid RestaurantId);
+    Guid RestaurantId,
+    string FullName,
+    Guid? BranchId);
 
 public sealed record AccessTokenResult(
     string Token,

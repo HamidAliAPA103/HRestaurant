@@ -19,6 +19,7 @@ export function Sidebar({
 }) {
   const user = useAuthStore((state) => state.user);
   const hasRole = useAuthStore((state) => state.hasRole);
+  const hasPermission = useAuthStore((state) => state.hasPermission);
 
   return (
     <>
@@ -72,7 +73,9 @@ export function Sidebar({
         <nav className="sidebar-scroll flex-1 overflow-y-auto px-3 py-5">
           {navigationGroups.map((group) => {
             const items = group.items.filter(
-              (item) => !item.roles || hasRole(item.roles),
+              (item) =>
+                (!item.roles || hasRole(item.roles)) &&
+                (!item.permission || hasPermission(item.permission)),
             );
 
             if (items.length === 0) return null;

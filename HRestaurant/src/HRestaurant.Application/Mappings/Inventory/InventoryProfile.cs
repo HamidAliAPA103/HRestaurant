@@ -39,6 +39,8 @@ public sealed class InventoryProfile : Profile
         CreateMap<StockTransaction, StockTransactionGetDTO>();
         CreateMap<InventoryNotification, InventoryNotificationGetDTO>()
             .ForMember(x => x.IngredientName,
-                o => o.MapFrom(x => x.InventoryItem.Ingredient.Name));
+                o => o.MapFrom(x => x.InventoryItem == null
+                    ? null
+                    : x.InventoryItem.Ingredient.Name));
     }
 }

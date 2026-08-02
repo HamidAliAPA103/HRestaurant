@@ -77,7 +77,31 @@ public static class Permissions
 
     public static class Payments
     {
+        public const string Read = "payments.read";
         public const string Process = "payments.process";
+        public const string Refund = "payments.refund";
+    }
+
+    public static class Customers
+    {
+        public const string Read = "customers.read";
+        public const string Manage = "customers.manage";
+    }
+
+    public static class Loyalty
+    {
+        public const string Read = "loyalty.read";
+        public const string Manage = "loyalty.manage";
+    }
+
+    public static class Reports
+    {
+        public const string Read = "reports.read";
+    }
+
+    public static class Audit
+    {
+        public const string Read = "audit.read";
     }
 
     public static class Reviews
@@ -114,7 +138,15 @@ public static class Permissions
         Orders.Update,
         Orders.Delete,
         Orders.UpdateKitchenStatus,
+        Payments.Read,
         Payments.Process,
+        Payments.Refund,
+        Customers.Read,
+        Customers.Manage,
+        Loyalty.Read,
+        Loyalty.Manage,
+        Reports.Read,
+        Audit.Read,
         Reviews.Read,
         Reviews.Manage
     ];

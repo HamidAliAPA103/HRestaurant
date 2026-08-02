@@ -33,3 +33,17 @@ export function RoleProtectedRoute({
 
   return <Outlet />;
 }
+
+export function PermissionProtectedRoute({
+  permission,
+}: {
+  permission: string;
+}) {
+  const hasPermission = useAuthStore((state) => state.hasPermission);
+
+  if (!hasPermission(permission)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  return <Outlet />;
+}

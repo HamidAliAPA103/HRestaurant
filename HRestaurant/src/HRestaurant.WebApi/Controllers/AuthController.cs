@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HRestaurant.Controllers;
 
-[AllowAnonymous]
 [Route("api/auth")]
 public sealed class AuthController : ApiControllerBase
 {
@@ -18,6 +17,7 @@ public sealed class AuthController : ApiControllerBase
     }
 
     [HttpPost("register")]
+    [AllowAnonymous]
     public async Task<IActionResult> Register(
         RegisterRequest request,
         CancellationToken cancellationToken)
@@ -29,6 +29,7 @@ public sealed class AuthController : ApiControllerBase
     }
 
     [HttpPost("login")]
+    [AllowAnonymous]
     public async Task<IActionResult> Login(
         LoginRequest request,
         CancellationToken cancellationToken)
@@ -40,6 +41,7 @@ public sealed class AuthController : ApiControllerBase
     }
 
     [HttpPost("refresh")]
+    [AllowAnonymous]
     public async Task<IActionResult> Refresh(
         RefreshTokenRequest request,
         CancellationToken cancellationToken)
@@ -51,6 +53,7 @@ public sealed class AuthController : ApiControllerBase
     }
 
     [HttpPost("logout")]
+    [AllowAnonymous]
     public async Task<IActionResult> Logout(
         LogoutRequest request,
         CancellationToken cancellationToken)
@@ -60,4 +63,41 @@ public sealed class AuthController : ApiControllerBase
                 request,
                 cancellationToken));
     }
+
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<IActionResult> GetCurrentUser(
+        CancellationToken cancellationToken)
+    {
+        return FromResponse(
+            await _authService.GetCurrentUserAsync(cancellationToken));
+    }
+
+    [HttpPost("forgot-password")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ForgotPassword(
+        ForgotPasswordRequest request,
+        CancellationToken cancellationToken) =>
+        FromResponse(await _authService.RequestPasswordResetAsync(request, cancellationToken));
+
+    [HttpPost("reset-password")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ResetPassword(
+        ResetPasswordRequest request,
+        CancellationToken cancellationToken) =>
+        FromResponse(await _authService.ResetPasswordAsync(request, cancellationToken));
+
+    [HttpPost("resend-verification")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ResendVerification(
+        ResendVerificationRequest request,
+        CancellationToken cancellationToken) =>
+        FromResponse(await _authService.ResendEmailVerificationAsync(request, cancellationToken));
+
+    [HttpPost("verify-email")]
+    [AllowAnonymous]
+    public async Task<IActionResult> VerifyEmail(
+        VerifyEmailRequest request,
+        CancellationToken cancellationToken) =>
+        FromResponse(await _authService.VerifyEmailAsync(request, cancellationToken));
 }

@@ -1,174 +1,54 @@
-import { useQuery } from "@tanstack/react-query";
-import {
-  Armchair,
-  Grid2X2,
-  ListFilter,
-  Plus,
-  Users,
-} from "lucide-react";
-import { useState } from "react";
-import { listResource } from "@/shared/api/resources";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Plus, RefreshCw, Save, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { branchApi, branchKeys } from "@/api/branchApi";
+import { tableApi, tableKeys } from "@/api/tableApi";
+import { useAuthStore } from "@/features/auth/store/auth-store";
+import { AdminHallEditor3D } from "@/features/tables/components/AdminHallEditor3D";
+import { Badge } from "@/shared/components/Badge";
 import { Button } from "@/shared/components/Button";
+import { FormField } from "@/shared/components/FormField";
+import { Modal } from "@/shared/components/Modal";
 import { PageHeader } from "@/shared/components/PageHeader";
-import {
-  EmptyState,
-  ErrorState,
-  LoadingState,
-} from "@/shared/components/StatePanel";
+import { EmptyState, ErrorState, LoadingState } from "@/shared/components/StatePanel";
 import { getErrorMessage } from "@/shared/lib/utils";
-import {
-  TableStatus,
-  type DiningTable,
-} from "@/shared/types/domain";
+import { TableStatus, type DiningTable } from "@/shared/types/domain";
 
-const statusMeta = {
-  [TableStatus.Available]: {
-    label: "Boş",
-    card: "border-[#cae5d2] bg-[#f2fbf5]",
-    icon: "bg-[#dff2e5] text-[#3b8153]",
-    dot: "bg-[#54a56c]",
-  },
-  [TableStatus.Occupied]: {
-    label: "Dolu",
-    card: "border-[#f0c7bd] bg-[#fff7f5]",
-    icon: "bg-[#ffe4de] text-[#c64f37]",
-    dot: "bg-[#e85d3f]",
-  },
-  [TableStatus.Reserved]: {
-    label: "Rezerv",
-    card: "border-[#efd9aa] bg-[#fffbf0]",
-    icon: "bg-[#fff0c9] text-[#a97019]",
-    dot: "bg-[#dfa03e]",
-  },
-  [TableStatus.Disabled]: {
-    label: "Deaktiv",
-    card: "border-[#d6d0ca] bg-[#f5f3f1]",
-    icon: "bg-[#e8e4df] text-[#6b625b]",
-    dot: "bg-[#8b8178]",
-  },
-  [TableStatus.Cleaning]: {
-    label: "Təmizlənir",
-    card: "border-[#bad9e8] bg-[#f2f9fc]",
-    icon: "bg-[#dceef6] text-[#37728f]",
-    dot: "bg-[#4d9abd]",
-  },
-};
+const schema = z.object({ tableNumber: z.string().trim().min(1).max(30), capacity: z.number().int().min(1).max(30), shape: z.number().int().min(0).max(2), status: z.number().int().min(0).max(4), width: z.number().min(.5).max(10), length: z.number().min(.5).max(10), height: z.number().min(.3).max(3), rotationY: z.number().finite() });
+type Values = z.infer<typeof schema>;
+const defaults: Values = { tableNumber: "", capacity: 4, shape: 0, status: 0, width: 1.8, length: 1.8, height: .75, rotationY: 0 };
+const statuses = ["Boş", "Dolu", "Rezerv", "Deaktiv", "Təmizlənir"];
+const shapes = ["Dairəvi", "Kvadrat", "Düzbucaqlı"];
 
 export function TableLayoutPage() {
-  const [filter, setFilter] = useState<TableStatus | "all">("all");
-  const query = useQuery({
-    queryKey: ["tables"],
-    queryFn: () => listResource<DiningTable>("/Table"),
-  });
-  const tables = (query.data?.data ?? []).filter(
-    (table) => filter === "all" || table.status === filter,
-  );
-
-  return (
-    <div className="page-enter space-y-6">
-      <PageHeader
-        eyebrow="Zal görünüşü"
-        title="Masa planı"
-        description="Masa doluluğunu izləyin, rezerv olunmuş və boş masaları bir baxışda görün."
-        actions={
-          <Button>
-            <Plus className="h-4 w-4" />
-            Yeni masa
-          </Button>
-        }
-      />
-
-      <div className="card flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <Grid2X2 className="h-4 w-4 text-[#e85d3f]" />
-          <span className="text-sm font-bold text-[#403933]">Əsas zal</span>
-          <span className="rounded-full bg-[#eee9e3] px-2 py-0.5 text-[10px] font-bold text-[#777067]">
-            {query.data?.totalCount ?? tables.length} masa
-          </span>
-        </div>
-        <div className="flex gap-2 overflow-x-auto">
-          <button
-            onClick={() => setFilter("all")}
-            className={`rounded-xl px-3 py-2 text-xs font-semibold ${
-              filter === "all"
-                ? "bg-[#26201c] text-white"
-                : "bg-[#f1ede7] text-[#6b625b]"
-            }`}
-          >
-            Hamısı
-          </button>
-          {Object.entries(statusMeta).map(([key, meta]) => (
-            <button
-              key={key}
-              onClick={() => setFilter(Number(key) as TableStatus)}
-              className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold ${
-                filter === Number(key)
-                  ? "bg-[#26201c] text-white"
-                  : "bg-[#f1ede7] text-[#6b625b]"
-              }`}
-            >
-              <span className={`h-2 w-2 rounded-full ${meta.dot}`} />
-              {meta.label}
-            </button>
-          ))}
-          <Button variant="secondary" size="sm">
-            <ListFilter className="h-4 w-4" />
-            Zona
-          </Button>
-        </div>
-      </div>
-
-      {query.isLoading ? (
-        <LoadingState label="Masa planı yüklənir" />
-      ) : query.isError ? (
-        <ErrorState
-          message={getErrorMessage(query.error)}
-          onRetry={() => query.refetch()}
-        />
-      ) : tables.length === 0 ? (
-        <EmptyState title="Bu filtrə uyğun masa yoxdur" />
-      ) : (
-        <section className="card relative overflow-hidden p-5 sm:p-8">
-          <div
-            className="pointer-events-none absolute inset-0 opacity-35"
-            style={{
-              backgroundImage:
-                "linear-gradient(#e8e1d9 1px, transparent 1px), linear-gradient(90deg, #e8e1d9 1px, transparent 1px)",
-              backgroundSize: "32px 32px",
-            }}
-          />
-          <div className="relative grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-            {tables.map((table, index) => {
-              const meta = statusMeta[table.status];
-              return (
-                <button
-                  key={table.id}
-                  className={`group min-h-40 rounded-3xl border-2 p-4 text-left transition hover:-translate-y-1 hover:shadow-lg ${meta.card}`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div
-                      className={`grid h-10 w-10 place-items-center rounded-2xl ${meta.icon}`}
-                    >
-                      <Armchair className="h-5 w-5" />
-                    </div>
-                    <span className={`h-2.5 w-2.5 rounded-full ${meta.dot}`} />
-                  </div>
-                  <div className="mt-5 text-xl font-bold text-[#322b26]">
-                    Masa {String(index + 1).padStart(2, "0")}
-                  </div>
-                  <div className="mt-2 flex items-center justify-between text-xs">
-                    <span className="flex items-center gap-1 text-[#776e66]">
-                      <Users className="h-3.5 w-3.5" />
-                      {table.capacity} nəfər
-                    </span>
-                    <span className="font-bold text-[#5d554e]">{meta.label}</span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-      )}
-    </div>
-  );
+  const restaurantId = useAuthStore((state) => state.user?.restaurantId ?? "");
+  const [branchId, setBranchId] = useState(""); const [drafts, setDrafts] = useState<DiningTable[]>([]); const [selectedId, setSelectedId] = useState<string | null>(null); const [changed, setChanged] = useState<Set<string>>(new Set()); const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const branches = useQuery({ queryKey: branchKeys.all, queryFn: ({ signal }) => branchApi.list({ pageSize: 100, signal }) });
+  useEffect(() => { const items = branches.data?.data ?? []; if (!branchId && items.length) setBranchId(items[0].id); }, [branchId, branches.data?.data]);
+  const query = useQuery({ queryKey: [...tableKeys.all, branchId], queryFn: ({ signal }) => tableApi.list({ branchId, pageSize: 100, signal }), enabled: Boolean(branchId) });
+  useEffect(() => { if (query.data) { setDrafts(query.data.data ?? []); setChanged(new Set()); setSelectedId(null); } }, [query.data]);
+  const selected = useMemo(() => drafts.find((table) => table.id === selectedId) ?? null, [drafts, selectedId]);
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<Values>({ resolver: zodResolver(schema), defaultValues: defaults });
+  useEffect(() => { if (open) reset(selected ? { tableNumber: selected.tableNumber, capacity: selected.capacity, shape: selected.shape, status: selected.status, width: selected.width, length: selected.length, height: selected.height, rotationY: selected.rotationY } : defaults); }, [open, reset, selected]);
+  const saveLayout = useMutation({ mutationFn: () => tableApi.saveLayout(branchId, drafts.filter((table) => changed.has(table.id)).map((table) => ({ tableId: table.id, positionX: table.positionX, positionY: table.positionY, positionZ: table.positionZ, rotationX: table.rotationX, rotationY: table.rotationY, rotationZ: table.rotationZ, width: table.width, length: table.length }))), onSuccess: async () => { setChanged(new Set()); await queryClient.invalidateQueries({ queryKey: tableKeys.all }); } });
+  const saveTable = useMutation({ mutationFn: async (values: Values) => {
+    if (!branchId) throw new Error("Filial seçin.");
+    if (!selected) return tableApi.create({ ...values, status: values.status as TableStatus, restaurantId, branchId, positionX: 0, positionY: 0, positionZ: 0, rotationX: 0, rotationZ: 0, isActive: values.status !== TableStatus.Disabled });
+    const response = await tableApi.update(selected.id, { ...values, status: values.status as TableStatus, positionX: selected.positionX, positionY: selected.positionY, positionZ: selected.positionZ, rotationX: selected.rotationX, rotationZ: selected.rotationZ });
+    if (values.status !== selected.status) await tableApi.setStatus(selected.id, values.status as TableStatus);
+    return response;
+  }, onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: tableKeys.all }); setOpen(false); } });
+  const remove = useMutation({ mutationFn: (id: string) => tableApi.remove(id), onSuccess: async () => { setSelectedId(null); await queryClient.invalidateQueries({ queryKey: tableKeys.all }); } });
+  const move = (id: string, x: number, zValue: number) => { setDrafts((current) => current.map((table) => table.id === id ? { ...table, positionX: x, positionZ: zValue } : table)); setChanged((current) => new Set(current).add(id)); };
+  const updateGeometry = (key: "rotationY" | "width" | "length", value: number) => { if (!selectedId || !Number.isFinite(value)) return; setDrafts((current) => current.map((table) => table.id === selectedId ? { ...table, [key]: value } : table)); setChanged((current) => new Set(current).add(selectedId)); };
+  return <div className="page-enter space-y-6"><PageHeader eyebrow="Zal görünüşü" title="3D masa planı" description="Masanı 3D səhnədə sürüşdürün, ölçü və rotasiyanı tənzimləyib dəyişiklikləri toplu saxlayın." actions={<div className="flex gap-2"><Button variant="secondary" disabled={!changed.size} loading={saveLayout.isPending} onClick={() => saveLayout.mutate()}><Save className="h-4 w-4" />Planı saxla ({changed.size})</Button><Button disabled={!branchId} onClick={() => { setSelectedId(null); setOpen(true); }}><Plus className="h-4 w-4" />Yeni masa</Button></div>} />
+    <div className="card flex flex-col gap-3 p-4 sm:flex-row"><select aria-label="Filial" value={branchId} onChange={(event) => setBranchId(event.target.value)} className="h-11 flex-1 rounded-xl border px-3"><option value="">Filial seçin</option>{(branches.data?.data ?? []).map((branch) => <option key={branch.id} value={branch.id}>{branch.name}</option>)}</select><Button variant="secondary" loading={query.isFetching} disabled={!branchId} onClick={() => query.refetch()}><RefreshCw className="h-4 w-4" />Yenilə</Button></div>
+    {query.isLoading ? <LoadingState label="Masalar yüklənir" /> : query.isError ? <ErrorState message={getErrorMessage(query.error)} onRetry={() => query.refetch()} /> : !branchId ? <EmptyState title="Filial seçin" /> : drafts.length === 0 ? <EmptyState title="Bu filialda masa yoxdur" action={<Button size="sm" onClick={() => setOpen(true)}>İlk masanı yarat</Button>} /> : <div className="grid gap-5 xl:grid-cols-[1fr_310px]"><AdminHallEditor3D tables={drafts} selectedId={selectedId} onSelect={setSelectedId} onMove={move} /><aside className="card p-5">{selected ? <><div className="flex items-start justify-between"><div><p className="text-xs text-[#887d74]">Seçilmiş masa</p><h2 className="text-xl font-bold">Masa {selected.tableNumber}</h2></div><Badge tone={selected.status === TableStatus.Available ? "success" : selected.status === TableStatus.Disabled ? "danger" : "warning"}>{statuses[selected.status]}</Badge></div><div className="mt-5 space-y-4"><div className="grid grid-cols-2 gap-3"><FormField label="X" type="number" step="0.1" value={selected.positionX} onChange={(event) => move(selected.id, Number(event.target.value), selected.positionZ)} /><FormField label="Z" type="number" step="0.1" value={selected.positionZ} onChange={(event) => move(selected.id, selected.positionX, Number(event.target.value))} /></div><FormField label="Y rotasiyası (radian)" type="number" step="0.1" value={selected.rotationY} onChange={(event) => updateGeometry("rotationY", Number(event.target.value))} /><div className="grid grid-cols-2 gap-3"><FormField label="En" type="number" step="0.1" min="0.5" value={selected.width} onChange={(event) => updateGeometry("width", Number(event.target.value))} /><FormField label="Uzunluq" type="number" step="0.1" min="0.5" value={selected.length} onChange={(event) => updateGeometry("length", Number(event.target.value))} /></div><Button className="w-full" variant="secondary" onClick={() => setOpen(true)}>Məlumatları redaktə et</Button><Button className="w-full" variant="danger" loading={remove.isPending} onClick={() => { if (window.confirm(`Masa ${selected.tableNumber} silinsin?`)) remove.mutate(selected.id); }}><Trash2 className="h-4 w-4" />Masanı sil</Button></div></> : <p className="text-sm leading-6 text-[#776d65]">Məlumatları redaktə etmək üçün səhnədə bir masa seçin. Masanı sürükləməklə X/Z mövqeyi dəyişir.</p>}</aside></div>}
+    {(saveLayout.isError || saveTable.isError) && <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700">{getErrorMessage(saveLayout.error ?? saveTable.error)}</p>}
+    <Modal open={open} onClose={() => setOpen(false)} title={selected ? "Masanı redaktə et" : "Yeni masa"}><form className="space-y-4" onSubmit={handleSubmit((values) => saveTable.mutate(values))}><div className="grid gap-4 sm:grid-cols-2"><FormField label="Masa nömrəsi" error={errors.tableNumber?.message} {...register("tableNumber")} /><FormField label="Tutum" type="number" error={errors.capacity?.message} {...register("capacity", { valueAsNumber: true })} /></div><div className="grid gap-4 sm:grid-cols-2"><label><span className="mb-2 block text-sm font-semibold">Forma</span><select className="h-12 w-full rounded-xl border px-3" {...register("shape", { valueAsNumber: true })}>{shapes.map((name, index) => <option key={name} value={index}>{name}</option>)}</select></label><label><span className="mb-2 block text-sm font-semibold">Status</span><select className="h-12 w-full rounded-xl border px-3" {...register("status", { valueAsNumber: true })}>{statuses.map((name, index) => <option key={name} value={index}>{name}</option>)}</select></label></div><div className="grid grid-cols-3 gap-3"><FormField label="En" type="number" step="0.1" error={errors.width?.message} {...register("width", { valueAsNumber: true })} /><FormField label="Uzunluq" type="number" step="0.1" error={errors.length?.message} {...register("length", { valueAsNumber: true })} /><FormField label="Hündürlük" type="number" step="0.1" error={errors.height?.message} {...register("height", { valueAsNumber: true })} /></div><FormField label="Y rotasiyası" type="number" step="0.1" error={errors.rotationY?.message} {...register("rotationY", { valueAsNumber: true })} /><div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={() => setOpen(false)}>Ləğv et</Button><Button type="submit" loading={saveTable.isPending}>Yadda saxla</Button></div></form></Modal>
+  </div>;
 }

@@ -5,6 +5,7 @@ using HRestaurant.Configuration;
 using HRestaurant.Data;
 using HRestaurant.DTOS.Order;
 using HRestaurant.DTOS.OrderItem;
+using HRestaurant.DTOS.Payment;
 using HRestaurant.DTOS.Responses;
 using HRestaurant.Enum;
 using HRestaurant.Exceptions;
@@ -30,6 +31,7 @@ public sealed class OrderService : IOrderService
     private readonly ICurrentUserContext _currentUser;
     private readonly IInventoryAlertService _alerts;
     private readonly IKitchenNotifier _notifier;
+    private readonly IPaymentService _payments;
     private readonly OrderWorkflowSettings _settings;
     private readonly TimeProvider _timeProvider;
     private readonly ILogger<OrderService> _logger;
@@ -40,6 +42,7 @@ public sealed class OrderService : IOrderService
         ICurrentUserContext currentUser,
         IInventoryAlertService alerts,
         IKitchenNotifier notifier,
+        IPaymentService payments,
         OrderWorkflowSettings settings,
         TimeProvider timeProvider,
         ILogger<OrderService> logger)
@@ -49,6 +52,7 @@ public sealed class OrderService : IOrderService
         _currentUser = currentUser;
         _alerts = alerts;
         _notifier = notifier;
+        _payments = payments;
         _settings = settings;
         _timeProvider = timeProvider;
         _logger = logger;
@@ -472,13 +476,24 @@ public sealed class OrderService : IOrderService
         var order = await LoadOrderForMutationAsync(id, cancellationToken);
         EnsureNotFinal(order);
         if (order.IsPaid) throw new ConflictException("Order is already paid.");
-        ApplyExpectedVersion(order, rowVersion);
-        order.IsPaid = true;
-        if (order.Status == OrderStatus.Pending) order.Status = OrderStatus.Confirmed;
-        order.UpdateAt = UtcNow;
-        await SaveWithConcurrencyAsync(cancellationToken);
+        var remaining = Math.Max(0, order.TotalAmount - order.PaidAmount);
+        if (remaining <= 0)
+            throw new ConflictException("The order has no remaining balance.");
+        await _payments.SplitAsync(new SplitPaymentDTO
+        {
+            OrderId = order.ID,
+            OrderRowVersion = rowVersion,
+            Payments =
+            [
+                new SplitPaymentItemDTO
+                {
+                    PaymentMethod = PaymentMethod.Cash,
+                    Amount = remaining
+                }
+            ]
+        }, cancellationToken);
         await NotifyAsync(order.ID, "OrderStatusChanged", cancellationToken);
-        return ApiResponse.Success("Payment processed successfully.");
+        return ApiResponse.Success("Cash payment processed successfully.");
     }
 
     private async Task<ApiResponse<object?>> ChangeStatusAsync(
@@ -531,6 +546,9 @@ public sealed class OrderService : IOrderService
         }
         order.Status = next;
         order.UpdateAt = UtcNow;
+        if (next == OrderStatus.Ready)
+            _db.InventoryNotifications.Add(
+                SystemNotificationFactory.OrderReady(order, UtcNow));
         await SaveWithConcurrencyAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         await NotifyAsync(order.ID,

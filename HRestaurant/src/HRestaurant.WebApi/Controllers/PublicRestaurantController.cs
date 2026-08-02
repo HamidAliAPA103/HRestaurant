@@ -30,6 +30,20 @@ public sealed class PublicRestaurantController : ApiControllerBase
         _availabilityService = availabilityService;
     }
 
+    [HttpGet("restaurants")]
+    [SwaggerOperation(
+        Summary = "List public restaurants",
+        Description = "Returns active restaurants available on the public website.",
+        Tags = ["Public Restaurant"])]
+    [ProducesResponseType(
+        typeof(ApiResponse<IReadOnlyCollection<PublicRestaurantDto>>),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status429TooManyRequests)]
+    public async Task<IActionResult> GetRestaurants(CancellationToken cancellationToken)
+    {
+        return FromResponse(await _restaurantService.GetAllAsync(cancellationToken));
+    }
+
     [HttpGet("restaurants/{slug}")]
     [SwaggerOperation(
         Summary = "Get a public restaurant",
@@ -87,6 +101,25 @@ public sealed class PublicRestaurantController : ApiControllerBase
             await _restaurantService.GetBranchesAsync(
                 restaurantSlug,
                 cancellationToken));
+    }
+
+    [HttpGet("restaurants/{restaurantSlug}/menu")]
+    [SwaggerOperation(
+        Summary = "Get the public restaurant menu",
+        Description = "Returns active menu categories and their non-deleted items without requiring authentication.",
+        Tags = ["Public Restaurant"])]
+    [ProducesResponseType(
+        typeof(ApiResponse<IReadOnlyCollection<PublicMenuCategoryDto>>),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status429TooManyRequests)]
+    public async Task<IActionResult> GetMenu(
+        string restaurantSlug,
+        CancellationToken cancellationToken)
+    {
+        return FromResponse(await _restaurantService.GetMenuAsync(
+            restaurantSlug,
+            cancellationToken));
     }
 
     [HttpGet("branches/{branchId:guid}/available-tables")]

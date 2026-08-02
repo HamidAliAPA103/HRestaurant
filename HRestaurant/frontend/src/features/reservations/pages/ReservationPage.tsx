@@ -1,325 +1,62 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  CalendarDays,
-  Clock3,
-  Plus,
-  Search,
-  Users,
-} from "lucide-react";
-import { useMemo, useState } from "react";
+import { CalendarDays, Edit3, Eye, Plus, RefreshCw, Search, Trash2, Users } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  createResource,
-  listResource,
-} from "@/shared/api/resources";
+import { branchApi, branchKeys } from "@/api/branchApi";
+import { customerApi, customerKeys } from "@/api/customerApi";
+import type { ReservationDto } from "@/api/contracts";
+import { reservationApi, reservationKeys } from "@/api/reservationApi";
+import { tableApi, tableKeys } from "@/api/tableApi";
 import { Badge } from "@/shared/components/Badge";
 import { Button } from "@/shared/components/Button";
 import { FormField } from "@/shared/components/FormField";
 import { Modal } from "@/shared/components/Modal";
 import { PageHeader } from "@/shared/components/PageHeader";
-import {
-  EmptyState,
-  ErrorState,
-  LoadingState,
-} from "@/shared/components/StatePanel";
-import {
-  formatDate,
-  getErrorMessage,
-  shortId,
-} from "@/shared/lib/utils";
-import {
-  ReservationStatus,
-  type DiningTable,
-  type Reservation,
-  type ReservationInput,
-  type User,
-} from "@/shared/types/domain";
+import { EmptyState, ErrorState, LoadingState } from "@/shared/components/StatePanel";
+import { formatDate, getErrorMessage } from "@/shared/lib/utils";
+import { ReservationStatus } from "@/shared/types/domain";
 
-const schema = z.object({
-  customerId: z.string().min(1, "Müştəri seçin."),
-  tableId: z.string().min(1, "Masa seçin."),
-  reservationTime: z.string().min(1, "Tarix və saat seçin."),
-  guestCount: z
-    .number()
-    .int()
-    .min(1, "Qonaq sayı ən azı 1 olmalıdır."),
-});
-
-type ReservationForm = z.infer<typeof schema>;
-
-const statusMeta = {
-  [ReservationStatus.Pending]: { label: "Gözləyir", tone: "warning" },
-  [ReservationStatus.Confirmed]: { label: "Təsdiqlənib", tone: "success" },
-  [ReservationStatus.Cancelled]: { label: "Ləğv edilib", tone: "danger" },
-  [ReservationStatus.Completed]: { label: "Tamamlanıb", tone: "neutral" },
-} as const;
+const schema = z.object({ customerId: z.string().uuid("Müştəri seçin."), branchId: z.string().uuid("Filial seçin."), tableId: z.string().uuid("Masa seçin."), reservationTime: z.string().min(1, "Tarix və saat seçin."), durationMinutes: z.number().int().min(30).max(240), guestCount: z.number().int().min(1).max(30) });
+type Values = z.infer<typeof schema>;
+const defaults: Values = { customerId: "", branchId: "", tableId: "", reservationTime: "", durationMinutes: 120, guestCount: 2 };
+const meta: Record<ReservationStatus, { label: string; tone: "success" | "warning" | "danger" | "neutral" | "info" }> = {
+  [ReservationStatus.Pending]: { label: "Gözləyir", tone: "warning" }, [ReservationStatus.Confirmed]: { label: "Təsdiqlənib", tone: "success" }, [ReservationStatus.Cancelled]: { label: "Ləğv edilib", tone: "danger" }, [ReservationStatus.Completed]: { label: "Tamamlanıb", tone: "neutral" }, [ReservationStatus.Seated]: { label: "Əyləşib", tone: "info" }, [ReservationStatus.NoShow]: { label: "Gəlmədi", tone: "danger" },
+};
+const transitions: Partial<Record<ReservationStatus, ReservationStatus[]>> = {
+  [ReservationStatus.Pending]: [ReservationStatus.Confirmed, ReservationStatus.Cancelled],
+  [ReservationStatus.Confirmed]: [ReservationStatus.Seated, ReservationStatus.Cancelled, ReservationStatus.NoShow],
+  [ReservationStatus.Seated]: [ReservationStatus.Completed, ReservationStatus.Cancelled],
+};
 
 export function ReservationPage() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(""); const [branchFilter, setBranchFilter] = useState(""); const [statusFilter, setStatusFilter] = useState(""); const [from, setFrom] = useState(""); const [to, setTo] = useState(""); const [page, setPage] = useState(1); const [open, setOpen] = useState(false); const [editing, setEditing] = useState<ReservationDto | null>(null); const [detail, setDetail] = useState<ReservationDto | null>(null);
   const queryClient = useQueryClient();
-  const reservationsQuery = useQuery({
-    queryKey: ["reservations"],
-    queryFn: () => listResource<Reservation>("/Reservation"),
-  });
-  const usersQuery = useQuery({
-    queryKey: ["users", "reservation"],
-    queryFn: () => listResource<User>("/User"),
-  });
-  const tablesQuery = useQuery({
-    queryKey: ["tables", "reservation"],
-    queryFn: () => listResource<DiningTable>("/Table"),
-  });
-  const customers = (usersQuery.data?.data ?? []).filter(
-    (user) => user.role.toLowerCase() === "customer",
-  );
-  const customerMap = Object.fromEntries(
-    customers.map((user) => [user.id, user.name]),
-  );
-  const reservations = useMemo(
-    () =>
-      (reservationsQuery.data?.data ?? []).filter((reservation) =>
-        `${customerMap[reservation.customerId] ?? reservation.customerId}`
-          .toLowerCase()
-          .includes(search.toLowerCase()),
-      ),
-    [customerMap, reservationsQuery.data?.data, search],
-  );
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<ReservationForm>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      customerId: "",
-      tableId: "",
-      reservationTime: "",
-      guestCount: 2,
-    },
-  });
-  const mutation = useMutation({
-    mutationFn: async (values: ReservationForm) => {
-      const input: ReservationInput = {
-        ...values,
-        reservationTime: new Date(values.reservationTime).toISOString(),
-        status: ReservationStatus.Pending,
-      };
-      const response = await createResource<ReservationInput>(
-        "/Reservation",
-        input,
-      );
-      if (!response.success) throw new Error(response.message);
-      return response;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["reservations"] });
-      reset();
-      setModalOpen(false);
-    },
-  });
+  const reservations = useQuery({ queryKey: [...reservationKeys.all, page, search, branchFilter, statusFilter, from, to], queryFn: ({ signal }) => reservationApi.list({ pageNumber: page, pageSize: 20, search: search || undefined, branchId: branchFilter || undefined, status: statusFilter === "" ? undefined : Number(statusFilter) as ReservationStatus, from: from || undefined, to: to || undefined, signal }) });
+  const branches = useQuery({ queryKey: branchKeys.all, queryFn: ({ signal }) => branchApi.list({ pageSize: 100, signal }) });
+  const customers = useQuery({ queryKey: customerKeys.all, queryFn: ({ signal }) => customerApi.list({ pageSize: 100, signal }) });
+  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<Values>({ resolver: zodResolver(schema), defaultValues: defaults });
+  const formBranchId = watch("branchId");
+  const tables = useQuery({ queryKey: [...tableKeys.all, "reservation", formBranchId], queryFn: ({ signal }) => tableApi.list({ branchId: formBranchId, isActive: true, pageSize: 100, signal }), enabled: Boolean(formBranchId) });
+  useEffect(() => { if (!open) return; reset(editing ? { customerId: editing.customerId ?? "", branchId: editing.branchId, tableId: editing.tableId, reservationTime: toLocalInput(editing.reservationTime), durationMinutes: editing.durationMinutes, guestCount: editing.guestCount } : defaults); }, [editing, open, reset]);
+  const save = useMutation({ mutationFn: (values: Values) => { const input = { ...values, reservationTime: new Date(values.reservationTime).toISOString(), status: editing?.status ?? ReservationStatus.Pending }; return editing ? reservationApi.update(editing.id, input) : reservationApi.create(input); }, onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: reservationKeys.all }); setOpen(false); setEditing(null); } });
+  const status = useMutation({ mutationFn: ({ item, next }: { item: ReservationDto; next: ReservationStatus }) => reservationApi.setStatus(item.id, next, next === ReservationStatus.Cancelled ? window.prompt("Ləğv səbəbi:")?.trim() || "Operator tərəfindən ləğv edildi." : undefined), onSuccess: async () => { setDetail(null); await queryClient.invalidateQueries({ queryKey: reservationKeys.all }); } });
+  const remove = useMutation({ mutationFn: (id: string) => reservationApi.remove(id), onSuccess: () => queryClient.invalidateQueries({ queryKey: reservationKeys.all }) });
+  const branchMap = Object.fromEntries((branches.data?.data ?? []).map((item) => [item.id, item.name]));
+  const customerMap = Object.fromEntries((customers.data?.data ?? []).map((item) => [item.id, item.fullName]));
+  const tableMap = Object.fromEntries((tables.data?.data ?? []).map((item) => [item.id, item.tableNumber]));
+  const items = reservations.data?.data ?? [];
+  return <div className="page-enter space-y-6"><PageHeader eyebrow="Qonaq planı" title="Rezervasiyalar" description="Tarix, filial, masa və status üzrə idarəetmə." actions={<Button onClick={() => { setEditing(null); setOpen(true); }}><Plus className="h-4 w-4" />Yeni rezervasiya</Button>} />
+    <div className="grid gap-4 sm:grid-cols-3">{[{ label: "Nəticə", value: reservations.data?.totalCount ?? 0, Icon: CalendarDays }, { label: "Təsdiqlənən", value: items.filter((item) => item.status === ReservationStatus.Confirmed).length, Icon: CalendarDays }, { label: "Qonaq sayı", value: items.reduce((sum, item) => sum + item.guestCount, 0), Icon: Users }].map(({ label, value, Icon }) => <div key={label} className="card flex items-center gap-4 p-5"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-[#f2ede6] text-[#e85d3f]"><Icon className="h-5 w-5" /></div><div><p className="text-2xl font-bold">{value}</p><p className="text-xs text-[#877d75]">{label}</p></div></div>)}</div>
+    <div className="card grid gap-3 p-4 md:grid-cols-3 xl:grid-cols-6"><label className="relative md:col-span-2"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" /><input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Ad və ya təsdiq kodu..." className="h-11 w-full rounded-xl border pl-10 pr-3" /></label><select aria-label="Filial filtri" value={branchFilter} onChange={(event) => { setBranchFilter(event.target.value); setPage(1); }} className="h-11 rounded-xl border px-3"><option value="">Bütün filiallar</option>{(branches.data?.data ?? []).map((branch) => <option key={branch.id} value={branch.id}>{branch.name}</option>)}</select><select aria-label="Status filtri" value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }} className="h-11 rounded-xl border px-3"><option value="">Bütün statuslar</option>{Object.entries(meta).map(([value,item]) => <option key={value} value={value}>{item.label}</option>)}</select><input aria-label="Başlanğıc tarix" type="date" value={from} onChange={(event) => setFrom(event.target.value)} className="h-11 rounded-xl border px-3" /><input aria-label="Son tarix" type="date" value={to} onChange={(event) => setTo(event.target.value)} className="h-11 rounded-xl border px-3" /><Button variant="secondary" loading={reservations.isFetching} onClick={() => reservations.refetch()}><RefreshCw className="h-4 w-4" />Yenilə</Button></div>
+    {reservations.isLoading ? <LoadingState label="Rezervasiyalar yüklənir" /> : reservations.isError ? <ErrorState message={getErrorMessage(reservations.error)} onRetry={() => reservations.refetch()} /> : !items.length ? <EmptyState title="Rezervasiya tapılmadı" /> : <><div className="table-shell overflow-x-auto"><table className="data-table min-w-[1000px]"><thead><tr><th>Kod / Qonaq</th><th>Filial</th><th>Tarix</th><th>Masa</th><th>Qonaq</th><th>Status</th><th>Əməliyyat</th></tr></thead><tbody>{items.map((item) => <tr key={item.id}><td><p className="font-bold">{item.fullName || customerMap[item.customerId ?? ""] || "Müştəri"}</p><p className="text-xs text-[#8b8179]">{item.confirmationCode}</p></td><td>{branchMap[item.branchId] ?? item.branchId.slice(0,8)}</td><td>{formatDate(item.reservationTime, true)}<span className="block text-xs">{item.durationMinutes} dəq.</span></td><td>{tableMap[item.tableId] ?? item.tableId.slice(0,6)}</td><td>{item.guestCount}</td><td><Badge tone={meta[item.status].tone}>{meta[item.status].label}</Badge></td><td><div className="flex gap-1"><button type="button" aria-label="Detallara bax" className="rounded-lg p-2" onClick={() => setDetail(item)}><Eye className="h-4 w-4" /></button><button type="button" aria-label="Redaktə et" className="rounded-lg p-2" onClick={() => { setEditing(item); setOpen(true); }}><Edit3 className="h-4 w-4" /></button><button type="button" aria-label="Sil" className="rounded-lg p-2 text-red-600" onClick={() => { if (window.confirm(`${item.confirmationCode} silinsin?`)) remove.mutate(item.id); }}><Trash2 className="h-4 w-4" /></button></div></td></tr>)}</tbody></table></div><div className="flex justify-end gap-2"><Button variant="secondary" disabled={!reservations.data?.hasPreviousPage} onClick={() => setPage((value) => value - 1)}>Əvvəlki</Button><span className="grid h-11 place-items-center px-3 text-sm">{page} / {reservations.data?.totalPages || 1}</span><Button variant="secondary" disabled={!reservations.data?.hasNextPage} onClick={() => setPage((value) => value + 1)}>Növbəti</Button></div></>}
+    <Modal open={Boolean(detail)} onClose={() => setDetail(null)} title={detail?.confirmationCode ?? "Rezervasiya"}>{detail && <div className="space-y-4"><dl className="grid grid-cols-2 gap-4 text-sm"><div><dt className="text-[#8b8179]">Qonaq</dt><dd className="font-bold">{detail.fullName}</dd></div><div><dt className="text-[#8b8179]">Status</dt><dd>{meta[detail.status].label}</dd></div><div><dt className="text-[#8b8179]">Vaxt</dt><dd>{formatDate(detail.reservationTime, true)}</dd></div><div><dt className="text-[#8b8179]">Qonaq sayı</dt><dd>{detail.guestCount}</dd></div></dl>{status.isError && <p className="text-sm text-red-600">{getErrorMessage(status.error)}</p>}<div className="flex flex-wrap justify-end gap-2">{(transitions[detail.status] ?? []).map((next) => <Button key={next} variant={next === ReservationStatus.Cancelled ? "danger" : "secondary"} loading={status.isPending} onClick={() => status.mutate({ item: detail, next })}>{meta[next].label}</Button>)}</div></div>}</Modal>
+    <Modal open={open} onClose={() => { setOpen(false); setEditing(null); }} title={editing ? "Rezervasiyanı redaktə et" : "Yeni rezervasiya"}><form className="space-y-4" onSubmit={handleSubmit((values) => save.mutate(values))}><label><span className="mb-2 block text-sm font-semibold">Müştəri</span><select className="h-12 w-full rounded-xl border px-3" {...register("customerId")}><option value="">Seçin</option>{(customers.data?.data ?? []).map((customer) => <option key={customer.id} value={customer.id}>{customer.fullName} · {customer.phone}</option>)}</select>{errors.customerId && <span className="text-xs text-red-600">{errors.customerId.message}</span>}</label><div className="grid gap-4 sm:grid-cols-2"><label><span className="mb-2 block text-sm font-semibold">Filial</span><select className="h-12 w-full rounded-xl border px-3" {...register("branchId")}><option value="">Seçin</option>{(branches.data?.data ?? []).map((branch) => <option key={branch.id} value={branch.id}>{branch.name}</option>)}</select></label><label><span className="mb-2 block text-sm font-semibold">Masa</span><select className="h-12 w-full rounded-xl border px-3" {...register("tableId")}><option value="">Seçin</option>{(tables.data?.data ?? []).map((table) => <option key={table.id} value={table.id}>{table.tableNumber} · {table.capacity} nəfər</option>)}</select></label></div><FormField label="Tarix və saat" type="datetime-local" min={new Date().toISOString().slice(0,16)} error={errors.reservationTime?.message} {...register("reservationTime")} /><div className="grid gap-4 sm:grid-cols-2"><FormField label="Müddət (dəqiqə)" type="number" step="30" error={errors.durationMinutes?.message} {...register("durationMinutes", { valueAsNumber: true })} /><FormField label="Qonaq sayı" type="number" error={errors.guestCount?.message} {...register("guestCount", { valueAsNumber: true })} /></div>{save.isError && <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700">{getErrorMessage(save.error)}</p>}<div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={() => setOpen(false)}>Ləğv et</Button><Button type="submit" loading={save.isPending}>Yadda saxla</Button></div></form></Modal>
+  </div>;
+}
 
-  return (
-    <div className="page-enter space-y-6">
-      <PageHeader
-        eyebrow="Qonaq planı"
-        title="Rezervasiyalar"
-        description="Gələcək qonaqları, masa təyinatlarını və rezervasiya statuslarını idarə edin."
-        actions={
-          <Button onClick={() => setModalOpen(true)}>
-            <Plus className="h-4 w-4" />
-            Yeni rezervasiya
-          </Button>
-        }
-      />
-
-      <div className="grid gap-4 sm:grid-cols-3">
-        {[
-          {
-            label: "Bu gün",
-            value: reservations.length,
-            icon: CalendarDays,
-          },
-          {
-            label: "Təsdiqlənən",
-            value: reservations.filter(
-              (item) => item.status === ReservationStatus.Confirmed,
-            ).length,
-            icon: Clock3,
-          },
-          {
-            label: "Qonaq sayı",
-            value: reservations.reduce(
-              (sum, item) => sum + item.guestCount,
-              0,
-            ),
-            icon: Users,
-          },
-        ].map((stat) => (
-          <div key={stat.label} className="card flex items-center gap-4 p-5">
-            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[#f2ede6] text-[#e85d3f]">
-              <stat.icon className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <div className="text-xs text-[#877d75]">{stat.label}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="card p-4">
-        <label className="relative block max-w-md">
-          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#968d85]" />
-          <input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Müştəri adı ilə axtar..."
-            className="h-11 w-full rounded-xl border border-[#ded8d0] bg-[#faf8f5] pl-10 pr-4 text-sm outline-none focus:border-[#e85d3f]"
-          />
-        </label>
-      </div>
-
-      {reservationsQuery.isLoading ? (
-        <LoadingState label="Rezervasiyalar yüklənir" />
-      ) : reservationsQuery.isError ? (
-        <ErrorState
-          message={getErrorMessage(reservationsQuery.error)}
-          onRetry={() => reservationsQuery.refetch()}
-        />
-      ) : reservations.length === 0 ? (
-        <EmptyState title="Rezervasiya tapılmadı" />
-      ) : (
-        <div className="table-shell overflow-x-auto">
-          <table className="data-table min-w-[760px]">
-            <thead>
-              <tr>
-                <th>Qonaq</th>
-                <th>Tarix və saat</th>
-                <th>Masa</th>
-                <th>Qonaq sayı</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reservations.map((reservation) => {
-                const meta = statusMeta[reservation.status];
-                const tableIndex =
-                  (tablesQuery.data?.data ?? []).findIndex(
-                    (table) => table.id === reservation.tableId,
-                  ) + 1;
-                return (
-                  <tr key={reservation.id}>
-                    <td>
-                      <div className="font-bold text-[#302a26]">
-                        {customerMap[reservation.customerId] ??
-                          shortId(reservation.customerId)}
-                      </div>
-                      <div className="mt-0.5 text-xs text-[#91877f]">
-                        {shortId(reservation.id)}
-                      </div>
-                    </td>
-                    <td>{formatDate(reservation.reservationTime, true)}</td>
-                    <td>Masa {tableIndex || "—"}</td>
-                    <td>
-                      <span className="inline-flex items-center gap-1.5">
-                        <Users className="h-3.5 w-3.5 text-[#9a9088]" />
-                        {reservation.guestCount} nəfər
-                      </span>
-                    </td>
-                    <td>
-                      <Badge tone={meta.tone} dot>
-                        {meta.label}
-                      </Badge>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title="Yeni rezervasiya"
-        description="Qonaq, vaxt və masa məlumatlarını seçin."
-      >
-        <form
-          className="space-y-4"
-          onSubmit={handleSubmit((values) => mutation.mutate(values))}
-        >
-          <label className="block">
-            <span className="mb-2 block text-sm font-semibold">Müştəri</span>
-            <select
-              className="h-12 w-full rounded-xl border border-[#dcd5cc] bg-white px-4 text-sm outline-none focus:border-[#e85d3f]"
-              {...register("customerId")}
-            >
-              <option value="">Müştəri seçin</option>
-              {customers.map((customer) => (
-                <option key={customer.id} value={customer.id}>
-                  {customer.name}
-                </option>
-              ))}
-            </select>
-            {errors.customerId && (
-              <span className="mt-1.5 block text-xs text-[#c94a33]">
-                {errors.customerId.message}
-              </span>
-            )}
-          </label>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="mb-2 block text-sm font-semibold">Masa</span>
-              <select
-                className="h-12 w-full rounded-xl border border-[#dcd5cc] bg-white px-4 text-sm outline-none focus:border-[#e85d3f]"
-                {...register("tableId")}
-              >
-                <option value="">Masa seçin</option>
-                {(tablesQuery.data?.data ?? []).map((table, index) => (
-                  <option key={table.id} value={table.id}>
-                    Masa {table.tableNumber || index + 1} · {table.capacity} nəfər
-                  </option>
-                ))}
-              </select>
-            </label>
-            <FormField
-              label="Qonaq sayı"
-              type="number"
-              min={1}
-              error={errors.guestCount?.message}
-              {...register("guestCount", { valueAsNumber: true })}
-            />
-          </div>
-          <FormField
-            label="Tarix və saat"
-            type="datetime-local"
-            error={errors.reservationTime?.message}
-            {...register("reservationTime")}
-          />
-          {mutation.isError && (
-            <p className="rounded-xl bg-[#fff0ed] p-3 text-sm text-[#b5442f]">
-              {getErrorMessage(mutation.error)}
-            </p>
-          )}
-          <div className="flex justify-end gap-2 pt-2">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setModalOpen(false)}
-            >
-              Ləğv et
-            </Button>
-            <Button type="submit" loading={mutation.isPending}>
-              Rezervasiya yarat
-            </Button>
-          </div>
-        </form>
-      </Modal>
-    </div>
-  );
+function toLocalInput(value: string) {
+  const date = new Date(value); const offset = date.getTimezoneOffset();
+  return new Date(date.getTime() - offset * 60_000).toISOString().slice(0, 16);
 }

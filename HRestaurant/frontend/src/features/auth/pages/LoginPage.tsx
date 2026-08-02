@@ -2,8 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import {
   ArrowRight,
-  BarChart3,
-  CheckCircle2,
   Eye,
   EyeOff,
   LockKeyhole,
@@ -14,6 +12,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Navigate,
+  Link,
   useLocation,
   useNavigate,
 } from "react-router-dom";
@@ -93,23 +92,9 @@ export function LoginPage() {
               əməliyyatlarınız real vaxtda sizinlədir.
             </p>
 
-            <div className="mt-10 grid max-w-lg grid-cols-2 gap-3">
-              <div className="rounded-2xl border border-white/8 bg-white/5 p-4">
-                <div className="flex items-center gap-2 text-sm text-white/55">
-                  <BarChart3 className="h-4 w-4 text-[#e85d3f]" />
-                  Bu gün satış
-                </div>
-                <div className="mt-3 text-2xl font-bold">₼ 4,860</div>
-                <div className="mt-1 text-xs text-[#85ce9b]">↑ 12.8% artım</div>
-              </div>
-              <div className="rounded-2xl border border-white/8 bg-white/5 p-4">
-                <div className="flex items-center gap-2 text-sm text-white/55">
-                  <CheckCircle2 className="h-4 w-4 text-[#f0aa51]" />
-                  Aktiv sifariş
-                </div>
-                <div className="mt-3 text-2xl font-bold">24</div>
-                <div className="mt-1 text-xs text-white/40">Orta vaxt 18 dəq.</div>
-              </div>
+            <div className="mt-10 grid max-w-lg grid-cols-2 gap-3 text-sm text-white/60">
+              <div className="rounded-2xl border border-white/8 bg-white/5 p-4">Canlı sifariş və mətbəx axını</div>
+              <div className="rounded-2xl border border-white/8 bg-white/5 p-4">Rezervasiya və hesabat idarəetməsi</div>
             </div>
           </div>
 
@@ -151,9 +136,7 @@ export function LoginPage() {
               />
 
               <div>
-                <label className="mb-2 block text-sm font-semibold text-[#3c3530]">
-                  Şifrə
-                </label>
+                <div className="mb-2 flex items-center justify-between"><label className="text-sm font-semibold text-[#3c3530]">Şifrə</label><Link to="/forgot-password" className="text-xs font-bold text-[#d64f34]">Şifrəni unutmusunuz?</Link></div>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -198,6 +181,8 @@ export function LoginPage() {
                 {!mutation.isPending && <ArrowRight className="h-4 w-4" />}
               </Button>
             </form>
+
+            <p className="mt-5 text-center text-sm text-[#7d736b]">Yeni və sahibsiz restoranı qoşursunuz? <Link to="/register" className="font-bold text-[#d64f34]">İlk owner hesabını yaradın</Link></p>
 
             <div className="mt-8 flex items-center justify-center gap-2 text-xs text-[#928980]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#64a779]" />

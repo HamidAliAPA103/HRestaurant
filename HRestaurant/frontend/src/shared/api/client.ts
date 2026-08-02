@@ -7,10 +7,14 @@ import type { ApiResponse } from "@/shared/types/api";
 import type { AuthResponse } from "@/shared/types/auth";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || "/api";
+const configuredTimeout = Number(import.meta.env.VITE_API_TIMEOUT_MS);
+const timeout = Number.isFinite(configuredTimeout) && configuredTimeout > 0
+  ? configuredTimeout
+  : 15_000;
 
 export const apiClient = axios.create({
   baseURL,
-  timeout: 15_000,
+  timeout,
   headers: {
     Accept: "application/json",
   },
@@ -18,7 +22,7 @@ export const apiClient = axios.create({
 
 const refreshClient = axios.create({
   baseURL,
-  timeout: 15_000,
+  timeout,
   headers: {
     Accept: "application/json",
   },

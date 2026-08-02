@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { Navigate } from "react-router-dom";
 import type { RouteObject } from "react-router-dom";
 import { PublicLayout } from "@/layouts/PublicLayout";
 import { LoadingState } from "@/shared/components/StatePanel";
@@ -9,6 +10,12 @@ const PublicRestaurantPage = lazy(() =>
   ).then((module) => ({
     default: module.PublicRestaurantPage,
   })),
+);
+const PublicHomePage = lazy(() =>
+  import("@/features/public-restaurant/pages/PublicHomePage").then((module) => ({ default: module.PublicHomePage })),
+);
+const PublicMenuPage = lazy(() =>
+  import("@/features/public-restaurant/pages/PublicMenuPage").then((module) => ({ default: module.PublicMenuPage })),
 );
 
 const ReservationTrackingPage = lazy(() =>
@@ -24,6 +31,10 @@ export const publicRoutes: RouteObject[] = [
     element: <PublicLayout />,
     children: [
       {
+        index: true,
+        element: <Suspense fallback={<LoadingState label="Restoranlar yüklənir" />}><PublicHomePage /></Suspense>,
+      },
+      {
         path: "/restaurants/:restaurantSlug",
         element: (
           <Suspense fallback={<LoadingState label="Restoran yüklənir" />}>
@@ -32,12 +43,24 @@ export const publicRoutes: RouteObject[] = [
         ),
       },
       {
+        path: "/restaurants/:restaurantSlug/menu",
+        element: <Suspense fallback={<LoadingState label="Menyu yüklənir" />}><PublicMenuPage /></Suspense>,
+      },
+      {
+        path: "/restaurants/:restaurantSlug/reservation",
+        element: <Suspense fallback={<LoadingState label="Rezervasiya açılır" />}><PublicRestaurantPage /></Suspense>,
+      },
+      {
         path: "/reservation/track",
         element: (
           <Suspense fallback={<LoadingState label="Rezervasiya açılır" />}>
             <ReservationTrackingPage />
           </Suspense>
         ),
+      },
+      {
+        path: "/reservation/success",
+        element: <Navigate to="/reservation/track" replace />,
       },
     ],
   },

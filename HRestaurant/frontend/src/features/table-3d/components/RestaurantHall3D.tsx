@@ -1,10 +1,11 @@
-import { Bounds, OrbitControls } from "@react-three/drei";
+import { Bounds } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useMemo } from "react";
 import type { PublicRestaurantTable } from "@/types/public";
 import { HallFloor } from "./HallFloor";
 import { HallWalls } from "./HallWalls";
 import { RestaurantTable3D } from "./RestaurantTable3D";
+import { CameraController } from "./CameraController";
 
 interface RestaurantHall3DProps {
   tables: PublicRestaurantTable[];
@@ -65,15 +66,7 @@ export function RestaurantHall3D({
             </group>
           </Bounds>
         </Suspense>
-        <OrbitControls
-          makeDefault
-          enableDamping
-          dampingFactor={0.08}
-          minDistance={7}
-          maxDistance={30}
-          maxPolarAngle={Math.PI / 2.05}
-          target={[0, 0.5, 0]}
-        />
+        <CameraController tables={laidOutTables} />
       </Canvas>
     </div>
   );

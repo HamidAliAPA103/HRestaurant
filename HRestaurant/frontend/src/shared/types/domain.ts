@@ -19,12 +19,19 @@ export interface RestaurantInput {
 }
 
 export interface User extends BaseEntity {
-  restaurantId?: string;
-  branchId?: string;
+  restaurantId: string;
+  branchId: string;
+  branchName: string;
+  appUserId?: string | null;
   email: string;
   name: string;
+  phone?: string | null;
   role: string;
-  isActive?: boolean;
+  salary: number;
+  hireDate?: string | null;
+  avatarUrl?: string | null;
+  emergencyContact?: string | null;
+  isActive: boolean;
 }
 
 export interface UserInput {
@@ -60,6 +67,12 @@ export interface MenuItem extends BaseEntity {
   isPopular: boolean;
   desc: string;
   nutrition: string;
+  ingredients?: Array<{
+    ingredientId: string;
+    name: string;
+    unit: number;
+    requiredQuantity: number;
+  }>;
 }
 
 export enum TableStatus {
@@ -78,6 +91,16 @@ export interface DiningTable extends BaseEntity {
   capacity: number;
   status: TableStatus;
   isActive: boolean;
+  shape: number;
+  positionX: number;
+  positionY: number;
+  positionZ: number;
+  rotationX: number;
+  rotationY: number;
+  rotationZ: number;
+  width: number;
+  length: number;
+  height: number;
 }
 
 export enum OrderType {
@@ -178,6 +201,8 @@ export enum ReservationStatus {
   Confirmed = 1,
   Cancelled = 2,
   Completed = 3,
+  Seated = 4,
+  NoShow = 5,
 }
 
 export interface Reservation extends BaseEntity {

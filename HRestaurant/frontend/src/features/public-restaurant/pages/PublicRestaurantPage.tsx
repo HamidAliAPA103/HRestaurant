@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { Clock3, LoaderCircle, MapPin, RefreshCw } from "lucide-react";
+import { Clock3, LoaderCircle, MapPin, RefreshCw, UtensilsCrossed } from "lucide-react";
 import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import {
   getPublicApiError,
+  getPublicMenu,
   getPublicRestaurant,
 } from "@/api/public-api";
 import { ReservationWizard } from "@/features/reservations/components/ReservationWizard";
@@ -12,9 +13,15 @@ import { RestaurantHero } from "../components/RestaurantHero";
 
 export function PublicRestaurantPage() {
   const { restaurantSlug = "" } = useParams();
+  const location = useLocation();
   const query = useQuery({
     queryKey: ["public-restaurant", restaurantSlug],
     queryFn: () => getPublicRestaurant(restaurantSlug),
+    enabled: Boolean(restaurantSlug),
+  });
+  const menuQuery = useQuery({
+    queryKey: ["public-menu", restaurantSlug],
+    queryFn: () => getPublicMenu(restaurantSlug),
     enabled: Boolean(restaurantSlug),
   });
 
@@ -35,6 +42,11 @@ export function PublicRestaurantPage() {
       setMeta("property", "og:image", query.data.coverImageUrl);
     }
   }, [query.data]);
+
+  useEffect(() => {
+    if (!query.data || !location.pathname.endsWith("/reservation")) return;
+    requestAnimationFrame(() => document.getElementById("reservation")?.scrollIntoView());
+  }, [location.pathname, query.data]);
 
   if (query.isPending) {
     return (
@@ -92,6 +104,12 @@ export function PublicRestaurantPage() {
               "Mətbəx, rahatlıq və diqqətli xidmət bir arada. Filialı seçərək uyğun saatları və boş masaları görə bilərsiniz."}
           </p>
           <Link
+            to={`/restaurants/${restaurant.slug}/menu`}
+            className="mt-6 mr-3 inline-flex rounded-full bg-[#b5422d] px-5 py-2.5 text-sm font-bold text-white"
+          >
+            Menyuya bax
+          </Link>
+          <Link
             to="/reservation/track"
             className="mt-6 inline-flex rounded-full border border-[#d2c7bb] bg-white px-5 py-2.5 text-sm font-bold"
           >
@@ -121,6 +139,11 @@ export function PublicRestaurantPage() {
               </div>
             ))}
           </dl>
+        </div>
+      </section>
+      <section aria-labelledby="featured-menu-title" className="bg-[#211d18] px-4 py-16 text-white sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl"><div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.24em] text-[#e8a36c]">Seçilmiş dadlar</p><h2 id="featured-menu-title" className="mt-2 font-serif text-4xl">Populyar menyu</h2></div><Link to={`/restaurants/${restaurant.slug}/menu`} className="rounded-full border border-white/20 px-5 py-2.5 text-center text-sm font-bold">Bütün menyu</Link></div>
+          {menuQuery.isLoading ? <div className="mt-8 grid animate-pulse gap-5 sm:grid-cols-2 lg:grid-cols-4">{[0,1,2,3].map((item) => <div key={item} className="h-64 rounded-3xl bg-white/10" />)}</div> : menuQuery.isError ? <p className="mt-8 rounded-2xl bg-white/10 p-5 text-white/70">Menyu hazırda yüklənmədi.</p> : (() => { const featured = (menuQuery.data ?? []).flatMap((category) => category.items).filter((item) => item.isAvailable).sort((a,b) => Number(b.isPopular) - Number(a.isPopular)).slice(0,4); return featured.length === 0 ? <p className="mt-8 rounded-2xl bg-white/10 p-5 text-white/70">Menyu məhsulu əlavə edilməyib.</p> : <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{featured.map((item) => <article key={item.id} className="overflow-hidden rounded-3xl bg-white/8"><div className="h-40 bg-white/10">{item.imageUrl ? <img src={item.imageUrl} alt={item.name} className="h-full w-full object-cover" /> : <div className="grid h-full place-items-center"><UtensilsCrossed className="h-7 w-7 text-white/40" /></div>}</div><div className="p-5"><h3 className="font-serif text-2xl">{item.name}</h3><p className="mt-2 line-clamp-2 min-h-10 text-sm text-white/55">{item.description}</p><p className="mt-4 font-bold text-[#f0b47e]">{item.finalPrice.toFixed(2)} ₼</p></div></article>)}</div>; })()}
         </div>
       </section>
       <ReservationWizard restaurant={restaurant} />

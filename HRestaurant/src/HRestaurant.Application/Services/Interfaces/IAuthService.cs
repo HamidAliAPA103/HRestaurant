@@ -20,4 +20,23 @@ public interface IAuthService
     Task<ApiResponse<object?>> LogoutAsync(
         LogoutRequest request,
         CancellationToken cancellationToken = default);
+
+    Task<ApiResponse<CurrentUserResponse>> GetCurrentUserAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<ApiResponse<object?>> RequestPasswordResetAsync(
+        ForgotPasswordRequest request,
+        CancellationToken cancellationToken = default);
+
+    Task<ApiResponse<object?>> ResetPasswordAsync(
+        ResetPasswordRequest request,
+        CancellationToken cancellationToken = default);
+
+    Task<ApiResponse<object?>> ResendEmailVerificationAsync(
+        ResendVerificationRequest request,
+        CancellationToken cancellationToken = default);
+
+    Task<ApiResponse<object?>> VerifyEmailAsync(
+        VerifyEmailRequest request,
+        CancellationToken cancellationToken = default);
 }

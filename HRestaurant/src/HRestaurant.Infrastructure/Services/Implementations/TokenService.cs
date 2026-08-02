@@ -54,8 +54,16 @@ public sealed class TokenService : ITokenService
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(AuthClaimTypes.UserId, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email),
-            new(AuthClaimTypes.RestaurantId, user.RestaurantId.ToString())
+            new(AuthClaimTypes.RestaurantId, user.RestaurantId.ToString()),
+            new(AuthClaimTypes.FullName, user.FullName)
         };
+
+        if (user.BranchId.HasValue)
+        {
+            claims.Add(new Claim(
+                AuthClaimTypes.BranchId,
+                user.BranchId.Value.ToString()));
+        }
 
         claims.AddRange(
             roles

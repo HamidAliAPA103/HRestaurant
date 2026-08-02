@@ -47,6 +47,7 @@ public static class DependencyInjection
         AddPublicReservationServices(services, configuration);
         AddInventoryServices(services, configuration);
         AddOrderServices(services, configuration);
+        AddPaymentAndLoyaltyServices(services, configuration);
 
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -66,14 +67,36 @@ public static class DependencyInjection
         services.AddScoped<IInventoryService, InventoryService>();
         services.AddScoped<IInventoryNotificationService, InventoryNotificationService>();
         services.AddScoped<IInventoryAlertService, InventoryAlertService>();
+        services.AddScoped<ICustomerService, CustomerService>();
+        services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<ILoyaltyService, LoyaltyService>();
+        services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IAuditLogService, AuditLogService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IAccountEmailSender, SmtpAccountEmailSender>();
+        services.AddScoped<IImageUploadService, ImageUploadService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ICurrentUserContext, CurrentUserContext>();
 
         services.AddHttpContextAccessor();
 
         return services;
+    }
+
+    private static void AddPaymentAndLoyaltyServices(
+        IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var settings = configuration.GetSection(LoyaltySettings.SectionName)
+            .Get<LoyaltySettings>() ?? new LoyaltySettings();
+        if (settings.EarnPointsPerCurrencyUnit < 0)
+            throw new InvalidOperationException(
+                "Loyalty:EarnPointsPerCurrencyUnit cannot be negative.");
+        if (settings.CurrencyValuePerPoint <= 0)
+            throw new InvalidOperationException(
+                "Loyalty:CurrencyValuePerPoint must be greater than zero.");
+        services.AddSingleton(settings);
     }
 
     private static void AddOrderServices(

@@ -37,7 +37,15 @@ public static class RolePermissionCatalog
                 Permissions.Orders.Update,
                 Permissions.Orders.Delete,
                 Permissions.Orders.UpdateKitchenStatus,
+                Permissions.Payments.Read,
                 Permissions.Payments.Process,
+                Permissions.Payments.Refund,
+                Permissions.Customers.Read,
+                Permissions.Customers.Manage,
+                Permissions.Loyalty.Read,
+                Permissions.Loyalty.Manage,
+                Permissions.Reports.Read,
+                Permissions.Audit.Read,
                 Permissions.Reviews.Read,
                 Permissions.Reviews.Manage
             ],
@@ -50,7 +58,11 @@ public static class RolePermissionCatalog
                 Permissions.Tables.Read,
                 Permissions.Orders.Read,
                 Permissions.Orders.Create,
-                Permissions.Payments.Process
+                Permissions.Payments.Read,
+                Permissions.Payments.Process,
+                Permissions.Customers.Read,
+                Permissions.Customers.Manage,
+                Permissions.Loyalty.Read
             ],
             [AppRoles.Waiter] =
             [
@@ -62,7 +74,10 @@ public static class RolePermissionCatalog
                 Permissions.Reservations.Manage,
                 Permissions.Orders.Read,
                 Permissions.Orders.Create,
-                Permissions.Orders.Update
+                Permissions.Orders.Update,
+                Permissions.Customers.Read,
+                Permissions.Customers.Manage,
+                Permissions.Loyalty.Read
             ],
             [AppRoles.Chef] =
             [

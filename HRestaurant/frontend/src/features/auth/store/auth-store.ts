@@ -16,6 +16,7 @@ interface AuthState {
   setSession: (response: AuthResponse) => void;
   clearSession: () => void;
   hasRole: (roles: AppRole[]) => boolean;
+  hasPermission: (permission: string) => boolean;
 }
 
 function parseJwt(token: string): JwtPayload | null {
@@ -47,12 +48,20 @@ function toUser(accessToken: string): AuthUser | null {
     : payload.role
       ? [payload.role]
       : [];
+  const permissions = Array.isArray(payload.permission)
+    ? payload.permission
+    : payload.permission
+      ? [payload.permission]
+      : [];
 
   return {
     id: payload.user_id,
+    fullName: payload.full_name,
     email: payload.email,
     restaurantId: payload.restaurant_id,
+    branchId: payload.branch_id,
     roles,
+    permissions,
   };
 }
 
@@ -83,6 +92,11 @@ export const useAuthStore = create<AuthState>()(
       hasRole: (roles) => {
         const currentRoles = get().user?.roles ?? [];
         return roles.some((role) => currentRoles.includes(role));
+      },
+      hasPermission: (permission) => {
+        const permissions = get().user?.permissions ?? [];
+        const isSuperAdmin = get().user?.roles.includes("SuperAdmin") ?? false;
+        return isSuperAdmin || permissions.includes("*") || permissions.includes(permission);
       },
     }),
     {

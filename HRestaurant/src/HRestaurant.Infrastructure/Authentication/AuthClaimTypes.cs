@@ -6,6 +6,10 @@ public static class AuthClaimTypes
 
     public const string RestaurantId = "restaurant_id";
 
+    public const string BranchId = "branch_id";
+
+    public const string FullName = "full_name";
+
     public const string Role = "role";
 
     public const string Permission = "permission";

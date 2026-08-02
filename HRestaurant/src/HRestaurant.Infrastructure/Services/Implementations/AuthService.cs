@@ -1,5 +1,6 @@
 using System.Data;
 using System.Security.Claims;
+using HRestaurant.Configuration;
 using HRestaurant.Data;
 using HRestaurant.DTOS.Auth;
 using HRestaurant.DTOS.Responses;
@@ -26,6 +27,9 @@ public sealed class AuthService : IAuthService
     private readonly AppDbContext _dbContext;
     private readonly ITokenService _tokenService;
     private readonly TimeProvider _timeProvider;
+    private readonly ICurrentUserContext _currentUser;
+    private readonly IAccountEmailSender _accountEmailSender;
+    private readonly PublicReservationSettings _publicSettings;
 
     public AuthService(
         UserManager<AppUser> userManager,
@@ -33,7 +37,10 @@ public sealed class AuthService : IAuthService
         SignInManager<AppUser> signInManager,
         AppDbContext dbContext,
         ITokenService tokenService,
-        TimeProvider timeProvider)
+        TimeProvider timeProvider,
+        ICurrentUserContext currentUser,
+        IAccountEmailSender accountEmailSender,
+        PublicReservationSettings publicSettings)
     {
         ArgumentNullException.ThrowIfNull(userManager);
         ArgumentNullException.ThrowIfNull(roleManager);
@@ -41,6 +48,9 @@ public sealed class AuthService : IAuthService
         ArgumentNullException.ThrowIfNull(dbContext);
         ArgumentNullException.ThrowIfNull(tokenService);
         ArgumentNullException.ThrowIfNull(timeProvider);
+        ArgumentNullException.ThrowIfNull(currentUser);
+        ArgumentNullException.ThrowIfNull(accountEmailSender);
+        ArgumentNullException.ThrowIfNull(publicSettings);
 
         _userManager = userManager;
         _roleManager = roleManager;
@@ -48,6 +58,9 @@ public sealed class AuthService : IAuthService
         _dbContext = dbContext;
         _tokenService = tokenService;
         _timeProvider = timeProvider;
+        _currentUser = currentUser;
+        _accountEmailSender = accountEmailSender;
+        _publicSettings = publicSettings;
     }
 
     public async Task<ApiResponse<AuthResponse>> RegisterAsync(
@@ -85,8 +98,23 @@ public sealed class AuthService : IAuthService
 
         await using var transaction =
             await _dbContext.Database.BeginTransactionAsync(
-                IsolationLevel.ReadCommitted,
+                IsolationLevel.Serializable,
                 cancellationToken);
+
+        var restaurantAlreadyClaimed = await _userManager.Users
+            .AsNoTracking()
+            .AnyAsync(
+                user => user.RestaurantId == request.RestaurantId,
+                cancellationToken);
+        if (restaurantAlreadyClaimed)
+        {
+            const string message =
+                "This restaurant already has an account. Ask a SuperAdmin or the restaurant owner to invite you.";
+            return ApiResponse.Failure<AuthResponse>(
+                StatusCodes.Status409Conflict,
+                message,
+                [new ErrorResponse("restaurant_already_claimed", message, "RestaurantId")]);
+        }
 
         var roleResult = await EnsureDefaultRoleAsync();
 
@@ -137,6 +165,8 @@ public sealed class AuthService : IAuthService
             [DefaultRole]);
         await _dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
+
+        await SendVerificationEmailAsync(user, cancellationToken);
 
         return ApiResponse.Created(
             response,
@@ -251,7 +281,7 @@ public sealed class AuthService : IAuthService
             roles.ToArray());
         var replacement = _tokenService.CreateRefreshToken();
         var accessToken = _tokenService.CreateAccessToken(
-            ToTokenUser(storedToken.User),
+            await ToTokenUserAsync(storedToken.User, cancellationToken),
             roles.ToArray(),
             permissions);
 
@@ -307,6 +337,160 @@ public sealed class AuthService : IAuthService
         return ApiResponse.Success("Logout completed successfully.");
     }
 
+    public async Task<ApiResponse<CurrentUserResponse>> GetCurrentUserAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(_currentUser.UserId.ToString())
+            ?? throw new HRestaurant.Exceptions.UnauthorizedException(
+                "The authenticated user no longer exists.");
+        var roles = await _userManager.GetRolesAsync(user);
+        var permissions = await GetPermissionsAsync(user, roles.ToArray());
+        var branchId = await GetBranchIdAsync(user.Id, cancellationToken);
+
+        return ApiResponse.Ok(
+            new CurrentUserResponse(
+                user.Id,
+                user.FullName,
+                user.Email ?? string.Empty,
+                user.RestaurantId,
+                branchId,
+                roles.ToArray(),
+                permissions,
+                user.EmailConfirmed),
+            "Current user retrieved successfully.");
+    }
+
+    public async Task<ApiResponse<object?>> RequestPasswordResetAsync(
+        ForgotPasswordRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email.Trim());
+        if (user is not null)
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var url = BuildPublicUrl(
+                "/reset-password",
+                ("email", user.Email ?? request.Email),
+                ("token", token));
+            await _accountEmailSender.SendPasswordResetAsync(
+                user.Email ?? request.Email,
+                user.FullName,
+                url,
+                cancellationToken);
+        }
+
+        return ApiResponse.Success(
+            "If the account exists, password reset instructions have been sent.");
+    }
+
+    public async Task<ApiResponse<object?>> ResetPasswordAsync(
+        ResetPasswordRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email.Trim());
+        if (user is null)
+        {
+            return InvalidAccountToken("Password reset token is invalid or expired.");
+        }
+
+        var result = await _userManager.ResetPasswordAsync(
+            user,
+            request.Token,
+            request.NewPassword);
+        if (!result.Succeeded)
+        {
+            return IdentityObjectFailure(
+                result,
+                StatusCodes.Status400BadRequest,
+                "Password reset token is invalid or expired.");
+        }
+
+        await RevokeAllActiveTokensAsync(
+            user.Id,
+            UtcNow,
+            "Password changed.",
+            cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return ApiResponse.Success("Password reset completed successfully.");
+    }
+
+    public async Task<ApiResponse<object?>> ResendEmailVerificationAsync(
+        ResendVerificationRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email.Trim());
+        if (user is not null && !user.EmailConfirmed)
+        {
+            await SendVerificationEmailAsync(user, cancellationToken);
+        }
+
+        return ApiResponse.Success(
+            "If the account requires verification, an email has been sent.");
+    }
+
+    public async Task<ApiResponse<object?>> VerifyEmailAsync(
+        VerifyEmailRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+        if (user is null)
+        {
+            return InvalidAccountToken("Email verification token is invalid or expired.");
+        }
+
+        var result = await _userManager.ConfirmEmailAsync(user, request.Token);
+        return result.Succeeded
+            ? ApiResponse.Success("Email verified successfully.")
+            : IdentityObjectFailure(
+                result,
+                StatusCodes.Status400BadRequest,
+                "Email verification token is invalid or expired.");
+    }
+
+    private async Task SendVerificationEmailAsync(
+        AppUser user,
+        CancellationToken cancellationToken)
+    {
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var url = BuildPublicUrl(
+            "/verify-email",
+            ("userId", user.Id.ToString()),
+            ("token", token));
+        await _accountEmailSender.SendEmailVerificationAsync(
+            user.Email ?? string.Empty,
+            user.FullName,
+            url,
+            cancellationToken);
+    }
+
+    private string BuildPublicUrl(
+        string path,
+        params (string Key, string Value)[] values)
+    {
+        var query = string.Join(
+            "&",
+            values.Select(value =>
+                $"{Uri.EscapeDataString(value.Key)}={Uri.EscapeDataString(value.Value)}"));
+        return $"{_publicSettings.PublicBaseUrl.TrimEnd('/')}{path}?{query}";
+    }
+
+    private static ApiResponse<object?> InvalidAccountToken(string message) =>
+        ApiResponse.Failure<object?>(
+            StatusCodes.Status400BadRequest,
+            message,
+            [new ErrorResponse("invalid_token", message)]);
+
+    private static ApiResponse<object?> IdentityObjectFailure(
+        IdentityResult result,
+        int statusCode,
+        string message) =>
+        ApiResponse.Failure<object?>(
+            statusCode,
+            message,
+            result.Errors.Select(error => new ErrorResponse(
+                error.Code,
+                error.Description)));
+
     private DateTime UtcNow =>
         _timeProvider.GetUtcNow().UtcDateTime;
 
@@ -332,7 +516,7 @@ public sealed class AuthService : IAuthService
     {
         var permissions = await GetPermissionsAsync(user, roles);
         var accessToken = _tokenService.CreateAccessToken(
-            ToTokenUser(user),
+            await ToTokenUserAsync(user, CancellationToken.None),
             roles,
             permissions);
         var refreshToken = _tokenService.CreateRefreshToken();
@@ -433,12 +617,30 @@ public sealed class AuthService : IAuthService
             || (!employeeState.IsDeleted && employeeState.IsActive);
     }
 
-    private static TokenUser ToTokenUser(AppUser user)
+    private async Task<TokenUser> ToTokenUserAsync(
+        AppUser user,
+        CancellationToken cancellationToken)
     {
         return new TokenUser(
             user.Id,
             user.Email!,
-            user.RestaurantId);
+            user.RestaurantId,
+            user.FullName,
+            await GetBranchIdAsync(user.Id, cancellationToken));
+    }
+
+    private async Task<Guid?> GetBranchIdAsync(
+        Guid appUserId,
+        CancellationToken cancellationToken)
+    {
+        return await _dbContext.BusinessUsers
+            .AsNoTracking()
+            .Where(employee =>
+                employee.AppUserId == appUserId
+                && !employee.IsDeleted
+                && employee.IsActive)
+            .Select(employee => employee.BranchId)
+            .SingleOrDefaultAsync(cancellationToken);
     }
 
     private static AuthResponse ToAuthResponse(

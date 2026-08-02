@@ -1,4 +1,4 @@
-import type { AxiosError } from "axios";
+import axios, { type AxiosError } from "axios";
 import type { ApiResponse } from "@/shared/types/api";
 
 export function cn(
@@ -38,6 +38,12 @@ export function initials(value: string) {
 
 export function getErrorMessage(error: unknown) {
   const axiosError = error as AxiosError<ApiResponse<unknown>>;
+
+  if (axios.isAxiosError(error)) {
+    if (error.code === "ECONNABORTED") return "Sorğunun vaxt limiti bitdi. Yenidən cəhd edin.";
+    if (!error.response) return "Serverə qoşulmaq mümkün olmadı. İnternet bağlantısını və serveri yoxlayın.";
+    if (error.response.status === 429) return "Çox sayda sorğu göndərildi. Bir qədər sonra yenidən cəhd edin.";
+  }
 
   return (
     axiosError.response?.data?.message ??

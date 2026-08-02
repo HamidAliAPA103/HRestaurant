@@ -42,6 +42,29 @@ export interface PublicRestaurant {
   branches: PublicBranch[];
 }
 
+export interface PublicMenuItem {
+  id: string;
+  categoryId: string;
+  name: string;
+  description: string;
+  nutrition: string;
+  imageUrl: string | null;
+  price: number;
+  discountPercentage: number;
+  finalPrice: number;
+  preparationTimeMinutes: number;
+  isAvailable: boolean;
+  isPopular: boolean;
+}
+
+export interface PublicMenuCategory {
+  id: string;
+  name: string;
+  description: string | null;
+  displayOrder: number;
+  items: PublicMenuItem[];
+}
+
 export interface PublicRestaurantTable {
   id: string;
   tableNumber: string;

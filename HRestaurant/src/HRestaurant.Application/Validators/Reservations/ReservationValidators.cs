@@ -1,5 +1,6 @@
 using FluentValidation;
 using HRestaurant.DTOS.Reservation;
+using HRestaurant.DTOS.Responses;
 
 namespace HRestaurant.Validators.Reservations;
 
@@ -57,6 +58,29 @@ public sealed class ReservationCreateDTOValidator
         };
 
         return reservationUtc >= timeProvider.GetUtcNow().UtcDateTime;
+    }
+}
+
+public sealed class ReservationListRequestValidator
+    : AbstractValidator<ReservationListRequest>
+{
+    public ReservationListRequestValidator()
+    {
+        RuleFor(x => x.PageNumber).GreaterThanOrEqualTo(1);
+        RuleFor(x => x.PageSize).InclusiveBetween(1, PaginationRequest.MaxPageSize);
+        RuleFor(x => x.Search).MaximumLength(100);
+        RuleFor(x => x).Must(x => !x.From.HasValue || !x.To.HasValue || x.From <= x.To)
+            .WithMessage("From date must be before or equal to To date.");
+    }
+}
+
+public sealed class ReservationStatusUpdateDTOValidator
+    : AbstractValidator<ReservationStatusUpdateDTO>
+{
+    public ReservationStatusUpdateDTOValidator()
+    {
+        RuleFor(x => x.Status).IsInEnum();
+        RuleFor(x => x.Reason).MaximumLength(300);
     }
 }
 

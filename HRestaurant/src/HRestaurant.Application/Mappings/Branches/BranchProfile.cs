@@ -56,7 +56,8 @@ public sealed class BranchProfile : Profile
             .ForMember(destination => destination.Shifts, options => options.Ignore())
             .ForMember(destination => destination.InventoryItems, options => options.Ignore())
             .ForMember(destination => destination.InventoryNotifications, options => options.Ignore())
-            .ForMember(destination => destination.Orders, options => options.Ignore());
+            .ForMember(destination => destination.Orders, options => options.Ignore())
+            .ForMember(destination => destination.Payments, options => options.Ignore());
 
         CreateMap<BranchUpdateDTO, Branch>()
             .IgnoreBaseEntityMembers()
@@ -91,6 +92,7 @@ public sealed class BranchProfile : Profile
             .ForMember(destination => destination.Shifts, options => options.Ignore())
             .ForMember(destination => destination.InventoryItems, options => options.Ignore())
             .ForMember(destination => destination.InventoryNotifications, options => options.Ignore())
-            .ForMember(destination => destination.Orders, options => options.Ignore());
+            .ForMember(destination => destination.Orders, options => options.Ignore())
+            .ForMember(destination => destination.Payments, options => options.Ignore());
     }
 }

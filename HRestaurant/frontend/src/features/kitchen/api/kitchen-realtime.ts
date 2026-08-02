@@ -11,9 +11,12 @@ export interface KitchenOrderEvent {
 
 export function createKitchenConnection(onEvent: (event: KitchenOrderEvent) => void) {
   const configuredApi = import.meta.env.VITE_API_BASE_URL || "/api";
-  const hubUrl = configuredApi.endsWith("/api")
-    ? `${configuredApi.slice(0, -4)}/hubs/kitchen`
-    : `${configuredApi.replace(/\/$/, "")}/hubs/kitchen`;
+  const configuredHub = import.meta.env.VITE_SIGNALR_BASE_URL?.replace(/\/$/, "");
+  const hubUrl = configuredHub
+    ? `${configuredHub}/hubs/kitchen`
+    : configuredApi.endsWith("/api")
+      ? `${configuredApi.slice(0, -4)}/hubs/kitchen`
+      : `${configuredApi.replace(/\/$/, "")}/hubs/kitchen`;
   const connection = new HubConnectionBuilder()
     .withUrl(hubUrl, {
       accessTokenFactory: () => useAuthStore.getState().accessToken ?? "",

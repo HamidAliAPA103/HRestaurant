@@ -169,6 +169,16 @@ public sealed class PublicReservationService
             await _dbContext.Reservations.AddAsync(
                 reservation,
                 cancellationToken);
+            await _dbContext.InventoryNotifications.AddAsync(
+                SystemNotificationFactory.ReservationCreated(
+                    reservation.ID,
+                    branch.RestaurantId,
+                    branch.ID,
+                    reservation.FullName,
+                    reservation.ConfirmationCode,
+                    reservation.ReservationTime,
+                    UtcNow),
+                cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         }

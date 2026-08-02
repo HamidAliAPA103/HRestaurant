@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import type { ReactNode } from "react";
+import { type KeyboardEvent, type ReactNode, useEffect, useRef } from "react";
 
 export function Modal({
   open,
@@ -14,7 +14,47 @@ export function Modal({
   description?: string;
   children: ReactNode;
 }) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    requestAnimationFrame(() => {
+      panelRef.current?.querySelector<HTMLElement>(
+        "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])",
+      )?.focus();
+    });
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") closeRef.current();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+      previous?.focus();
+    };
+  }, [open]);
+
   if (!open) return null;
+
+  function trapFocus(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.key !== "Tab") return;
+    const controls = panelRef.current?.querySelectorAll<HTMLElement>(
+      "button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])",
+    );
+    if (!controls?.length) return;
+    const first = controls[0];
+    const last = controls[controls.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault(); last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault(); first.focus();
+    }
+  }
 
   return (
     <div
@@ -26,7 +66,7 @@ export function Modal({
         if (event.currentTarget === event.target) onClose();
       }}
     >
-      <div className="max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl sm:max-w-xl sm:rounded-3xl sm:p-7">
+      <div ref={panelRef} onKeyDown={trapFocus} className="max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl sm:max-w-xl sm:rounded-3xl sm:p-7">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
             <h2 className="text-xl font-bold tracking-tight text-[#241f1c]">

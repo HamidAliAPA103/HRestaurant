@@ -11,6 +11,7 @@ public sealed class CustomerProfile : Profile
         CreateMap<User, CustomerGetDTO>()
             .ForMember(x => x.Id, o => o.MapFrom(x => x.ID))
             .ForMember(x => x.RestaurantId, o => o.MapFrom(x => x.RestaurantId!.Value))
+            .ForMember(x => x.BranchId, o => o.MapFrom(x => x.BranchId))
             .ForMember(x => x.FullName, o => o.MapFrom(x => x.Name))
             .ForMember(x => x.Phone, o => o.MapFrom(x => x.Phone ?? string.Empty))
             .ForMember(x => x.Email,

@@ -16,6 +16,7 @@ namespace HRestaurant.Controllers;
 [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status403Forbidden)]
 [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
 [Route("api/inventory/notifications")]
+[Route("api/notifications")]
 public sealed class InventoryNotificationController : ApiControllerBase
 {
     private const string ManageRoles = AppRoles.SuperAdmin + "," + AppRoles.RestaurantOwner + "," + AppRoles.Manager;
@@ -27,6 +28,12 @@ public sealed class InventoryNotificationController : ApiControllerBase
     public async Task<IActionResult> GetAll([FromQuery] InventoryNotificationListRequest request,
         CancellationToken cancellationToken) =>
         FromResponse(await _service.GetAllAsync(request, cancellationToken));
+
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(ApiResponse<InventoryNotificationGetDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken) =>
+        FromResponse(await _service.GetByIdAsync(id, cancellationToken));
 
     [HttpGet("unread")]
     [ProducesResponseType(typeof(PagedResponse<InventoryNotificationGetDTO>), StatusCodes.Status200OK)]

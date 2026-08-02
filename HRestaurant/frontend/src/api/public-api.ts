@@ -8,6 +8,7 @@ import type {
   PublicReservationDetails,
   PublicReservationLookupRequest,
   PublicRestaurant,
+  PublicMenuCategory,
   PublicRestaurantTable,
   PublicTableLayout,
   TableAvailabilityRequest,
@@ -35,6 +36,16 @@ async function unwrap<T>(request: Promise<{ data: ApiResponse<T> }>) {
 export function getPublicRestaurant(slug: string) {
   return unwrap<PublicRestaurant>(
     publicApiClient.get(`/public/restaurants/${encodeURIComponent(slug)}`),
+  );
+}
+
+export function getPublicRestaurants() {
+  return unwrap<PublicRestaurant[]>(publicApiClient.get("/public/restaurants"));
+}
+
+export function getPublicMenu(slug: string) {
+  return unwrap<PublicMenuCategory[]>(
+    publicApiClient.get(`/public/restaurants/${encodeURIComponent(slug)}/menu`),
   );
 }
 

@@ -5,6 +5,7 @@ namespace HRestaurant.DTOS.Customer;
 public sealed class CustomerCreateDTO
 {
     public Guid RestaurantId { get; set; }
+    public Guid? BranchId { get; set; }
     public string FullName { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
     public string? Email { get; set; }
@@ -34,6 +35,7 @@ public class CustomerGetDTO
 {
     public Guid Id { get; set; }
     public Guid RestaurantId { get; set; }
+    public Guid? BranchId { get; set; }
     public string FullName { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
     public string? Email { get; set; }
