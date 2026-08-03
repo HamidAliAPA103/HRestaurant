@@ -20,7 +20,7 @@ public sealed class UploadController : ApiControllerBase
     [ProducesResponseType(typeof(ApiResponse<ImageUploadResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UploadImage(
-        [FromForm] IFormFile file,
+        IFormFile file,
         [FromForm] string category,
         [FromForm] Guid? restaurantId,
         [FromForm] string? oldImageUrl,

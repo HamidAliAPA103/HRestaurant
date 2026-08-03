@@ -16,6 +16,7 @@ namespace HRestaurant.Controllers;
 [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status403Forbidden)]
 [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
 [Route("api/Ingredient")]
+[Route("api/ingredients")]
 public sealed class IngredientController : ApiControllerBase
 {
     private readonly IIngredientService _service;
