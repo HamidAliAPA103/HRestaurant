@@ -1,6 +1,7 @@
 import { AdaptiveDpr, useGLTF } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useEffect, useMemo, useState } from "react";
+import { useReducedMotion } from "motion/react";
 import { supportsWebGL } from "@/features/food-3d/lib/scene-utils";
 import { useFoodViewerStore } from "@/features/food-3d/store/food-viewer-store";
 import type { PublicFood3D, PublicIngredient3D } from "@/types/public";
@@ -11,6 +12,7 @@ import { FoodModel } from "./FoodModel";
 import { FoodPlate } from "./FoodPlate";
 import { IngredientExplodedView } from "./IngredientExplodedView";
 import { SceneErrorBoundary } from "./SceneErrorBoundary";
+import { detectPerformanceProfile } from "@/features/three-performance/performance-profile";
 
 interface Food3DViewerProps {
   food: PublicFood3D;
@@ -18,6 +20,8 @@ interface Food3DViewerProps {
 }
 
 export function Food3DViewer({ food, ingredients }: Food3DViewerProps) {
+  const reducedMotion = Boolean(useReducedMotion());
+  const profile = useMemo(() => detectPerformanceProfile(reducedMotion), [reducedMotion]);
   const [webGLAvailable] = useState(() => supportsWebGL());
   const setSelectedIngredient = useFoodViewerStore(
     (state) => state.setSelectedIngredient,
@@ -70,8 +74,9 @@ export function Food3DViewer({ food, ingredients }: Food3DViewerProps) {
       <Canvas
         aria-label={`${food.name} üçün interaktiv 3D görünüş. Fırlatmaq üçün sürüşdürün, yaxınlaşdırmaq üçün təkərdən istifadə edin.`}
         camera={{ position: [4.8, 3.25, 5.7], fov: 42, near: 0.1, far: 100 }}
-        dpr={[1, 1.75]}
-        shadows
+        dpr={profile.dpr}
+        shadows={profile.shadows}
+        frameloop={profile.frameloop}
         gl={{
           antialias: true,
           alpha: true,
@@ -104,6 +109,7 @@ export function Food3DViewer({ food, ingredients }: Food3DViewerProps) {
           ? "Stilizə edilmiş 3D təsvir"
           : "3D model"}
       </div>
+      <span className="pointer-events-none absolute right-4 top-4 rounded-full bg-white/75 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#564b43]">{profile.level} profile</span>
       <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/85 px-4 py-2 text-center text-xs font-medium text-[#564b43] shadow-sm backdrop-blur">
         Fırlatmaq üçün sürüşdürün · Zoom üçün təkərdən istifadə edin
       </p>

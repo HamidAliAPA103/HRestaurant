@@ -1,6 +1,6 @@
 import { AdaptiveDpr } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { supportsWebGL } from "@/features/food-3d/lib/scene-utils";
 import { useRestaurantExperienceStore } from "@/features/restaurant-experience/store/restaurant-experience-store";
 import type { PublicBranchScene, PublicRestaurantTable } from "@/types/public";
@@ -12,6 +12,7 @@ import { RestaurantMiniMap } from "./RestaurantMiniMap";
 import { RestaurantTablesLayer } from "./RestaurantTablesLayer";
 import { SceneControls } from "./SceneControls";
 import { SceneLoadingScreen } from "./SceneLoadingScreen";
+import { detectPerformanceProfile } from "@/features/three-performance/performance-profile";
 
 interface RestaurantSceneProps {
   scene: PublicBranchScene;
@@ -24,6 +25,7 @@ export function RestaurantScene({
   tables,
   reducedMotion,
 }: RestaurantSceneProps) {
+  const profile = useMemo(() => detectPerformanceProfile(reducedMotion), [reducedMotion]);
   const [webGLAvailable] = useState(() => supportsWebGL());
   const mode = useRestaurantExperienceStore((state) => state.mode);
   const tourStarted = useRestaurantExperienceStore((state) => state.tourStarted);
@@ -78,8 +80,9 @@ export function RestaurantScene({
           near: 0.1,
           far: 150,
         }}
-        dpr={[1, 1.7]}
-        shadows
+        dpr={profile.dpr}
+        shadows={profile.shadows}
+        frameloop={profile.frameloop}
         gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
         fallback={<SceneLoadingScreen />}
         onPointerMissed={() => setSelectedTableId(null)}

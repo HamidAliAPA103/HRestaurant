@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Box, Clock3, Search, Star, UtensilsCrossed } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { motion, useReducedMotion } from "motion/react";
 import {
   getPublicApiError,
   getPublicMenu,
@@ -9,6 +10,7 @@ import {
 } from "@/api/public-api";
 
 export function PublicMenuPage() {
+  const reducedMotion = Boolean(useReducedMotion());
   const { restaurantSlug = "" } = useParams();
   const [search, setSearch] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -90,23 +92,24 @@ export function PublicMenuPage() {
   }
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-[90rem] px-4 py-16 sm:px-6 lg:px-10 lg:py-24">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#a5422f]">
             {restaurant.data?.name}
           </p>
-          <h1 className="mt-2 font-serif text-5xl">Menyu</h1>
+          <h1 className="display-type mt-3 text-6xl sm:text-8xl">Menyu</h1>
+          <p className="mt-4 max-w-xl text-text-secondary">Mətbəximizin mövsümi hekayəsini kəşf edin. Hər yeməyin 3D təqdimatına daxil ola bilərsiniz.</p>
         </div>
         <Link
           to={`/restaurants/${restaurantSlug}/reservation`}
-          className="rounded-full bg-[#b5422d] px-5 py-3 text-center font-bold text-white"
+          className="rounded-full bg-accent-primary px-6 py-3.5 text-center font-bold text-white transition hover:bg-accent-secondary"
         >
           Masa rezerv et
         </Link>
       </div>
 
-      <div className="mt-8 grid gap-3 rounded-3xl border bg-white p-4 md:grid-cols-[1fr_auto_auto]">
+      <div className="glass mt-10 grid gap-3 rounded-[2rem] p-4 shadow-xl shadow-black/5 md:grid-cols-[1fr_auto_auto]">
         <label className="relative">
           <span className="sr-only">Yemək axtar</span>
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" aria-hidden />
@@ -165,17 +168,18 @@ export function PublicMenuPage() {
         </div>
       ) : (
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {items.map((item) => (
-            <article
+          {items.map((item, index) => (
+            <motion.article
               key={item.id}
-              className="group overflow-hidden rounded-3xl border bg-white transition hover:-translate-y-1 hover:shadow-xl"
+              initial={reducedMotion ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: reducedMotion ? 0 : Math.min(index * .04, .28) }}
+              className="group overflow-hidden rounded-[2rem] border border-black/5 bg-white/75 shadow-sm transition hover:-translate-y-2 hover:shadow-2xl"
             >
               <Link
                 to={`/restaurants/${restaurantSlug}/menu/${item.id}`}
                 aria-label={`${item.name} üçün 3D detallara bax`}
                 className="block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#b5422d]"
               >
-                <div className="relative h-48 bg-[#e6ddd2]">
+                <div className="relative h-56 bg-[#e6ddd2]">
                   {item.imageUrl ? (
                     <img
                       src={item.imageUrl}
@@ -222,7 +226,7 @@ export function PublicMenuPage() {
                   )}
                 </div>
               </Link>
-            </article>
+            </motion.article>
           ))}
         </div>
       )}

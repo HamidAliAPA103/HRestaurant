@@ -124,7 +124,7 @@ export function FoodDetailPage() {
       </Link>
 
       <div className="mt-6 grid gap-8 xl:grid-cols-[minmax(0,1.6fr)_minmax(20rem,0.75fr)]">
-        <section>
+        <section className="mobile-3d-sheet">
           <Food3DViewer food={food} ingredients={ingredients} />
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-[#e7ddd2] bg-white p-4">
             <p className="flex items-center gap-2 text-sm text-[#6d5e53]">
