@@ -233,7 +233,8 @@ export function RestaurantExperiencePage() {
     <main>
       <section ref={heroRef} className="relative bg-[#17110e] px-4 pb-20 pt-8 text-white sm:px-6 lg:px-8">
         <div className="mx-auto max-w-[92rem]">
-          <div ref={heroCopyRef} className="relative z-20 mb-6 max-w-3xl lg:absolute lg:left-[7%] lg:top-20 lg:mb-0 lg:w-[38rem]">
+          <div ref={heroCopyRef} className="relative z-20 mb-10 grid gap-7 pt-8 lg:grid-cols-[1fr_auto] lg:items-end">
+            <div className="max-w-3xl">
             <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#f09a73]">
               {restaurant.name} · Virtual Experience
             </p>
@@ -243,7 +244,8 @@ export function RestaurantExperiencePage() {
             <p className="mt-5 max-w-xl leading-7 text-white/68">
               Real masa planında zonaları gəzin, uyğun masanı seçin və rezervasiyaya davam edin.
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
+            </div>
+            <div className="flex flex-wrap gap-3 lg:justify-end">
               <button
                 type="button"
                 onClick={() => startTour("guided")}
@@ -260,7 +262,7 @@ export function RestaurantExperiencePage() {
               </button>
             </div>
           </div>
-          <div id="scene-shell" className="relative z-10 lg:pt-8">
+          <div id="scene-shell" className="relative z-10">
             <Suspense fallback={<SceneLoadingScreen />}>
               <RestaurantScene scene={branchScene} tables={tables} reducedMotion={reducedMotion} />
             </Suspense>

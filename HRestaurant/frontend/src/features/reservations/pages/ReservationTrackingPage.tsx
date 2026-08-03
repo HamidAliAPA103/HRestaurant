@@ -61,6 +61,8 @@ export function ReservationTrackingPage() {
   });
   const form = useForm<ReservationLookupFormValue>({
     resolver: zodResolver(reservationLookupSchema),
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       confirmationCode: "",
       phone: "",
@@ -137,9 +139,9 @@ export function ReservationTrackingPage() {
               placeholder="64 simvolluq təhlükəsiz token"
             />
           </label>
-          {form.formState.errors.confirmationCode && (
-            <p className="mt-3 text-sm font-semibold text-red-700">
-              {form.formState.errors.confirmationCode.message}
+          {form.formState.errors.root && (
+            <p role="alert" className="mt-3 text-sm font-semibold text-red-700">
+              {form.formState.errors.root.message}
             </p>
           )}
           <button
