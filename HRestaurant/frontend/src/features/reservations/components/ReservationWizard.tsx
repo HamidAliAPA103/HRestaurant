@@ -6,7 +6,8 @@ import {
   LoaderCircle,
   RefreshCw,
 } from "lucide-react";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   createPublicReservation,
   getAvailableTables,
@@ -52,9 +53,26 @@ export function ReservationWizard({
   restaurant,
 }: ReservationWizardProps) {
   const state = useReservationStore();
+  const [searchParams] = useSearchParams();
+  const requestedTableApplied = useRef(false);
+  const [availabilityMessage, setAvailabilityMessage] = useState<string | null>(null);
 
   useEffect(() => {
     state.setRestaurant(restaurant);
+
+    const branch = restaurant.branches.find(
+      (item) => item.id === searchParams.get("branchId"),
+    );
+    const date = searchParams.get("date");
+    const time = searchParams.get("time");
+    const guests = Number(searchParams.get("guests"));
+    if (branch && date && time) {
+      state.setBranch(branch);
+      state.setReservationDate(date);
+      if (Number.isFinite(guests) && guests > 0) state.setGuestCount(guests);
+      state.setStartTime(time);
+      state.setCurrentStep(4);
+    }
 
     return () => state.reset();
   }, [restaurant.id]);
@@ -100,6 +118,16 @@ export function ReservationWizard({
     }
   }, [tableQuery.data]);
 
+  useEffect(() => {
+    if (!tableQuery.data || requestedTableApplied.current) return;
+    const requestedTableId = searchParams.get("tableId");
+    const requestedTable = tableQuery.data.find(
+      (table) => table.id === requestedTableId && table.isAvailable,
+    );
+    if (requestedTable) state.selectTable(requestedTable);
+    requestedTableApplied.current = true;
+  }, [searchParams, state, tableQuery.data]);
+
   const createMutation = useMutation({
     mutationFn: () =>
       createPublicReservation({
@@ -119,6 +147,9 @@ export function ReservationWizard({
     onSuccess: state.setSuccess,
     onError: (error) => {
       if (getPublicApiError(error).status === 409) {
+        setAvailabilityMessage(
+          "Seçilmiş masa bu vaxt üçün artıq rezerv edilib. Uyğunluq yeniləndi; başqa masa seçin.",
+        );
         state.selectTable(null);
         state.setCurrentStep(4);
         void tableQuery.refetch();
@@ -262,6 +293,11 @@ export function ReservationWizard({
             title="Masanızı seçin"
             description="Zalı böyüdə, döndərə və masaların üzərinə toxuna bilərsiniz."
           >
+            {availabilityMessage && (
+              <p className="mb-5 rounded-2xl bg-amber-50 p-4 text-sm font-semibold text-amber-900" role="alert">
+                {availabilityMessage}
+              </p>
+            )}
             <TableStatusLegend />
             <div className="mt-5">
               {tableQuery.isFetching ? (
@@ -301,7 +337,10 @@ export function ReservationWizard({
                       selectedTable={state.selectedTable}
                       reservationDate={state.reservationDate}
                       startTime={state.startTime}
-                      onSelect={state.selectTable}
+                      onSelect={(table) => {
+                        setAvailabilityMessage(null);
+                        state.selectTable(table);
+                      }}
                     />
                   </Suspense>
                   <SelectedTablePanel table={state.selectedTable} />
@@ -317,7 +356,10 @@ export function ReservationWizard({
                   <AccessibleTableList
                     tables={state.availableTables}
                     selectedTable={state.selectedTable}
-                    onSelect={state.selectTable}
+                    onSelect={(table) => {
+                      setAvailabilityMessage(null);
+                      state.selectTable(table);
+                    }}
                   />
                 </div>
               )}

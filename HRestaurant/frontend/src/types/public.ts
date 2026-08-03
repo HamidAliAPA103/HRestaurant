@@ -42,6 +42,61 @@ export interface PublicRestaurant {
   branches: PublicBranch[];
 }
 
+export interface PublicRestaurantExperience {
+  restaurant: PublicRestaurant;
+  defaultBranchId: string | null;
+}
+
+export interface PublicSceneHotspot {
+  key: string;
+  name: string;
+  description: string;
+  positionX: number;
+  positionY: number;
+  positionZ: number;
+  cameraX: number;
+  cameraY: number;
+  cameraZ: number;
+  tableIds: string[];
+  availableTableCount: number;
+}
+
+export interface PublicSceneTable {
+  id: string;
+  tableNumber: string;
+  capacity: number;
+  shape: "Round" | "Square" | "Rectangle";
+  status: PublicTableStatus;
+  positionX: number;
+  positionY: number;
+  positionZ: number;
+  rotationX: number;
+  rotationY: number;
+  rotationZ: number;
+  width: number;
+  length: number;
+  height: number;
+}
+
+export interface PublicBranchScene {
+  branchId: string;
+  branchName: string;
+  floorWidth: number;
+  floorDepth: number;
+  wallHeight: number;
+  centerX: number;
+  centerZ: number;
+  tables: PublicSceneTable[];
+  hotspots: PublicSceneHotspot[];
+}
+
+export interface PublicRestaurantScene {
+  restaurantId: string;
+  restaurantSlug: string;
+  restaurantName: string;
+  branches: PublicBranchScene[];
+}
+
 export interface PublicMenuItem {
   id: string;
   categoryId: string;

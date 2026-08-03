@@ -22,6 +22,11 @@ const FoodDetailPage = lazy(() =>
     default: module.FoodDetailPage,
   })),
 );
+const RestaurantExperiencePage = lazy(() =>
+  import("@/features/restaurant-experience/pages/RestaurantExperiencePage").then(
+    (module) => ({ default: module.RestaurantExperiencePage }),
+  ),
+);
 
 const ReservationTrackingPage = lazy(() =>
   import("@/features/reservations/pages/ReservationTrackingPage").then(
@@ -56,6 +61,14 @@ export const publicRoutes: RouteObject[] = [
         element: (
           <Suspense fallback={<LoadingState label="3D yemək təcrübəsi yüklənir" />}>
             <FoodDetailPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/restaurants/:restaurantSlug/experience",
+        element: (
+          <Suspense fallback={<LoadingState label="3D virtual tur yüklənir" />}>
+            <RestaurantExperiencePage />
           </Suspense>
         ),
       },

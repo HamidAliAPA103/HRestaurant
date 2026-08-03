@@ -8,6 +8,8 @@ import type {
   PublicReservationDetails,
   PublicReservationLookupRequest,
   PublicRestaurant,
+  PublicRestaurantExperience,
+  PublicRestaurantScene,
   PublicMenuCategory,
   PublicFood3D,
   PublicIngredient3D,
@@ -44,6 +46,20 @@ export function getPublicRestaurant(slug: string) {
 
 export function getPublicRestaurants() {
   return unwrap<PublicRestaurant[]>(publicApiClient.get("/public/restaurants"));
+}
+
+export function getPublicRestaurantExperience(slug: string) {
+  return unwrap<PublicRestaurantExperience>(
+    publicApiClient.get(
+      `/public/restaurants/${encodeURIComponent(slug)}/experience`,
+    ),
+  );
+}
+
+export function getPublicRestaurantScene(slug: string) {
+  return unwrap<PublicRestaurantScene>(
+    publicApiClient.get(`/public/restaurants/${encodeURIComponent(slug)}/scene`),
+  );
 }
 
 export function getPublicMenu(slug: string) {

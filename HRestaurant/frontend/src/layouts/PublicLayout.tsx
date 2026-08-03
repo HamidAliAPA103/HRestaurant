@@ -11,6 +11,7 @@ export function PublicLayout() {
     ...(slug ? [
       { label: "Restoran", to: `/restaurants/${slug}` },
       { label: "Menyu", to: `/restaurants/${slug}/menu` },
+      { label: "3D Tur", to: `/restaurants/${slug}/experience` },
       { label: "Rezervasiya", to: `/restaurants/${slug}/reservation` },
     ] : []),
     { label: "Rezervasiyanı yoxla", to: "/reservation/track" },
