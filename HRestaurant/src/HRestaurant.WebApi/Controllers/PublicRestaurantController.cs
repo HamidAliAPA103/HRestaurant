@@ -122,6 +122,40 @@ public sealed class PublicRestaurantController : ApiControllerBase
             cancellationToken));
     }
 
+    [HttpGet("restaurants/{restaurantSlug}/experience")]
+    [SwaggerOperation(
+        Summary = "Get public restaurant experience",
+        Description = "Returns public restaurant and active branch information used by the virtual tour.",
+        Tags = ["Public Restaurant Experience"])]
+    [ProducesResponseType(
+        typeof(ApiResponse<PublicRestaurantExperienceDto>),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status429TooManyRequests)]
+    public async Task<IActionResult> GetExperience(
+        string restaurantSlug,
+        CancellationToken cancellationToken) =>
+        FromResponse(await _restaurantService.GetExperienceAsync(
+            restaurantSlug,
+            cancellationToken));
+
+    [HttpGet("restaurants/{restaurantSlug}/scene")]
+    [SwaggerOperation(
+        Summary = "Get public restaurant 3D scene",
+        Description = "Returns a procedural scene calculated from real branch and table layout data.",
+        Tags = ["Public Restaurant Experience"])]
+    [ProducesResponseType(
+        typeof(ApiResponse<PublicRestaurantSceneDto>),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status429TooManyRequests)]
+    public async Task<IActionResult> GetScene(
+        string restaurantSlug,
+        CancellationToken cancellationToken) =>
+        FromResponse(await _restaurantService.GetSceneAsync(
+            restaurantSlug,
+            cancellationToken));
+
     [HttpGet("menu-items/{menuItemId:guid}/3d")]
     [SwaggerOperation(
         Summary = "Get public 3D menu item data",

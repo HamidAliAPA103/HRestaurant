@@ -28,4 +28,12 @@ public interface IPublicRestaurantService
         GetMenuItemIngredients3DAsync(
             Guid menuItemId,
             CancellationToken cancellationToken = default);
+
+    Task<ApiResponse<PublicRestaurantExperienceDto>> GetExperienceAsync(
+        string restaurantSlug,
+        CancellationToken cancellationToken = default);
+
+    Task<ApiResponse<PublicRestaurantSceneDto>> GetSceneAsync(
+        string restaurantSlug,
+        CancellationToken cancellationToken = default);
 }

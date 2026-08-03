@@ -259,6 +259,58 @@ public sealed class PublicRestaurantService
             "Public 3D ingredient data retrieved successfully.");
     }
 
+    public async Task<ApiResponse<PublicRestaurantExperienceDto>> GetExperienceAsync(
+        string restaurantSlug,
+        CancellationToken cancellationToken = default)
+    {
+        var restaurant = await GetRestaurantAsync(restaurantSlug, cancellationToken);
+        var publicRestaurant = MapRestaurant(restaurant);
+        var result = new PublicRestaurantExperienceDto
+        {
+            Restaurant = publicRestaurant,
+            DefaultBranchId = publicRestaurant.Branches.FirstOrDefault()?.Id
+        };
+
+        return ApiResponse.Ok(result, "Public restaurant experience retrieved successfully.");
+    }
+
+    public async Task<ApiResponse<PublicRestaurantSceneDto>> GetSceneAsync(
+        string restaurantSlug,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(restaurantSlug))
+            throw new NotFoundException("The requested restaurant was not found.");
+
+        var normalizedSlug = restaurantSlug.Trim().ToLowerInvariant();
+        var restaurant = await _dbContext.Restaurants
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Include(entity => entity.Branches)
+                .ThenInclude(branch => branch.Tables)
+            .FirstOrDefaultAsync(entity =>
+                entity.Slug == normalizedSlug
+                && entity.IsActive
+                && !entity.IsDeleted,
+                cancellationToken)
+            ?? throw new NotFoundException("The requested restaurant was not found.");
+
+        var branches = restaurant.Branches
+            .Where(branch => branch.IsActive && !branch.IsDeleted)
+            .OrderBy(branch => branch.Name)
+            .Select(MapSceneBranch)
+            .ToArray();
+
+        var scene = new PublicRestaurantSceneDto
+        {
+            RestaurantId = restaurant.ID,
+            RestaurantSlug = restaurant.Slug,
+            RestaurantName = restaurant.Name,
+            Branches = branches
+        };
+
+        return ApiResponse.Ok(scene, "Public restaurant scene retrieved successfully.");
+    }
+
     private async Task<Restaurant> GetRestaurantAsync(
         string slug,
         CancellationToken cancellationToken)
@@ -333,6 +385,114 @@ public sealed class PublicRestaurantService
         return dto;
     }
 
+    private static PublicBranchSceneDto MapSceneBranch(Branch branch)
+    {
+        var tables = branch.Tables
+            .Where(table => !table.IsDeleted)
+            .OrderBy(table => table.TableNumber)
+            .Select(table => new PublicSceneTableDto
+            {
+                Id = table.ID,
+                TableNumber = table.TableNumber,
+                Capacity = table.Tutum,
+                Shape = table.Shape.ToString(),
+                Status = !table.IsActive
+                    ? "Disabled"
+                    : table.Status == HRestaurant.Enum.TableStatus.Available
+                        ? "Available"
+                        : table.Status.ToString(),
+                PositionX = table.PositionX ?? 0,
+                PositionY = table.PositionY ?? 0,
+                PositionZ = table.PositionZ ?? 0,
+                RotationX = table.RotationX ?? 0,
+                RotationY = table.RotationY ?? 0,
+                RotationZ = table.RotationZ ?? 0,
+                Width = table.Width,
+                Length = table.Length,
+                Height = table.Height
+            })
+            .ToArray();
+
+        var minX = tables.Length == 0
+            ? -6d
+            : tables.Min(table => table.PositionX - table.Width / 2);
+        var maxX = tables.Length == 0
+            ? 6d
+            : tables.Max(table => table.PositionX + table.Width / 2);
+        var minZ = tables.Length == 0
+            ? -5d
+            : tables.Min(table => table.PositionZ - table.Length / 2);
+        var maxZ = tables.Length == 0
+            ? 5d
+            : tables.Max(table => table.PositionZ + table.Length / 2);
+        var centerX = (minX + maxX) / 2;
+        var centerZ = (minZ + maxZ) / 2;
+        var width = Math.Max(12, maxX - minX + 6);
+        var depth = Math.Max(10, maxZ - minZ + 6);
+        var hotspots = BuildHotspots(tables, centerX, centerZ, width, depth);
+
+        return new PublicBranchSceneDto
+        {
+            BranchId = branch.ID,
+            BranchName = branch.Name,
+            FloorWidth = width,
+            FloorDepth = depth,
+            WallHeight = 4,
+            CenterX = centerX,
+            CenterZ = centerZ,
+            Tables = tables,
+            Hotspots = hotspots
+        };
+    }
+
+    private static IReadOnlyCollection<PublicSceneHotspotDto> BuildHotspots(
+        IReadOnlyCollection<PublicSceneTableDto> tables,
+        double centerX,
+        double centerZ,
+        double width,
+        double depth)
+    {
+        var tableCenterX = tables.Count == 0 ? centerX : tables.Average(table => table.PositionX);
+        var tableCenterZ = tables.Count == 0 ? centerZ : tables.Average(table => table.PositionZ);
+        var definitions = new[]
+        {
+            new SceneHotspotDefinition("entrance", "Entrance", "Restoranın əsas giriş və qarşılama zonası.", centerX, centerZ + depth * 0.43, centerX, 2.4, centerZ + depth * 0.72, false),
+            new SceneHotspotDefinition("main-hall", "Main Hall", "Əsas zal və restoranın mərkəzi servis sahəsi.", centerX, centerZ, centerX + 4.2, 3.1, centerZ + 5.2, true),
+            new SceneHotspotDefinition("window-area", "Window Area", "Təbii işıq alan pəncərə yanı masa zonası.", centerX - width * 0.34, centerZ, centerX - width * 0.16, 2.5, centerZ + 4.2, true),
+            new SceneHotspotDefinition("vip-area", "VIP Area", "Daha sakit və məxfi oturma sahəsi.", centerX + width * 0.31, centerZ - depth * 0.23, centerX + width * 0.12, 2.6, centerZ + depth * 0.08, true),
+            new SceneHotspotDefinition("bar", "Bar", "İçki servisi və qısa oturuş üçün bar zonası.", centerX + width * 0.33, centerZ + depth * 0.27, centerX + width * 0.08, 2.4, centerZ + depth * 0.1, true),
+            new SceneHotspotDefinition("kitchen-preview", "Kitchen Preview", "Mətbəx servis pəncərəsinə təhlükəsiz baxış nöqtəsi.", centerX - width * 0.32, centerZ - depth * 0.34, centerX - width * 0.08, 2.5, centerZ - depth * 0.05, false),
+            new SceneHotspotDefinition("table-area", "Table Area", "Mövcud masa planının mərkəzi baxış nöqtəsi.", tableCenterX, tableCenterZ, tableCenterX + 3.8, 3, tableCenterZ + 4.5, true)
+        };
+
+        var assignments = definitions.ToDictionary(
+            definition => definition.Key,
+            _ => new List<PublicSceneTableDto>());
+        var selectableZones = definitions.Where(definition => definition.AcceptsTables).ToArray();
+        foreach (var table in tables)
+        {
+            var closest = selectableZones.MinBy(definition =>
+                Math.Pow(table.PositionX - definition.X, 2)
+                + Math.Pow(table.PositionZ - definition.Z, 2));
+            if (closest is not null) assignments[closest.Key].Add(table);
+        }
+
+        return definitions.Select(definition => new PublicSceneHotspotDto
+        {
+            Key = definition.Key,
+            Name = definition.Name,
+            Description = definition.Description,
+            PositionX = definition.X,
+            PositionY = 0.15,
+            PositionZ = definition.Z,
+            CameraX = definition.CameraX,
+            CameraY = definition.CameraY,
+            CameraZ = definition.CameraZ,
+            TableIds = assignments[definition.Key].Select(table => table.Id).ToArray(),
+            AvailableTableCount = assignments[definition.Key].Count(table => table.Status == "Available")
+        }).ToArray();
+    }
+
     private static string GetFallbackKind(string ingredientName)
     {
         var name = ingredientName.Trim().ToLowerInvariant();
@@ -347,4 +507,15 @@ public sealed class PublicRestaurantService
 
     private static bool ContainsAny(string value, params string[] terms) =>
         terms.Any(value.Contains);
+
+    private sealed record SceneHotspotDefinition(
+        string Key,
+        string Name,
+        string Description,
+        double X,
+        double Z,
+        double CameraX,
+        double CameraY,
+        double CameraZ,
+        bool AcceptsTables);
 }
