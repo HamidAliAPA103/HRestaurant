@@ -4904,6 +4904,41 @@
         "IsRequired": false
       },
       {
+        "Name": "Model3DUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelPosterUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelScale",
+        "Type": "System.Decimal",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelRotationX",
+        "Type": "System.Decimal",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelRotationY",
+        "Type": "System.Decimal",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelRotationZ",
+        "Type": "System.Decimal",
+        "IsRequired": false
+      },
+      {
+        "Name": "Is3DEnabled",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
         "Name": "Name",
         "Type": "System.String",
         "IsRequired": false
@@ -5143,6 +5178,41 @@
       {
         "Name": "ImageURL",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Model3DUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelPosterUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelScale",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelRotationX",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelRotationY",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelRotationZ",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Is3DEnabled",
+        "Type": "System.Nullable\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       },
       {
@@ -6048,6 +6118,41 @@
         "IsRequired": false
       },
       {
+        "Name": "Model3DUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelPosterUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelScale",
+        "Type": "System.Decimal",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelRotationX",
+        "Type": "System.Decimal",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelRotationY",
+        "Type": "System.Decimal",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelRotationZ",
+        "Type": "System.Decimal",
+        "IsRequired": false
+      },
+      {
+        "Name": "Is3DEnabled",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
         "Name": "Name",
         "Type": "System.String",
         "IsRequired": false
@@ -6287,6 +6392,41 @@
       {
         "Name": "ImageURL",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Model3DUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelPosterUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelScale",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelRotationX",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelRotationY",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "ModelRotationZ",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Is3DEnabled",
+        "Type": "System.Nullable\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       },
       {
@@ -10330,6 +10470,82 @@
     ]
   },
   {
+    "ContainingType": "HRestaurant.Controllers.PublicRestaurantController",
+    "Method": "GetMenuItem3D",
+    "RelativePath": "api/public/menu-items/{menuItemId}/3d",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "menuItemId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "HRestaurant.DTOS.Responses.ApiResponse\u00601[[HRestaurant.DTOS.Public.PublicMenuItem3DDto, HRestaurant.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "HRestaurant.DTOS.Responses.ApiResponse\u00601[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 404
+      },
+      {
+        "Type": "HRestaurant.DTOS.Responses.ApiResponse\u00601[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 429
+      }
+    ]
+  },
+  {
+    "ContainingType": "HRestaurant.Controllers.PublicRestaurantController",
+    "Method": "GetMenuItemIngredients3D",
+    "RelativePath": "api/public/menu-items/{menuItemId}/ingredients-3d",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "menuItemId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "HRestaurant.DTOS.Responses.ApiResponse\u00601[[System.Collections.Generic.IReadOnlyCollection\u00601[[HRestaurant.DTOS.Public.PublicIngredient3DDto, HRestaurant.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "HRestaurant.DTOS.Responses.ApiResponse\u00601[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 404
+      },
+      {
+        "Type": "HRestaurant.DTOS.Responses.ApiResponse\u00601[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 429
+      }
+    ]
+  },
+  {
     "ContainingType": "HRestaurant.Controllers.PublicReservationsController",
     "Method": "Create",
     "RelativePath": "api/public/reservations",
@@ -10621,6 +10837,44 @@
   },
   {
     "ContainingType": "HRestaurant.Controllers.PublicRestaurantController",
+    "Method": "GetExperience",
+    "RelativePath": "api/public/restaurants/{restaurantSlug}/experience",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "restaurantSlug",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "HRestaurant.DTOS.Responses.ApiResponse\u00601[[HRestaurant.DTOS.Public.PublicRestaurantExperienceDto, HRestaurant.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "HRestaurant.DTOS.Responses.ApiResponse\u00601[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 404
+      },
+      {
+        "Type": "HRestaurant.DTOS.Responses.ApiResponse\u00601[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 429
+      }
+    ]
+  },
+  {
+    "ContainingType": "HRestaurant.Controllers.PublicRestaurantController",
     "Method": "GetMenu",
     "RelativePath": "api/public/restaurants/{restaurantSlug}/menu",
     "HttpMethod": "GET",
@@ -10636,6 +10890,44 @@
     "ReturnTypes": [
       {
         "Type": "HRestaurant.DTOS.Responses.ApiResponse\u00601[[System.Collections.Generic.IReadOnlyCollection\u00601[[HRestaurant.DTOS.Public.PublicMenuCategoryDto, HRestaurant.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "HRestaurant.DTOS.Responses.ApiResponse\u00601[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 404
+      },
+      {
+        "Type": "HRestaurant.DTOS.Responses.ApiResponse\u00601[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 429
+      }
+    ]
+  },
+  {
+    "ContainingType": "HRestaurant.Controllers.PublicRestaurantController",
+    "Method": "GetScene",
+    "RelativePath": "api/public/restaurants/{restaurantSlug}/scene",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "restaurantSlug",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "HRestaurant.DTOS.Responses.ApiResponse\u00601[[HRestaurant.DTOS.Public.PublicRestaurantSceneDto, HRestaurant.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "application/json"
         ],

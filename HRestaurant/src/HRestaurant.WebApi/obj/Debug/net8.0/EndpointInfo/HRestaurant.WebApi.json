@@ -6608,6 +6608,31 @@
                   "ImageUrl": {
                     "type": "string"
                   },
+                  "Model3DUrl": {
+                    "type": "string"
+                  },
+                  "ModelPosterUrl": {
+                    "type": "string"
+                  },
+                  "ModelScale": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ModelRotationX": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ModelRotationY": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ModelRotationZ": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "Is3DEnabled": {
+                    "type": "boolean"
+                  },
                   "Name": {
                     "type": "string"
                   },
@@ -6646,6 +6671,27 @@
                   "style": "form"
                 },
                 "ImageUrl": {
+                  "style": "form"
+                },
+                "Model3DUrl": {
+                  "style": "form"
+                },
+                "ModelPosterUrl": {
+                  "style": "form"
+                },
+                "ModelScale": {
+                  "style": "form"
+                },
+                "ModelRotationX": {
+                  "style": "form"
+                },
+                "ModelRotationY": {
+                  "style": "form"
+                },
+                "ModelRotationZ": {
+                  "style": "form"
+                },
+                "Is3DEnabled": {
                   "style": "form"
                 },
                 "Name": {
@@ -6914,6 +6960,31 @@
                   "ImageUrl": {
                     "type": "string"
                   },
+                  "Model3DUrl": {
+                    "type": "string"
+                  },
+                  "ModelPosterUrl": {
+                    "type": "string"
+                  },
+                  "ModelScale": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ModelRotationX": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ModelRotationY": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ModelRotationZ": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "Is3DEnabled": {
+                    "type": "boolean"
+                  },
                   "Name": {
                     "type": "string"
                   },
@@ -6952,6 +7023,27 @@
                   "style": "form"
                 },
                 "ImageUrl": {
+                  "style": "form"
+                },
+                "Model3DUrl": {
+                  "style": "form"
+                },
+                "ModelPosterUrl": {
+                  "style": "form"
+                },
+                "ModelScale": {
+                  "style": "form"
+                },
+                "ModelRotationX": {
+                  "style": "form"
+                },
+                "ModelRotationY": {
+                  "style": "form"
+                },
+                "ModelRotationZ": {
+                  "style": "form"
+                },
+                "Is3DEnabled": {
                   "style": "form"
                 },
                 "Name": {
@@ -7961,6 +8053,31 @@
                   "ImageURL": {
                     "type": "string"
                   },
+                  "Model3DUrl": {
+                    "type": "string"
+                  },
+                  "ModelPosterUrl": {
+                    "type": "string"
+                  },
+                  "ModelScale": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ModelRotationX": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ModelRotationY": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ModelRotationZ": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "Is3DEnabled": {
+                    "type": "boolean"
+                  },
                   "Name": {
                     "type": "string"
                   },
@@ -7999,6 +8116,27 @@
                   "style": "form"
                 },
                 "ImageURL": {
+                  "style": "form"
+                },
+                "Model3DUrl": {
+                  "style": "form"
+                },
+                "ModelPosterUrl": {
+                  "style": "form"
+                },
+                "ModelScale": {
+                  "style": "form"
+                },
+                "ModelRotationX": {
+                  "style": "form"
+                },
+                "ModelRotationY": {
+                  "style": "form"
+                },
+                "ModelRotationZ": {
+                  "style": "form"
+                },
+                "Is3DEnabled": {
                   "style": "form"
                 },
                 "Name": {
@@ -8253,6 +8391,31 @@
                   "ImageURL": {
                     "type": "string"
                   },
+                  "Model3DUrl": {
+                    "type": "string"
+                  },
+                  "ModelPosterUrl": {
+                    "type": "string"
+                  },
+                  "ModelScale": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ModelRotationX": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ModelRotationY": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ModelRotationZ": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "Is3DEnabled": {
+                    "type": "boolean"
+                  },
                   "Name": {
                     "type": "string"
                   },
@@ -8291,6 +8454,27 @@
                   "style": "form"
                 },
                 "ImageURL": {
+                  "style": "form"
+                },
+                "Model3DUrl": {
+                  "style": "form"
+                },
+                "ModelPosterUrl": {
+                  "style": "form"
+                },
+                "ModelScale": {
+                  "style": "form"
+                },
+                "ModelRotationX": {
+                  "style": "form"
+                },
+                "ModelRotationY": {
+                  "style": "form"
+                },
+                "ModelRotationZ": {
+                  "style": "form"
+                },
+                "Is3DEnabled": {
                   "style": "form"
                 },
                 "Name": {
@@ -15938,6 +16122,316 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PublicMenuCategoryDtoIReadOnlyCollectionApiResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "The requested resource was not found.",
+                  "data": null,
+                  "errors": [
+                    {
+                      "code": "not_found",
+                      "message": "The requested resource was not found."
+                    }
+                  ],
+                  "statusCode": 404,
+                  "traceId": "00-example-trace-id-01"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Too many requests. Please try again later.",
+                  "data": null,
+                  "errors": [
+                    {
+                      "code": "rate_limit_exceeded",
+                      "message": "Too many requests. Please try again later."
+                    }
+                  ],
+                  "statusCode": 429,
+                  "traceId": "00-example-trace-id-01"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/restaurants/{restaurantSlug}/experience": {
+      "get": {
+        "tags": [
+          "Public Restaurant Experience"
+        ],
+        "summary": "Get public restaurant experience",
+        "description": "Returns public restaurant and active branch information used by the virtual tour.",
+        "parameters": [
+          {
+            "name": "restaurantSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicRestaurantExperienceDtoApiResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "The requested resource was not found.",
+                  "data": null,
+                  "errors": [
+                    {
+                      "code": "not_found",
+                      "message": "The requested resource was not found."
+                    }
+                  ],
+                  "statusCode": 404,
+                  "traceId": "00-example-trace-id-01"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Too many requests. Please try again later.",
+                  "data": null,
+                  "errors": [
+                    {
+                      "code": "rate_limit_exceeded",
+                      "message": "Too many requests. Please try again later."
+                    }
+                  ],
+                  "statusCode": 429,
+                  "traceId": "00-example-trace-id-01"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/restaurants/{restaurantSlug}/scene": {
+      "get": {
+        "tags": [
+          "Public Restaurant Experience"
+        ],
+        "summary": "Get public restaurant 3D scene",
+        "description": "Returns a procedural scene calculated from real branch and table layout data.",
+        "parameters": [
+          {
+            "name": "restaurantSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicRestaurantSceneDtoApiResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "The requested resource was not found.",
+                  "data": null,
+                  "errors": [
+                    {
+                      "code": "not_found",
+                      "message": "The requested resource was not found."
+                    }
+                  ],
+                  "statusCode": 404,
+                  "traceId": "00-example-trace-id-01"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Too many requests. Please try again later.",
+                  "data": null,
+                  "errors": [
+                    {
+                      "code": "rate_limit_exceeded",
+                      "message": "Too many requests. Please try again later."
+                    }
+                  ],
+                  "statusCode": 429,
+                  "traceId": "00-example-trace-id-01"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/menu-items/{menuItemId}/3d": {
+      "get": {
+        "tags": [
+          "Public Restaurant"
+        ],
+        "summary": "Get public 3D menu item data",
+        "description": "Returns only public presentation and 3D model settings. Inventory, supplier and cost data are never exposed.",
+        "parameters": [
+          {
+            "name": "menuItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicMenuItem3DDtoApiResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "The requested resource was not found.",
+                  "data": null,
+                  "errors": [
+                    {
+                      "code": "not_found",
+                      "message": "The requested resource was not found."
+                    }
+                  ],
+                  "statusCode": 404,
+                  "traceId": "00-example-trace-id-01"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Too many requests. Please try again later.",
+                  "data": null,
+                  "errors": [
+                    {
+                      "code": "rate_limit_exceeded",
+                      "message": "Too many requests. Please try again later."
+                    }
+                  ],
+                  "statusCode": 429,
+                  "traceId": "00-example-trace-id-01"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/menu-items/{menuItemId}/ingredients-3d": {
+      "get": {
+        "tags": [
+          "Public Restaurant"
+        ],
+        "summary": "Get public 3D ingredient data",
+        "description": "Returns public ingredient, nutrition and exploded-view transforms without inventory prices or supplier information.",
+        "parameters": [
+          {
+            "name": "menuItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicIngredient3DDtoIReadOnlyCollectionApiResponse"
                 }
               }
             }
@@ -27631,6 +28125,46 @@
           },
           "unit": {
             "$ref": "#/components/schemas/IngredientUnit"
+          },
+          "model3DUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "calories": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "protein": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "carbohydrates": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "fat": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "origin": {
+            "type": "string",
+            "nullable": true
+          },
+          "allergenInformation": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -27655,6 +28189,46 @@
           },
           "isActive": {
             "type": "boolean"
+          },
+          "model3DUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "calories": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "protein": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "carbohydrates": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "fat": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "origin": {
+            "type": "string",
+            "nullable": true
+          },
+          "allergenInformation": {
+            "type": "string",
+            "nullable": true
           },
           "creatAt": {
             "type": "string",
@@ -27806,6 +28380,46 @@
           },
           "isActive": {
             "type": "boolean"
+          },
+          "model3DUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "calories": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "protein": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "carbohydrates": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "fat": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "origin": {
+            "type": "string",
+            "nullable": true
+          },
+          "allergenInformation": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -29010,6 +29624,33 @@
             "type": "string",
             "nullable": true
           },
+          "model3DUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "modelPosterUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "modelScale": {
+            "type": "number",
+            "format": "double"
+          },
+          "modelRotationX": {
+            "type": "number",
+            "format": "double"
+          },
+          "modelRotationY": {
+            "type": "number",
+            "format": "double"
+          },
+          "modelRotationZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "is3DEnabled": {
+            "type": "boolean"
+          },
           "ingredients": {
             "type": "array",
             "items": {
@@ -29145,6 +29786,37 @@
           "requiredQuantity": {
             "type": "number",
             "format": "double"
+          },
+          "explodedPositionX": {
+            "type": "number",
+            "format": "double"
+          },
+          "explodedPositionY": {
+            "type": "number",
+            "format": "double"
+          },
+          "explodedPositionZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "explodedRotationX": {
+            "type": "number",
+            "format": "double"
+          },
+          "explodedRotationY": {
+            "type": "number",
+            "format": "double"
+          },
+          "explodedRotationZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "displayOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isVisibleIn3D": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -29166,6 +29838,37 @@
           "requiredQuantity": {
             "type": "number",
             "format": "double"
+          },
+          "explodedPositionX": {
+            "type": "number",
+            "format": "double"
+          },
+          "explodedPositionY": {
+            "type": "number",
+            "format": "double"
+          },
+          "explodedPositionZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "explodedRotationX": {
+            "type": "number",
+            "format": "double"
+          },
+          "explodedRotationY": {
+            "type": "number",
+            "format": "double"
+          },
+          "explodedRotationZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "displayOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isVisibleIn3D": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -30291,6 +30994,54 @@
         },
         "additionalProperties": false
       },
+      "PublicBranchSceneDto": {
+        "type": "object",
+        "properties": {
+          "branchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "branchName": {
+            "type": "string",
+            "nullable": true
+          },
+          "floorWidth": {
+            "type": "number",
+            "format": "double"
+          },
+          "floorDepth": {
+            "type": "number",
+            "format": "double"
+          },
+          "wallHeight": {
+            "type": "number",
+            "format": "double"
+          },
+          "centerX": {
+            "type": "number",
+            "format": "double"
+          },
+          "centerZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "tables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicSceneTableDto"
+            },
+            "nullable": true
+          },
+          "hotspots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicSceneHotspotDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PublicCancelReservationDto": {
         "type": "object",
         "properties": {
@@ -30362,6 +31113,153 @@
           "captchaToken": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PublicIngredient3DDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          },
+          "requiredQuantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "model3DUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "calories": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "protein": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "carbohydrates": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "fat": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "origin": {
+            "type": "string",
+            "nullable": true
+          },
+          "allergenInformation": {
+            "type": "string",
+            "nullable": true
+          },
+          "explodedPositionX": {
+            "type": "number",
+            "format": "double"
+          },
+          "explodedPositionY": {
+            "type": "number",
+            "format": "double"
+          },
+          "explodedPositionZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "explodedRotationX": {
+            "type": "number",
+            "format": "double"
+          },
+          "explodedRotationY": {
+            "type": "number",
+            "format": "double"
+          },
+          "explodedRotationZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "displayOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isVisibleIn3D": {
+            "type": "boolean"
+          },
+          "fallbackKind": {
+            "type": "string",
+            "nullable": true
+          },
+          "usesProceduralFallback": {
+            "type": "boolean",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PublicIngredient3DDtoIReadOnlyCollectionApiResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicIngredient3DDto"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "traceId": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "stackTrace": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -30441,6 +31339,138 @@
         },
         "additionalProperties": false
       },
+      "PublicMenuItem3DDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "restaurantSlug": {
+            "type": "string",
+            "nullable": true
+          },
+          "restaurantName": {
+            "type": "string",
+            "nullable": true
+          },
+          "categoryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "nutrition": {
+            "type": "string",
+            "nullable": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "discountPercentage": {
+            "type": "number",
+            "format": "double"
+          },
+          "finalPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "preparationTimeMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isAvailable": {
+            "type": "boolean"
+          },
+          "isPopular": {
+            "type": "boolean"
+          },
+          "model3DUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "modelPosterUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "modelScale": {
+            "type": "number",
+            "format": "double"
+          },
+          "modelRotationX": {
+            "type": "number",
+            "format": "double"
+          },
+          "modelRotationY": {
+            "type": "number",
+            "format": "double"
+          },
+          "modelRotationZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "is3DEnabled": {
+            "type": "boolean"
+          },
+          "usesProceduralFallback": {
+            "type": "boolean",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PublicMenuItem3DDtoApiResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/PublicMenuItem3DDto"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "traceId": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "stackTrace": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PublicMenuItemDto": {
         "type": "object",
         "properties": {
@@ -30489,6 +31519,13 @@
           },
           "isPopular": {
             "type": "boolean"
+          },
+          "is3DEnabled": {
+            "type": "boolean"
+          },
+          "modelPosterUrl": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -30862,6 +31899,127 @@
         },
         "additionalProperties": false
       },
+      "PublicRestaurantExperienceDto": {
+        "type": "object",
+        "properties": {
+          "restaurant": {
+            "$ref": "#/components/schemas/PublicRestaurantDto"
+          },
+          "defaultBranchId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PublicRestaurantExperienceDtoApiResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/PublicRestaurantExperienceDto"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "traceId": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "stackTrace": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PublicRestaurantSceneDto": {
+        "type": "object",
+        "properties": {
+          "restaurantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "restaurantSlug": {
+            "type": "string",
+            "nullable": true
+          },
+          "restaurantName": {
+            "type": "string",
+            "nullable": true
+          },
+          "branches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicBranchSceneDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PublicRestaurantSceneDtoApiResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/PublicRestaurantSceneDto"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "traceId": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "stackTrace": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PublicRestaurantTableDto": {
         "type": "object",
         "properties": {
@@ -30973,6 +32131,122 @@
             "type": "string",
             "nullable": true,
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PublicSceneHotspotDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "positionX": {
+            "type": "number",
+            "format": "double"
+          },
+          "positionY": {
+            "type": "number",
+            "format": "double"
+          },
+          "positionZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "cameraX": {
+            "type": "number",
+            "format": "double"
+          },
+          "cameraY": {
+            "type": "number",
+            "format": "double"
+          },
+          "cameraZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "tableIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          },
+          "availableTableCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PublicSceneTableDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tableNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "capacity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "shape": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "positionX": {
+            "type": "number",
+            "format": "double"
+          },
+          "positionY": {
+            "type": "number",
+            "format": "double"
+          },
+          "positionZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "rotationX": {
+            "type": "number",
+            "format": "double"
+          },
+          "rotationY": {
+            "type": "number",
+            "format": "double"
+          },
+          "rotationZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "width": {
+            "type": "number",
+            "format": "double"
+          },
+          "length": {
+            "type": "number",
+            "format": "double"
+          },
+          "height": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false

@@ -7,6 +7,9 @@ C:\Users\ASUS\AppData\Local\Temp\HRestaurantFluentValidationBuild\HRestaurant.Ap
 C:\Users\ASUS\AppData\Local\Temp\HRestaurantValidationSmoke\HRestaurant.Application.deps.json
 C:\Users\ASUS\AppData\Local\Temp\HRestaurantValidationSmoke\HRestaurant.Application.dll
 C:\Users\ASUS\AppData\Local\Temp\HRestaurantValidationSmoke\HRestaurant.Application.pdb
+C:\Users\ASUS\AppData\Local\Temp\hrestaurant-swagger-verify-019fc77e\HRestaurant.Application.deps.json
+C:\Users\ASUS\AppData\Local\Temp\hrestaurant-swagger-verify-019fc77e\HRestaurant.Application.dll
+C:\Users\ASUS\AppData\Local\Temp\hrestaurant-swagger-verify-019fc77e\HRestaurant.Application.pdb
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Application\bin\Debug\net8.0\HRestaurant.Application.deps.json
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Application\bin\Debug\net8.0\HRestaurant.Application.dll
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Application\bin\Debug\net8.0\HRestaurant.Application.pdb
@@ -23,6 +26,3 @@ C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Application\obj\De
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Application\obj\Debug\net8.0\refint\HRestaurant.Application.dll
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Application\obj\Debug\net8.0\HRestaurant.Application.pdb
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Application\obj\Debug\net8.0\ref\HRestaurant.Application.dll
-C:\Users\ASUS\AppData\Local\Temp\hrestaurant-swagger-verify-019fc77e\HRestaurant.Application.deps.json
-C:\Users\ASUS\AppData\Local\Temp\hrestaurant-swagger-verify-019fc77e\HRestaurant.Application.dll
-C:\Users\ASUS\AppData\Local\Temp\hrestaurant-swagger-verify-019fc77e\HRestaurant.Application.pdb
