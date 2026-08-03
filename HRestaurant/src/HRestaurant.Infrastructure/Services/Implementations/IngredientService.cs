@@ -45,6 +45,9 @@ public sealed class IngredientService : IIngredientService
         var entity = _mapper.Map<Ingredient>(dto);
         entity.Name = name;
         entity.NormalizedName = normalized;
+        ApplyPublicPresentation(entity, dto.Model3DUrl, dto.ImageUrl, dto.Description,
+            dto.Origin, dto.AllergenInformation, dto.Calories, dto.Protein,
+            dto.Carbohydrates, dto.Fat);
         entity.CreatAt = UtcNow;
         _db.Ingredients.Add(entity);
         await _db.SaveChangesAsync(cancellationToken);
@@ -104,6 +107,9 @@ public sealed class IngredientService : IIngredientService
         entity.NormalizedName = normalized;
         entity.Unit = dto.Unit;
         entity.IsActive = dto.IsActive;
+        ApplyPublicPresentation(entity, dto.Model3DUrl, dto.ImageUrl, dto.Description,
+            dto.Origin, dto.AllergenInformation, dto.Calories, dto.Protein,
+            dto.Carbohydrates, dto.Fat);
         entity.UpdateAt = UtcNow;
         await _db.SaveChangesAsync(cancellationToken);
         return ApiResponse.Success("Ingredient updated successfully.");
@@ -150,7 +156,15 @@ public sealed class IngredientService : IIngredientService
         {
             MenuItemId = menuItemId,
             IngredientId = dto.IngredientId,
-            RequiredQuantity = dto.RequiredQuantity
+            RequiredQuantity = dto.RequiredQuantity,
+            ExplodedPositionX = dto.ExplodedPositionX,
+            ExplodedPositionY = dto.ExplodedPositionY,
+            ExplodedPositionZ = dto.ExplodedPositionZ,
+            ExplodedRotationX = dto.ExplodedRotationX,
+            ExplodedRotationY = dto.ExplodedRotationY,
+            ExplodedRotationZ = dto.ExplodedRotationZ,
+            DisplayOrder = dto.DisplayOrder,
+            IsVisibleIn3D = dto.IsVisibleIn3D
         });
         await _db.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
@@ -225,5 +239,31 @@ public sealed class IngredientService : IIngredientService
     }
 
     private static string Normalize(string value) => value.Trim().ToUpperInvariant();
+    private static string? NormalizeOptional(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+    private static void ApplyPublicPresentation(
+        Ingredient entity,
+        string? model3DUrl,
+        string? imageUrl,
+        string? description,
+        string? origin,
+        string? allergenInformation,
+        decimal? calories,
+        decimal? protein,
+        decimal? carbohydrates,
+        decimal? fat)
+    {
+        entity.Model3DUrl = NormalizeOptional(model3DUrl);
+        entity.ImageUrl = NormalizeOptional(imageUrl);
+        entity.Description = NormalizeOptional(description);
+        entity.Origin = NormalizeOptional(origin);
+        entity.AllergenInformation = NormalizeOptional(allergenInformation);
+        entity.Calories = calories;
+        entity.Protein = protein;
+        entity.Carbohydrates = carbohydrates;
+        entity.Fat = fat;
+    }
+
     private DateTime UtcNow => _timeProvider.GetUtcNow().UtcDateTime;
 }

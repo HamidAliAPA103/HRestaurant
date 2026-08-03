@@ -19,4 +19,13 @@ public interface IPublicRestaurantService
     Task<ApiResponse<IReadOnlyCollection<PublicMenuCategoryDto>>> GetMenuAsync(
         string restaurantSlug,
         CancellationToken cancellationToken = default);
+
+    Task<ApiResponse<PublicMenuItem3DDto>> GetMenuItem3DAsync(
+        Guid menuItemId,
+        CancellationToken cancellationToken = default);
+
+    Task<ApiResponse<IReadOnlyCollection<PublicIngredient3DDto>>>
+        GetMenuItemIngredients3DAsync(
+            Guid menuItemId,
+            CancellationToken cancellationToken = default);
 }

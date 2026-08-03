@@ -9,6 +9,20 @@ public sealed class MenuCreateRequest
 
     public string? ImageUrl { get; init; }
 
+    public string? Model3DUrl { get; init; }
+
+    public string? ModelPosterUrl { get; init; }
+
+    public decimal ModelScale { get; init; } = 1m;
+
+    public decimal ModelRotationX { get; init; }
+
+    public decimal ModelRotationY { get; init; }
+
+    public decimal ModelRotationZ { get; init; }
+
+    public bool Is3DEnabled { get; init; }
+
     public required string Name { get; init; }
 
     public decimal Price { get; init; }

@@ -23,4 +23,6 @@ public sealed class PublicMenuItemDto
     public int PreparationTimeMinutes { get; init; }
     public bool IsAvailable { get; init; }
     public bool IsPopular { get; init; }
+    public bool Is3DEnabled { get; init; }
+    public string? ModelPosterUrl { get; init; }
 }

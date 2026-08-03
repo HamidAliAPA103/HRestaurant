@@ -116,7 +116,9 @@ public sealed class PublicRestaurantService
                         FinalPrice = item.FinalPrice,
                         PreparationTimeMinutes = item.PreparationTimeMinutes,
                         IsAvailable = item.IsAvailable,
-                        IsPopular = item.IsPopular
+                        IsPopular = item.IsPopular,
+                        Is3DEnabled = item.Is3DEnabled,
+                        ModelPosterUrl = item.ModelPosterUrl
                     })
                     .ToArray()
             })
@@ -125,6 +127,136 @@ public sealed class PublicRestaurantService
         return ApiResponse.Ok<IReadOnlyCollection<PublicMenuCategoryDto>>(
             categories,
             "Public menu retrieved successfully.");
+    }
+
+    public async Task<ApiResponse<PublicMenuItem3DDto>> GetMenuItem3DAsync(
+        Guid menuItemId,
+        CancellationToken cancellationToken = default)
+    {
+        var item = await _dbContext.Menus
+            .AsNoTracking()
+            .Where(menu =>
+                menu.ID == menuItemId
+                && !menu.IsDeleted
+                && !menu.Category.IsDeleted
+                && menu.Category.IsActive
+                && !menu.Restaurant.IsDeleted
+                && menu.Restaurant.IsActive)
+            .Select(menu => new PublicMenuItem3DDto
+            {
+                Id = menu.ID,
+                RestaurantSlug = menu.Restaurant.Slug,
+                RestaurantName = menu.Restaurant.Name,
+                CategoryName = menu.Category.Name,
+                Name = menu.Name,
+                Description = menu.Desc,
+                Nutrition = menu.Nutrition,
+                ImageUrl = menu.ImageURL,
+                Price = menu.Price,
+                DiscountPercentage = menu.DiscountPercentage,
+                FinalPrice = menu.FinalPrice,
+                PreparationTimeMinutes = menu.PreparationTimeMinutes,
+                IsAvailable = menu.IsAvailable,
+                IsPopular = menu.IsPopular,
+                Model3DUrl = menu.Model3DUrl,
+                ModelPosterUrl = menu.ModelPosterUrl,
+                ModelScale = menu.ModelScale,
+                ModelRotationX = menu.ModelRotationX,
+                ModelRotationY = menu.ModelRotationY,
+                ModelRotationZ = menu.ModelRotationZ,
+                Is3DEnabled = menu.Is3DEnabled
+            })
+            .FirstOrDefaultAsync(cancellationToken)
+            ?? throw new NotFoundException("Menu item", menuItemId);
+
+        return ApiResponse.Ok(item, "Public 3D menu item retrieved successfully.");
+    }
+
+    public async Task<ApiResponse<IReadOnlyCollection<PublicIngredient3DDto>>>
+        GetMenuItemIngredients3DAsync(
+            Guid menuItemId,
+            CancellationToken cancellationToken = default)
+    {
+        var menuItemExists = await _dbContext.Menus.AsNoTracking().AnyAsync(menu =>
+            menu.ID == menuItemId
+            && !menu.IsDeleted
+            && !menu.Category.IsDeleted
+            && menu.Category.IsActive
+            && !menu.Restaurant.IsDeleted
+            && menu.Restaurant.IsActive,
+            cancellationToken);
+        if (!menuItemExists)
+            throw new NotFoundException("Menu item", menuItemId);
+
+        var rows = await _dbContext.MenuItemIngredients
+            .AsNoTracking()
+            .Where(link =>
+                link.MenuItemId == menuItemId
+                && !link.MenuItem.IsDeleted
+                && !link.MenuItem.Category.IsDeleted
+                && link.MenuItem.Category.IsActive
+                && !link.MenuItem.Restaurant.IsDeleted
+                && link.MenuItem.Restaurant.IsActive
+                && link.Ingredient.RestaurantId == link.MenuItem.RestaurantId
+                && !link.Ingredient.IsDeleted
+                && link.Ingredient.IsActive)
+            .OrderBy(link => link.DisplayOrder)
+            .ThenBy(link => link.Ingredient.Name)
+            .Select(link => new
+            {
+                link.Ingredient.ID,
+                link.Ingredient.Name,
+                link.Ingredient.Unit,
+                link.RequiredQuantity,
+                link.Ingredient.Model3DUrl,
+                link.Ingredient.ImageUrl,
+                link.Ingredient.Description,
+                link.Ingredient.Calories,
+                link.Ingredient.Protein,
+                link.Ingredient.Carbohydrates,
+                link.Ingredient.Fat,
+                link.Ingredient.Origin,
+                link.Ingredient.AllergenInformation,
+                link.ExplodedPositionX,
+                link.ExplodedPositionY,
+                link.ExplodedPositionZ,
+                link.ExplodedRotationX,
+                link.ExplodedRotationY,
+                link.ExplodedRotationZ,
+                link.DisplayOrder,
+                link.IsVisibleIn3D
+            })
+            .ToArrayAsync(cancellationToken);
+
+        var result = rows.Select(row => new PublicIngredient3DDto
+        {
+            Id = row.ID,
+            Name = row.Name,
+            Unit = row.Unit.ToString(),
+            RequiredQuantity = row.RequiredQuantity,
+            Model3DUrl = row.Model3DUrl,
+            ImageUrl = row.ImageUrl,
+            Description = row.Description,
+            Calories = row.Calories,
+            Protein = row.Protein,
+            Carbohydrates = row.Carbohydrates,
+            Fat = row.Fat,
+            Origin = row.Origin,
+            AllergenInformation = row.AllergenInformation,
+            ExplodedPositionX = row.ExplodedPositionX,
+            ExplodedPositionY = row.ExplodedPositionY,
+            ExplodedPositionZ = row.ExplodedPositionZ,
+            ExplodedRotationX = row.ExplodedRotationX,
+            ExplodedRotationY = row.ExplodedRotationY,
+            ExplodedRotationZ = row.ExplodedRotationZ,
+            DisplayOrder = row.DisplayOrder,
+            IsVisibleIn3D = row.IsVisibleIn3D,
+            FallbackKind = GetFallbackKind(row.Name)
+        }).ToArray();
+
+        return ApiResponse.Ok<IReadOnlyCollection<PublicIngredient3DDto>>(
+            result,
+            "Public 3D ingredient data retrieved successfully.");
     }
 
     private async Task<Restaurant> GetRestaurantAsync(
@@ -200,4 +332,19 @@ public sealed class PublicRestaurantService
                     DefaultTimeZoneId));
         return dto;
     }
+
+    private static string GetFallbackKind(string ingredientName)
+    {
+        var name = ingredientName.Trim().ToLowerInvariant();
+        if (ContainsAny(name, "pomidor", "tomato")) return "tomato";
+        if (ContainsAny(name, "xiyar", "cucumber")) return "cucumber";
+        if (ContainsAny(name, "pendir", "cheese")) return "cheese";
+        if (ContainsAny(name, "sous", "sauce")) return "sauce";
+        if (ContainsAny(name, "göyərti", "goyerti", "herb", "cəfəri", "ceferi", "şüyüd", "suyud"))
+            return "herb";
+        return "generic";
+    }
+
+    private static bool ContainsAny(string value, params string[] terms) =>
+        terms.Any(value.Contains);
 }

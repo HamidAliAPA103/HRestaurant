@@ -11,5 +11,12 @@ public sealed class MenuUpdateDTO
     public Guid? CategoryId { get; set; }
     public string? Desc { get; set; }
     public string? Nutrition { get; set; }
+    public string? Model3DUrl { get; set; }
+    public string? ModelPosterUrl { get; set; }
+    public decimal? ModelScale { get; set; }
+    public decimal? ModelRotationX { get; set; }
+    public decimal? ModelRotationY { get; set; }
+    public decimal? ModelRotationZ { get; set; }
+    public bool? Is3DEnabled { get; set; }
     public List<MenuItemIngredientDTO>? Ingredients { get; set; }
 }

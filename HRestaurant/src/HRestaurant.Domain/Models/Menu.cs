@@ -18,6 +18,13 @@ namespace HRestaurant.Models
         public bool IsPopular { get; set; }
         public string Desc {  get; set; } = string.Empty;
         public string Nutrition { get; set; } = string.Empty;
+        public string? Model3DUrl { get; set; }
+        public string? ModelPosterUrl { get; set; }
+        public decimal ModelScale { get; set; } = 1m;
+        public decimal ModelRotationX { get; set; }
+        public decimal ModelRotationY { get; set; }
+        public decimal ModelRotationZ { get; set; }
+        public bool Is3DEnabled { get; set; }
         public Restaurant Restaurant { get; set; } = null!;
         public MenuCategory Category { get; set; } = null!;
         public List<MenuItemIngredient> Ingredients { get; set; } = new();

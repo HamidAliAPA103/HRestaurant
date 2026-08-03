@@ -12,6 +12,13 @@ public sealed class MenuItemIngredientConfiguration
         entity.ToTable("MenuItemIngredients");
         entity.HasKey(x => new { x.MenuItemId, x.IngredientId });
         entity.Property(x => x.RequiredQuantity).HasPrecision(18, 3);
+        entity.Property(x => x.ExplodedPositionX).HasPrecision(9, 4);
+        entity.Property(x => x.ExplodedPositionY).HasPrecision(9, 4);
+        entity.Property(x => x.ExplodedPositionZ).HasPrecision(9, 4);
+        entity.Property(x => x.ExplodedRotationX).HasPrecision(9, 4);
+        entity.Property(x => x.ExplodedRotationY).HasPrecision(9, 4);
+        entity.Property(x => x.ExplodedRotationZ).HasPrecision(9, 4);
+        entity.Property(x => x.IsVisibleIn3D).HasDefaultValue(true);
         entity.HasOne(x => x.MenuItem).WithMany(x => x.Ingredients)
             .HasForeignKey(x => x.MenuItemId).OnDelete(DeleteBehavior.Cascade);
         entity.HasOne(x => x.Ingredient).WithMany(x => x.MenuItems)

@@ -7,6 +7,7 @@ interface ReservationTimeStepProps {
   reservationDate: string;
   startTime: string;
   durationMinutes: number;
+  timeZoneId: string;
   onStartTimeChange: (value: string) => void;
   onDurationChange: (value: number) => void;
 }
@@ -16,6 +17,7 @@ export function ReservationTimeStep({
   reservationDate,
   startTime,
   durationMinutes,
+  timeZoneId,
   onStartTimeChange,
   onDurationChange,
 }: ReservationTimeStepProps) {
@@ -23,6 +25,7 @@ export function ReservationTimeStep({
     workingHours,
     reservationDate,
     durationMinutes,
+    { timeZoneId },
   );
 
   return (
@@ -45,6 +48,11 @@ export function ReservationTimeStep({
             </option>
           ))}
         </select>
+        {timeSlots.length === 0 && (
+          <span className="mt-2 block text-sm text-amber-700">
+            Bu tarix üçün uyğun gələcək saat qalmayıb. Başqa tarix seçin.
+          </span>
+        )}
       </label>
       <label>
         <span className="mb-2 block text-sm font-bold text-[#4d443d]">

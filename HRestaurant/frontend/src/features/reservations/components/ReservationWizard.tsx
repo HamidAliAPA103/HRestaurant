@@ -226,6 +226,7 @@ export function ReservationWizard({
                   reservationDate={state.reservationDate}
                   startTime={state.startTime}
                   durationMinutes={state.durationMinutes}
+                  timeZoneId={state.selectedBranch.timeZoneId}
                   onStartTimeChange={state.setStartTime}
                   onDurationChange={state.setDurationMinutes}
                 />

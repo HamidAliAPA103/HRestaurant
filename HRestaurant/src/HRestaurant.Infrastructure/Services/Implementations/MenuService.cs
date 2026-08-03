@@ -72,12 +72,22 @@ public sealed class MenuService : IMenuService
                 : NormalizeOptional(dto.ImageUrl) ?? string.Empty;
             entity.Desc = dto.Desc.Trim();
             entity.Nutrition = dto.Nutrition.Trim();
+            entity.Model3DUrl = NormalizeOptional(dto.Model3DUrl);
+            entity.ModelPosterUrl = NormalizeOptional(dto.ModelPosterUrl);
             entity.FinalPrice = CalculateFinalPrice(dto.Price, dto.DiscountPercentage);
             entity.CreatAt = UtcNow;
             entity.Ingredients = dto.Ingredients.Select(item => new MenuItemIngredient
             {
                 IngredientId = item.IngredientId,
-                RequiredQuantity = item.RequiredQuantity
+                RequiredQuantity = item.RequiredQuantity,
+                ExplodedPositionX = item.ExplodedPositionX,
+                ExplodedPositionY = item.ExplodedPositionY,
+                ExplodedPositionZ = item.ExplodedPositionZ,
+                ExplodedRotationX = item.ExplodedRotationX,
+                ExplodedRotationY = item.ExplodedRotationY,
+                ExplodedRotationZ = item.ExplodedRotationZ,
+                DisplayOrder = item.DisplayOrder,
+                IsVisibleIn3D = item.IsVisibleIn3D
             }).ToList();
 
             _db.Menus.Add(entity);
@@ -171,6 +181,15 @@ public sealed class MenuService : IMenuService
             if (dto.PreparationTimeMinutes.HasValue) entity.PreparationTimeMinutes = dto.PreparationTimeMinutes.Value;
             if (dto.Desc is not null) entity.Desc = dto.Desc.Trim();
             if (dto.Nutrition is not null) entity.Nutrition = dto.Nutrition.Trim();
+            if (dto.Model3DUrl is not null)
+                entity.Model3DUrl = NormalizeOptional(dto.Model3DUrl);
+            if (dto.ModelPosterUrl is not null)
+                entity.ModelPosterUrl = NormalizeOptional(dto.ModelPosterUrl);
+            if (dto.ModelScale.HasValue) entity.ModelScale = dto.ModelScale.Value;
+            if (dto.ModelRotationX.HasValue) entity.ModelRotationX = dto.ModelRotationX.Value;
+            if (dto.ModelRotationY.HasValue) entity.ModelRotationY = dto.ModelRotationY.Value;
+            if (dto.ModelRotationZ.HasValue) entity.ModelRotationZ = dto.ModelRotationZ.Value;
+            if (dto.Is3DEnabled.HasValue) entity.Is3DEnabled = dto.Is3DEnabled.Value;
             if (newImage is not null)
             {
                 entity.Image = newImage;
@@ -193,7 +212,15 @@ public sealed class MenuService : IMenuService
                     entity.Ingredients.Add(new MenuItemIngredient
                     {
                         IngredientId = item.IngredientId,
-                        RequiredQuantity = item.RequiredQuantity
+                        RequiredQuantity = item.RequiredQuantity,
+                        ExplodedPositionX = item.ExplodedPositionX,
+                        ExplodedPositionY = item.ExplodedPositionY,
+                        ExplodedPositionZ = item.ExplodedPositionZ,
+                        ExplodedRotationX = item.ExplodedRotationX,
+                        ExplodedRotationY = item.ExplodedRotationY,
+                        ExplodedRotationZ = item.ExplodedRotationZ,
+                        DisplayOrder = item.DisplayOrder,
+                        IsVisibleIn3D = item.IsVisibleIn3D
                     });
             }
 

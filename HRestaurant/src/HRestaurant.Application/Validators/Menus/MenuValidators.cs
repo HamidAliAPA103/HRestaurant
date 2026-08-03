@@ -16,6 +16,14 @@ public sealed class MenuCreateDTOValidator : AbstractValidator<MenuCreateDTO>
             .When(x => x.Image is not null);
         RuleFor(x => x.ImageUrl).MaximumLength(500)
             .When(x => x.ImageUrl is not null);
+        RuleFor(x => x.Model3DUrl).MaximumLength(500)
+            .When(x => x.Model3DUrl is not null);
+        RuleFor(x => x.ModelPosterUrl).MaximumLength(500)
+            .When(x => x.ModelPosterUrl is not null);
+        RuleFor(x => x.ModelScale).InclusiveBetween(0.01m, 100m);
+        RuleFor(x => x.ModelRotationX).InclusiveBetween(-360m, 360m);
+        RuleFor(x => x.ModelRotationY).InclusiveBetween(-360m, 360m);
+        RuleFor(x => x.ModelRotationZ).InclusiveBetween(-360m, 360m);
         RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
         RuleFor(x => x.Price).GreaterThan(0);
         RuleFor(x => x.DiscountPercentage).InclusiveBetween(0, 100);
@@ -38,6 +46,18 @@ public sealed class MenuUpdateDTOValidator : AbstractValidator<MenuUpdateDTO>
             .When(x => x.Image is not null);
         RuleFor(x => x.ImageURL).NotEmpty().MaximumLength(500)
             .When(x => x.ImageURL is not null);
+        RuleFor(x => x.Model3DUrl).NotEmpty().MaximumLength(500)
+            .When(x => x.Model3DUrl is not null);
+        RuleFor(x => x.ModelPosterUrl).NotEmpty().MaximumLength(500)
+            .When(x => x.ModelPosterUrl is not null);
+        RuleFor(x => x.ModelScale).InclusiveBetween(0.01m, 100m)
+            .When(x => x.ModelScale.HasValue);
+        RuleFor(x => x.ModelRotationX).InclusiveBetween(-360m, 360m)
+            .When(x => x.ModelRotationX.HasValue);
+        RuleFor(x => x.ModelRotationY).InclusiveBetween(-360m, 360m)
+            .When(x => x.ModelRotationY.HasValue);
+        RuleFor(x => x.ModelRotationZ).InclusiveBetween(-360m, 360m)
+            .When(x => x.ModelRotationZ.HasValue);
         RuleFor(x => x.Name).NotEmpty().MaximumLength(100)
             .When(x => x.Name is not null);
         RuleFor(x => x.Price).GreaterThan(0).When(x => x.Price.HasValue);
@@ -66,6 +86,13 @@ public sealed class MenuItemIngredientDTOValidator
     {
         RuleFor(x => x.IngredientId).NotEmpty();
         RuleFor(x => x.RequiredQuantity).GreaterThan(0);
+        RuleFor(x => x.ExplodedPositionX).InclusiveBetween(-100m, 100m);
+        RuleFor(x => x.ExplodedPositionY).InclusiveBetween(-100m, 100m);
+        RuleFor(x => x.ExplodedPositionZ).InclusiveBetween(-100m, 100m);
+        RuleFor(x => x.ExplodedRotationX).InclusiveBetween(-360m, 360m);
+        RuleFor(x => x.ExplodedRotationY).InclusiveBetween(-360m, 360m);
+        RuleFor(x => x.ExplodedRotationZ).InclusiveBetween(-360m, 360m);
+        RuleFor(x => x.DisplayOrder).GreaterThanOrEqualTo(0);
     }
 }
 

@@ -21,5 +21,12 @@ public sealed class MenuGetDTO
     public bool IsPopular { get; set; }
     public string Desc { get; set; } = string.Empty;
     public string Nutrition { get; set; } = string.Empty;
+    public string? Model3DUrl { get; set; }
+    public string? ModelPosterUrl { get; set; }
+    public decimal ModelScale { get; set; }
+    public decimal ModelRotationX { get; set; }
+    public decimal ModelRotationY { get; set; }
+    public decimal ModelRotationZ { get; set; }
+    public bool Is3DEnabled { get; set; }
     public List<MenuItemIngredientGetDTO> Ingredients { get; set; } = [];
 }

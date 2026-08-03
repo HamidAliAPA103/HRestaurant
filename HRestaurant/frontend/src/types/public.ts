@@ -55,6 +55,67 @@ export interface PublicMenuItem {
   preparationTimeMinutes: number;
   isAvailable: boolean;
   isPopular: boolean;
+  is3DEnabled: boolean;
+  modelPosterUrl: string | null;
+}
+
+export interface PublicFood3D {
+  id: string;
+  restaurantSlug: string;
+  restaurantName: string;
+  categoryName: string;
+  name: string;
+  description: string;
+  nutrition: string;
+  imageUrl: string | null;
+  price: number;
+  discountPercentage: number;
+  finalPrice: number;
+  preparationTimeMinutes: number;
+  isAvailable: boolean;
+  isPopular: boolean;
+  model3DUrl: string | null;
+  modelPosterUrl: string | null;
+  modelScale: number;
+  modelRotationX: number;
+  modelRotationY: number;
+  modelRotationZ: number;
+  is3DEnabled: boolean;
+  usesProceduralFallback: boolean;
+}
+
+export type IngredientFallbackKind =
+  | "tomato"
+  | "cucumber"
+  | "cheese"
+  | "sauce"
+  | "herb"
+  | "generic";
+
+export interface PublicIngredient3D {
+  id: string;
+  name: string;
+  unit: string;
+  requiredQuantity: number;
+  model3DUrl: string | null;
+  imageUrl: string | null;
+  description: string | null;
+  calories: number | null;
+  protein: number | null;
+  carbohydrates: number | null;
+  fat: number | null;
+  origin: string | null;
+  allergenInformation: string | null;
+  explodedPositionX: number;
+  explodedPositionY: number;
+  explodedPositionZ: number;
+  explodedRotationX: number;
+  explodedRotationY: number;
+  explodedRotationZ: number;
+  displayOrder: number;
+  isVisibleIn3D: boolean;
+  fallbackKind: IngredientFallbackKind;
+  usesProceduralFallback: boolean;
 }
 
 export interface PublicMenuCategory {

@@ -1,5 +1,6 @@
 import { getData, getPage, send } from "@/api/apiClient";
 import type { BranchDto, BranchInput, ListParams, WorkingHour } from "@/api/contracts";
+import { serializeWorkingHours } from "@/api/workingHours";
 export const branchKeys = { all: ["branches"] as const, detail: (id: string) => ["branches", id] as const };
 export const branchApi = {
   list: ({ signal, ...params }: ListParams & { restaurantId?: string } = {}) => getPage<BranchDto>("/Branch", { params, signal }),
@@ -10,5 +11,7 @@ export const branchApi = {
   setActive: (id: string, active: boolean) => send("patch", `/Branch/${id}/${active ? "activate" : "deactivate"}`),
   assignManager: (id: string, managerId: string) => send("put", `/Branch/${id}/manager`, { managerId }),
   removeManager: (id: string) => send("delete", `/Branch/${id}/manager`),
-  updateWorkingHours: (id: string, workingHours: WorkingHour[]) => send("put", `/Branch/${id}/working-hours`, { workingHours }),
+  updateWorkingHours: (id: string, workingHours: WorkingHour[]) => send("put", `/Branch/${id}/working-hours`, {
+    workingHours: serializeWorkingHours(workingHours),
+  }),
 };

@@ -9,10 +9,13 @@ import type {
   PublicReservationLookupRequest,
   PublicRestaurant,
   PublicMenuCategory,
+  PublicFood3D,
+  PublicIngredient3D,
   PublicRestaurantTable,
   PublicTableLayout,
   TableAvailabilityRequest,
 } from "@/types/public";
+import { toApiTime } from "@/utils/reservation-date";
 
 const publicApiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
@@ -49,6 +52,20 @@ export function getPublicMenu(slug: string) {
   );
 }
 
+export function getPublicMenuItem3D(menuItemId: string) {
+  return unwrap<PublicFood3D>(
+    publicApiClient.get(`/public/menu-items/${encodeURIComponent(menuItemId)}/3d`),
+  );
+}
+
+export function getPublicMenuItemIngredients3D(menuItemId: string) {
+  return unwrap<PublicIngredient3D[]>(
+    publicApiClient.get(
+      `/public/menu-items/${encodeURIComponent(menuItemId)}/ingredients-3d`,
+    ),
+  );
+}
+
 export function getPublicBranches(restaurantSlug: string) {
   return unwrap<PublicBranch[]>(
     publicApiClient.get(
@@ -77,8 +94,13 @@ export function getPublicTableLayout(branchId: string) {
 export function createPublicReservation(
   request: PublicCreateReservationRequest,
 ) {
+  const payload = {
+    ...request,
+    startTime: toApiTime(request.startTime),
+  };
+
   return unwrap<PublicReservationCreated>(
-    publicApiClient.post("/public/reservations", request),
+    publicApiClient.post("/public/reservations", payload),
   );
 }
 
@@ -115,10 +137,14 @@ export async function cancelPublicReservation(
 export function getPublicApiError(error: unknown) {
   if (error instanceof AxiosError) {
     const response = error.response?.data as ApiResponse<unknown> | undefined;
+    const responseError = response?.errors?.find(
+      (item) => item.field?.toLowerCase() !== "dto",
+    ) ?? response?.errors?.[0];
 
     return {
       status: error.response?.status,
       message:
+        responseError?.message ||
         response?.message ||
         "Sorğu tamamlanmadı. Zəhmət olmasa yenidən cəhd edin.",
       traceId: response?.traceId,

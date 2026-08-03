@@ -122,6 +122,38 @@ public sealed class PublicRestaurantController : ApiControllerBase
             cancellationToken));
     }
 
+    [HttpGet("menu-items/{menuItemId:guid}/3d")]
+    [SwaggerOperation(
+        Summary = "Get public 3D menu item data",
+        Description = "Returns only public presentation and 3D model settings. Inventory, supplier and cost data are never exposed.",
+        Tags = ["Public Restaurant"])]
+    [ProducesResponseType(typeof(ApiResponse<PublicMenuItem3DDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status429TooManyRequests)]
+    public async Task<IActionResult> GetMenuItem3D(
+        Guid menuItemId,
+        CancellationToken cancellationToken) =>
+        FromResponse(await _restaurantService.GetMenuItem3DAsync(
+            menuItemId,
+            cancellationToken));
+
+    [HttpGet("menu-items/{menuItemId:guid}/ingredients-3d")]
+    [SwaggerOperation(
+        Summary = "Get public 3D ingredient data",
+        Description = "Returns public ingredient, nutrition and exploded-view transforms without inventory prices or supplier information.",
+        Tags = ["Public Restaurant"])]
+    [ProducesResponseType(
+        typeof(ApiResponse<IReadOnlyCollection<PublicIngredient3DDto>>),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status429TooManyRequests)]
+    public async Task<IActionResult> GetMenuItemIngredients3D(
+        Guid menuItemId,
+        CancellationToken cancellationToken) =>
+        FromResponse(await _restaurantService.GetMenuItemIngredients3DAsync(
+            menuItemId,
+            cancellationToken));
+
     [HttpGet("branches/{branchId:guid}/available-tables")]
     [HttpGet("branches/{branchId:guid}/tables")]
     [SwaggerOperation(
