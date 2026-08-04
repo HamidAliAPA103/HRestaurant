@@ -118,7 +118,20 @@ public sealed class PublicRestaurantService
                         IsAvailable = item.IsAvailable,
                         IsPopular = item.IsPopular,
                         Is3DEnabled = item.Is3DEnabled,
+                        Has3DModel = item.Is3DEnabled
+                            && !string.IsNullOrWhiteSpace(item.Model3DUrl),
                         ModelPosterUrl = item.ModelPosterUrl
+                        ,VideoUrl = item.VideoUrl
+                        ,VideoPosterUrl = item.VideoPosterUrl
+                        ,VideoDurationSeconds = item.VideoDurationSeconds
+                        ,IsVideoEnabled = item.IsVideoEnabled
+                            && !string.IsNullOrWhiteSpace(item.VideoUrl)
+                        ,VideoDisplayOrder = item.VideoDisplayOrder
+                        ,Ingredients = item.Ingredients
+                            .Where(link => !link.Ingredient.IsDeleted && link.Ingredient.IsActive)
+                            .OrderBy(link => link.DisplayOrder)
+                            .Select(link => link.Ingredient.Name)
+                            .ToArray()
                     })
                     .ToArray()
             })
@@ -345,6 +358,7 @@ public sealed class PublicRestaurantService
         return branches
             .Where(branch =>
                 branch.IsActive
+                && branch.IsPubliclyVisible
                 && !branch.IsDeleted)
             .OrderBy(branch => branch.Name)
             .Select(branch =>

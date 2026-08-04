@@ -34,3 +34,15 @@ C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Infrastructure\obj
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Infrastructure\obj\Debug\net8.0\HRestaurant.Infrastructure.pdb
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Infrastructure\obj\Debug\net8.0\HRestaurant.Infrastructure.genruntimeconfig.cache
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Infrastructure\obj\Debug\net8.0\ref\HRestaurant.Infrastructure.dll
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.public-api-artifacts\verification\HRestaurant.Infrastructure.deps.json
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.public-api-artifacts\verification\HRestaurant.Infrastructure.runtimeconfig.json
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.public-api-artifacts\verification\HRestaurant.Infrastructure.dll
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.public-api-artifacts\verification\HRestaurant.Infrastructure.pdb
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.public-api-artifacts\test-verification\HRestaurant.Infrastructure.deps.json
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.public-api-artifacts\test-verification\HRestaurant.Infrastructure.runtimeconfig.json
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.public-api-artifacts\test-verification\HRestaurant.Infrastructure.dll
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.public-api-artifacts\test-verification\HRestaurant.Infrastructure.pdb
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.verify-api\HRestaurant.Infrastructure.deps.json
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.verify-api\HRestaurant.Infrastructure.runtimeconfig.json
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.verify-api\HRestaurant.Infrastructure.dll
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.verify-api\HRestaurant.Infrastructure.pdb

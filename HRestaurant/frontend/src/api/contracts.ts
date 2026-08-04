@@ -70,6 +70,14 @@ export interface BranchDto {
   email: string | null;
   latitude: number | null;
   longitude: number | null;
+  frontImageUrl: string | null;
+  coverImageUrl: string | null;
+  shortDescription: string | null;
+  googleMapsUrl: string | null;
+  virtualTourUrl: string | null;
+  parkingInfo: string | null;
+  landmark: string | null;
+  isPubliclyVisible: boolean;
   managerId: string | null;
   managerName: string | null;
   managerEmail: string | null;
@@ -89,6 +97,14 @@ export interface BranchInput {
   email?: string;
   latitude?: number | null;
   longitude?: number | null;
+  frontImageUrl?: string;
+  coverImageUrl?: string;
+  shortDescription?: string;
+  googleMapsUrl?: string;
+  virtualTourUrl?: string;
+  parkingInfo?: string;
+  landmark?: string;
+  isPubliclyVisible: boolean;
   timeZoneId: string;
   workingHours?: WorkingHour[];
 }

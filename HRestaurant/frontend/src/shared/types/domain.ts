@@ -67,6 +67,18 @@ export interface MenuItem extends BaseEntity {
   isPopular: boolean;
   desc: string;
   nutrition: string;
+  model3DUrl: string | null;
+  modelPosterUrl: string | null;
+  modelScale: number;
+  modelRotationX: number;
+  modelRotationY: number;
+  modelRotationZ: number;
+    is3DEnabled: boolean;
+    videoUrl: string | null;
+    videoPosterUrl: string | null;
+    videoDurationSeconds: number | null;
+    isVideoEnabled: boolean;
+    videoDisplayOrder: number;
   ingredients?: Array<{
     ingredientId: string;
     name: string;

@@ -27,6 +27,8 @@ const RestaurantExperiencePage = lazy(() =>
     (module) => ({ default: module.RestaurantExperiencePage }),
   ),
 );
+const PublicBranchesPage = lazy(() => import("@/features/public-restaurant/pages/PublicBranchesPage").then((module) => ({ default: module.PublicBranchesPage })));
+const BranchDetailPage = lazy(() => import("@/features/public-restaurant/pages/BranchDetailPage").then((module) => ({ default: module.BranchDetailPage })));
 
 const ReservationTrackingPage = lazy(() =>
   import("@/features/reservations/pages/ReservationTrackingPage").then(
@@ -64,6 +66,8 @@ export const publicRoutes: RouteObject[] = [
           </Suspense>
         ),
       },
+      { path: "/restaurants/:restaurantSlug/branches", element: <Suspense fallback={<LoadingState label="Filiallar yüklənir" />}><PublicBranchesPage /></Suspense> },
+      { path: "/restaurants/:restaurantSlug/branches/:branchId", element: <Suspense fallback={<LoadingState label="Filial yüklənir" />}><BranchDetailPage /></Suspense> },
       {
         path: "/restaurants/:restaurantSlug/experience",
         element: (

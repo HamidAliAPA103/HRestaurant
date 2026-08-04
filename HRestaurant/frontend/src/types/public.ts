@@ -22,6 +22,16 @@ export interface PublicBranch {
   address: string;
   phone: string | null;
   email: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  frontImageUrl: string | null;
+  coverImageUrl: string | null;
+  shortDescription: string | null;
+  googleMapsUrl: string | null;
+  virtualTourUrl: string | null;
+  parkingInfo: string | null;
+  landmark: string | null;
+  isActive: boolean;
   timeZoneId: string;
   isOpenNow: boolean;
   workingHours: PublicWorkingHour[];
@@ -111,7 +121,14 @@ export interface PublicMenuItem {
   isAvailable: boolean;
   isPopular: boolean;
   is3DEnabled: boolean;
+  has3DModel: boolean;
   modelPosterUrl: string | null;
+  videoUrl: string | null;
+  videoPosterUrl: string | null;
+  videoDurationSeconds: number | null;
+  isVideoEnabled: boolean;
+  videoDisplayOrder: number;
+  ingredients: string[];
 }
 
 export interface PublicFood3D {

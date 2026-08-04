@@ -35,16 +35,25 @@ export const RestaurantCameraController = memo(function RestaurantCameraControll
     if (!controls) return;
     const selectedTable = tables.find((table) => table.id === selectedTableId);
     const hotspot = scene.hotspots[activeHotspotIndex] ?? scene.hotspots[0];
-    const targetX = selectedTable?.positionX ?? hotspot?.positionX ?? scene.centerX;
+    const isEntrance = !selectedTable && activeHotspotIndex === 0;
+    const targetX = selectedTable?.positionX ?? (isEntrance ? scene.centerX : hotspot?.positionX) ?? scene.centerX;
     const targetY = selectedTable ? selectedTable.height : hotspot?.positionY ?? 0.7;
-    const targetZ = selectedTable?.positionZ ?? hotspot?.positionZ ?? scene.centerZ;
+    const targetZ = selectedTable?.positionZ ?? (isEntrance ? scene.centerZ : hotspot?.positionZ) ?? scene.centerZ;
     const cameraX = selectedTable
       ? selectedTable.positionX + 3
-      : hotspot?.cameraX ?? scene.centerX + 5;
-    const cameraY = selectedTable ? 2.65 : hotspot?.cameraY ?? 3;
+      : isEntrance
+        ? scene.centerX + scene.floorWidth * 0.3
+        : hotspot?.cameraX ?? scene.centerX + 5;
+    const cameraY = selectedTable
+      ? 2.65
+      : isEntrance
+        ? scene.wallHeight + 1.9
+        : Math.max(hotspot?.cameraY ?? 3, 2.6);
     const cameraZ = selectedTable
       ? selectedTable.positionZ + 3.2
-      : hotspot?.cameraZ ?? scene.centerZ + 5;
+      : isEntrance
+        ? scene.centerZ + scene.floorDepth * 0.48
+        : hotspot?.cameraZ ?? scene.centerZ + 5;
 
     if (reducedMotion) {
       camera.position.set(cameraX, cameraY, cameraZ);
@@ -83,9 +92,9 @@ export const RestaurantCameraController = memo(function RestaurantCameraControll
     if (!tourStarted) {
       const progress = reducedMotion ? 1 : heroProgress;
       const entrance = scene.hotspots[0];
-      const outsideX = scene.centerX + scene.floorWidth * 0.42;
-      const outsideY = scene.wallHeight + 3.8;
-      const outsideZ = scene.centerZ + scene.floorDepth * 0.9;
+      const outsideX = scene.centerX + scene.floorWidth * 0.3;
+      const outsideY = scene.wallHeight + 1.9;
+      const outsideZ = scene.centerZ + scene.floorDepth * 0.48;
       const insideX = entrance?.cameraX ?? scene.centerX + 3;
       const insideY = entrance?.cameraY ?? 2.5;
       const insideZ = entrance?.cameraZ ?? scene.centerZ + 4;

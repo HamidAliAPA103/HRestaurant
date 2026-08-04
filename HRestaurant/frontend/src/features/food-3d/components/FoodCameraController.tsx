@@ -21,6 +21,8 @@ export const FoodCameraController = memo(function FoodCameraController({
     (state) => state.selectedIngredientId,
   );
   const isExploded = useFoodViewerStore((state) => state.isExploded);
+  const autoRotate = useFoodViewerStore((state) => state.autoRotate);
+  const viewResetVersion = useFoodViewerStore((state) => state.viewResetVersion);
   const reducedMotion = useReducedMotion();
   const visibleIngredients = useMemo(
     () => ingredients.filter((ingredient) => ingredient.isVisibleIn3D),
@@ -77,13 +79,15 @@ export const FoodCameraController = memo(function FoodCameraController({
     return () => {
       timeline.kill();
     };
-  }, [camera, isExploded, reducedMotion, selectedIngredientId, visibleIngredients]);
+  }, [camera, isExploded, reducedMotion, selectedIngredientId, viewResetVersion, visibleIngredients]);
 
   return (
     <OrbitControls
       ref={controlsRef}
       makeDefault
       enableDamping
+      autoRotate={autoRotate && !reducedMotion}
+      autoRotateSpeed={1.15}
       dampingFactor={0.08}
       enablePan={false}
       minDistance={2.2}

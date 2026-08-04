@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "HRestaurant.Domain/1.0.0": {
+        "runtime": {
+          "HRestaurant.Domain.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "HRestaurant.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

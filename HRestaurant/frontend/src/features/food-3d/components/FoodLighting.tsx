@@ -1,4 +1,4 @@
-import { Environment } from "@react-three/drei";
+import { ContactShadows, Environment } from "@react-three/drei";
 
 export function FoodLighting() {
   return (
@@ -20,6 +20,15 @@ export function FoodLighting() {
         position={[-5, 4, -2]}
       />
       <Environment preset="studio" environmentIntensity={0.45} />
+      <ContactShadows
+        position={[0, 0.01, 0]}
+        opacity={0.32}
+        scale={8}
+        blur={2.4}
+        far={5}
+        resolution={512}
+        color="#4a3024"
+      />
     </>
   );
 }

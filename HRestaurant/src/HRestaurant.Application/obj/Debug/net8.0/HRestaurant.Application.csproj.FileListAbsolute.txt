@@ -26,3 +26,12 @@ C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Application\obj\De
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Application\obj\Debug\net8.0\refint\HRestaurant.Application.dll
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Application\obj\Debug\net8.0\HRestaurant.Application.pdb
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.Application\obj\Debug\net8.0\ref\HRestaurant.Application.dll
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.public-api-artifacts\verification\HRestaurant.Application.deps.json
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.public-api-artifacts\verification\HRestaurant.Application.dll
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.public-api-artifacts\verification\HRestaurant.Application.pdb
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.public-api-artifacts\test-verification\HRestaurant.Application.deps.json
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.public-api-artifacts\test-verification\HRestaurant.Application.dll
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.public-api-artifacts\test-verification\HRestaurant.Application.pdb
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.verify-api\HRestaurant.Application.deps.json
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.verify-api\HRestaurant.Application.dll
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\.verify-api\HRestaurant.Application.pdb

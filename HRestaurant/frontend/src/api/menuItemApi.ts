@@ -3,6 +3,11 @@ import type { ListParams, MenuItem } from "@/api/contracts";
 export interface MenuItemInput {
   name: string; price: number; discountPercentage: number; preparationTimeMinutes: number;
   desc: string; categoryId: string; nutrition: string; imageUrl?: string;
+  model3DUrl?: string; modelPosterUrl?: string; modelScale: number;
+  modelRotationX: number; modelRotationY: number; modelRotationZ: number;
+  is3DEnabled: boolean;
+  videoUrl?: string; videoPosterUrl?: string; videoDurationSeconds?: number;
+  isVideoEnabled: boolean; videoDisplayOrder: number;
   image?: File; ingredients?: Array<{ ingredientId: string; requiredQuantity: number }>;
 }
 function form(input: MenuItemInput) {
@@ -12,6 +17,18 @@ function form(input: MenuItemInput) {
   data.append("preparationTimeMinutes", String(input.preparationTimeMinutes));
   data.append("desc", input.desc); data.append("categoryId", input.categoryId);
   data.append("nutrition", input.nutrition);
+  if (input.model3DUrl) data.append("model3DUrl", input.model3DUrl);
+  if (input.modelPosterUrl) data.append("modelPosterUrl", input.modelPosterUrl);
+  data.append("modelScale", String(input.modelScale));
+  data.append("modelRotationX", String(input.modelRotationX));
+  data.append("modelRotationY", String(input.modelRotationY));
+  data.append("modelRotationZ", String(input.modelRotationZ));
+  data.append("is3DEnabled", String(input.is3DEnabled));
+  if (input.videoUrl) data.append("videoUrl", input.videoUrl);
+  if (input.videoPosterUrl) data.append("videoPosterUrl", input.videoPosterUrl);
+  if (input.videoDurationSeconds != null) data.append("videoDurationSeconds", String(input.videoDurationSeconds));
+  data.append("isVideoEnabled", String(input.isVideoEnabled));
+  data.append("videoDisplayOrder", String(input.videoDisplayOrder));
   if (input.imageUrl) data.append("imageUrl", input.imageUrl);
   if (input.image) data.append("image", input.image);
   (input.ingredients ?? []).forEach((item, index) => {

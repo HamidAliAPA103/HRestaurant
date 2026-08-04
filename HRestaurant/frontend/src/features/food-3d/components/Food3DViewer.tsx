@@ -6,10 +6,12 @@ import { supportsWebGL } from "@/features/food-3d/lib/scene-utils";
 import { useFoodViewerStore } from "@/features/food-3d/store/food-viewer-store";
 import type { PublicFood3D, PublicIngredient3D } from "@/types/public";
 import { FoodCameraController } from "./FoodCameraController";
+import { Food3DFallback } from "./Food3DFallback";
 import { FoodLighting } from "./FoodLighting";
 import { FoodLoadingFallback } from "./FoodLoadingFallback";
 import { FoodModel } from "./FoodModel";
 import { FoodPlate } from "./FoodPlate";
+import { FoodViewerControls } from "./FoodViewerControls";
 import { IngredientExplodedView } from "./IngredientExplodedView";
 import { SceneErrorBoundary } from "./SceneErrorBoundary";
 import { detectPerformanceProfile } from "@/features/three-performance/performance-profile";
@@ -23,6 +25,8 @@ export function Food3DViewer({ food, ingredients }: Food3DViewerProps) {
   const reducedMotion = Boolean(useReducedMotion());
   const profile = useMemo(() => detectPerformanceProfile(reducedMotion), [reducedMotion]);
   const [webGLAvailable] = useState(() => supportsWebGL());
+  const [modelFailed, setModelFailed] = useState(false);
+  const setAutoRotate = useFoodViewerStore((state) => state.setAutoRotate);
   const setSelectedIngredient = useFoodViewerStore(
     (state) => state.setSelectedIngredient,
   );
@@ -45,36 +49,45 @@ export function Food3DViewer({ food, ingredients }: Food3DViewerProps) {
     ingredients.forEach((ingredient) => {
       if (ingredient.model3DUrl) useGLTF.preload(ingredient.model3DUrl);
     });
+    return () => {
+      if (food.model3DUrl) useGLTF.clear(food.model3DUrl);
+      ingredients.forEach((ingredient) => {
+        if (ingredient.model3DUrl) useGLTF.clear(ingredient.model3DUrl);
+      });
+    };
   }, [food.is3DEnabled, food.model3DUrl, ingredients]);
 
+  useEffect(() => {
+    setModelFailed(false);
+    setAutoRotate(false);
+  }, [food.model3DUrl, setAutoRotate]);
+
   if (!webGLAvailable) {
-    const fallbackImage = food.modelPosterUrl ?? food.imageUrl;
     return (
-      <div className="relative grid min-h-[34rem] place-items-center overflow-hidden rounded-[2rem] bg-[#211914] text-center text-white">
-        {fallbackImage && (
-          <img
-            src={fallbackImage}
-            alt={`${food.name} üçün statik görünüş`}
-            className="absolute inset-0 h-full w-full object-cover opacity-45"
-          />
-        )}
-        <div className="relative z-10 max-w-md p-8">
-          <h2 className="font-serif text-3xl">3D görünüş dəstəklənmir</h2>
-          <p className="mt-3 text-sm leading-6 text-white/75">
-            Brauzer və ya cihaz WebGL-i aktiv etməyib. Ingredient məlumatları
-            aşağıdakı əlçatan HTML siyahısında tam təqdim olunur.
-          </p>
-        </div>
-      </div>
+      <Food3DFallback
+        food={food}
+        title="3D görünüş dəstəklənmir"
+        message="Brauzer və ya cihaz WebGL-i aktiv etməyib. Yeməyin statik görünüşü göstərilir."
+      />
+    );
+  }
+
+  if (modelFailed) {
+    return (
+      <Food3DFallback
+        food={food}
+        title="3D model yüklənmədi"
+        message="Model faylı açıla bilmədi. Yeməyin poster və ya menyu şəkli göstərilir."
+      />
     );
   }
 
   return (
-    <div className="relative min-h-[34rem] overflow-hidden rounded-[2rem] border border-[#e7ddd2] bg-[radial-gradient(circle_at_50%_28%,#fff8ed_0%,#ead9c8_55%,#c9ae97_100%)] shadow-[0_24px_80px_rgba(74,46,30,0.18)]">
+    <div className="relative h-[clamp(28rem,66svh,38rem)] overflow-hidden rounded-[2rem] border border-[#e7ddd2] bg-[radial-gradient(circle_at_50%_28%,#fff8ed_0%,#ead9c8_55%,#c9ae97_100%)] shadow-[0_24px_80px_rgba(74,46,30,0.18)]">
       <Canvas
         aria-label={`${food.name} üçün interaktiv 3D görünüş. Fırlatmaq üçün sürüşdürün, yaxınlaşdırmaq üçün təkərdən istifadə edin.`}
         camera={{ position: [4.8, 3.25, 5.7], fov: 42, near: 0.1, far: 100 }}
-        dpr={profile.dpr}
+        dpr={[profile.dpr[0], Math.min(profile.dpr[1], 1.5)]}
         shadows={profile.shadows}
         frameloop={profile.frameloop}
         gl={{
@@ -90,7 +103,8 @@ export function Food3DViewer({ food, ingredients }: Food3DViewerProps) {
           <FoodPlate />
           <SceneErrorBoundary
             resetKey={food.model3DUrl ?? "procedural-food"}
-            fallback={<FoodModel food={food} forceProcedural />}
+            fallback={null}
+            onError={() => setModelFailed(true)}
           >
             <FoodModel food={food} />
           </SceneErrorBoundary>
@@ -110,9 +124,7 @@ export function Food3DViewer({ food, ingredients }: Food3DViewerProps) {
           : "3D model"}
       </div>
       <span className="pointer-events-none absolute right-4 top-4 rounded-full bg-white/75 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#564b43]">{profile.level} profile</span>
-      <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/85 px-4 py-2 text-center text-xs font-medium text-[#564b43] shadow-sm backdrop-blur">
-        Fırlatmaq üçün sürüşdürün · Zoom üçün təkərdən istifadə edin
-      </p>
+      <FoodViewerControls reducedMotion={reducedMotion} />
     </div>
   );
 }

@@ -4,6 +4,7 @@ interface SceneErrorBoundaryProps {
   children: ReactNode;
   fallback: ReactNode;
   resetKey: string;
+  onError?: (error: Error) => void;
 }
 
 interface SceneErrorBoundaryState {
@@ -27,6 +28,7 @@ export class SceneErrorBoundary extends Component<
   }
 
   public componentDidCatch(error: Error, info: ErrorInfo) {
+    this.props.onError?.(error);
     console.error("3D model could not be rendered; procedural fallback activated.", {
       error,
       componentStack: info.componentStack,

@@ -1,4 +1,4 @@
-import { useGLTF } from "@react-three/drei";
+import { Center, useGLTF } from "@react-three/drei";
 import { memo, useEffect, useMemo } from "react";
 import { MathUtils, Mesh } from "three";
 import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.js";
@@ -46,7 +46,7 @@ function LoadedFoodModel({ url }: { url: string }) {
     [clonedScene],
   );
 
-  return <primitive object={clonedScene} dispose={null} />;
+  return <Center><primitive object={clonedScene} dispose={null} /></Center>;
 }
 
 export const ProceduralFoodModel = memo(function ProceduralFoodModel() {

@@ -41,6 +41,15 @@ public sealed class BranchConfiguration
         entity.Property(branch => branch.Longitude)
             .HasPrecision(9, 6);
 
+        entity.Property(branch => branch.FrontImageUrl).HasMaxLength(500);
+        entity.Property(branch => branch.CoverImageUrl).HasMaxLength(500);
+        entity.Property(branch => branch.ShortDescription).HasMaxLength(500);
+        entity.Property(branch => branch.GoogleMapsUrl).HasMaxLength(500);
+        entity.Property(branch => branch.VirtualTourUrl).HasMaxLength(500);
+        entity.Property(branch => branch.ParkingInfo).HasMaxLength(500);
+        entity.Property(branch => branch.Landmark).HasMaxLength(250);
+        entity.Property(branch => branch.IsPubliclyVisible).HasDefaultValue(true);
+
         entity.Property(branch => branch.TimeZoneId)
             .HasMaxLength(100)
             .IsUnicode(false)

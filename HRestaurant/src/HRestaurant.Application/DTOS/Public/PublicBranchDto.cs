@@ -13,6 +13,16 @@ public sealed class PublicBranchDto
     public string? Phone { get; set; }
 
     public string? Email { get; set; }
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
+    public string? FrontImageUrl { get; set; }
+    public string? CoverImageUrl { get; set; }
+    public string? ShortDescription { get; set; }
+    public string? GoogleMapsUrl { get; set; }
+    public string? VirtualTourUrl { get; set; }
+    public string? ParkingInfo { get; set; }
+    public string? Landmark { get; set; }
+    public bool IsActive { get; set; }
 
     public string TimeZoneId { get; set; } = string.Empty;
 

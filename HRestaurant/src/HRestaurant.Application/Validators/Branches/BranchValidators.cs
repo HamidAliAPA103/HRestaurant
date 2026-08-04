@@ -208,6 +208,15 @@ internal sealed class BranchDetailsValidator<T> : AbstractValidator<T>
             .WithMessage("Longitude must be between -180 and 180.")
             .When(dto => GetLongitude(dto).HasValue);
 
+        RuleFor(dto => GetShortDescription(dto)).MaximumLength(500)
+            .When(dto => GetShortDescription(dto) is not null);
+        RuleFor(dto => GetLandmark(dto)).MaximumLength(250)
+            .When(dto => GetLandmark(dto) is not null);
+        RuleForEach(dto => GetUrls(dto))
+            .MaximumLength(500)
+            .Must(IsValidPublicUrl)
+            .WithMessage("Media and map links must be absolute HTTP or HTTPS URLs.");
+
         RuleFor(dto => GetTimeZoneId(dto))
             .NotEmpty()
             .WithName("TimeZoneId")
@@ -273,6 +282,35 @@ internal sealed class BranchDetailsValidator<T> : AbstractValidator<T>
         BranchUpdateDTO update => update.TimeZoneId,
         _ => string.Empty
     };
+
+    private static string? GetShortDescription(T dto) => dto switch
+    {
+        BranchCreateDTO create => create.ShortDescription,
+        BranchUpdateDTO update => update.ShortDescription,
+        _ => null
+    };
+
+    private static string? GetLandmark(T dto) => dto switch
+    {
+        BranchCreateDTO create => create.Landmark,
+        BranchUpdateDTO update => update.Landmark,
+        _ => null
+    };
+
+    private static IEnumerable<string> GetUrls(T dto)
+    {
+        var values = dto switch
+        {
+            BranchCreateDTO create => new[] { create.FrontImageUrl, create.CoverImageUrl, create.GoogleMapsUrl, create.VirtualTourUrl },
+            BranchUpdateDTO update => new[] { update.FrontImageUrl, update.CoverImageUrl, update.GoogleMapsUrl, update.VirtualTourUrl },
+            _ => []
+        };
+        return values.Where(value => !string.IsNullOrWhiteSpace(value))!;
+    }
+
+    private static bool IsValidPublicUrl(string value) =>
+        Uri.TryCreate(value, UriKind.Absolute, out var uri)
+        && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
 
     private static bool IsValidTimeZone(string timeZoneId)
     {

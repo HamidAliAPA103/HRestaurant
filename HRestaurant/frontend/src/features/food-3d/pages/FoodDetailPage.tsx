@@ -10,6 +10,7 @@ import {
 } from "@/api/public-api";
 import { AccessibleIngredientList } from "@/features/food-3d/components/AccessibleIngredientList";
 import { Food3DViewer } from "@/features/food-3d/components/Food3DViewer";
+import { Food3DFallback } from "@/features/food-3d/components/Food3DFallback";
 import { FoodLoadingFallback } from "@/features/food-3d/components/FoodLoadingFallback";
 import { IngredientInfoPanel } from "@/features/food-3d/components/IngredientInfoPanel";
 import { IngredientLegend } from "@/features/food-3d/components/IngredientLegend";
@@ -107,6 +108,7 @@ export function FoodDetailPage() {
     setExploded(nextValue);
     if (!nextValue) setSelectedIngredient(null);
   };
+  const has3DModel = food.is3DEnabled && Boolean(food.model3DUrl);
 
   return (
     <motion.main
@@ -125,8 +127,16 @@ export function FoodDetailPage() {
 
       <div className="mt-6 grid gap-8 xl:grid-cols-[minmax(0,1.6fr)_minmax(20rem,0.75fr)]">
         <section className="mobile-3d-sheet">
-          <Food3DViewer food={food} ingredients={ingredients} />
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-[#e7ddd2] bg-white p-4">
+          {has3DModel ? (
+            <Food3DViewer food={food} ingredients={ingredients} />
+          ) : (
+            <Food3DFallback
+              food={food}
+              title="Statik yemək görünüşü"
+              message="Bu yemək üçün 3D model əlavə edilməyib. Poster və ya menyu şəkli göstərilir."
+            />
+          )}
+          {has3DModel && <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-[#e7ddd2] bg-white p-4">
             <p className="flex items-center gap-2 text-sm text-[#6d5e53]">
               <Rotate3D className="h-5 w-5 text-[#b5422d]" aria-hidden />
               Modeli rotate və zoom edə bilərsiniz
@@ -145,7 +155,7 @@ export function FoodDetailPage() {
               )}
               {isExploded ? "Yeməyi birləşdir" : "Ingredientləri göstər"}
             </button>
-          </div>
+          </div>}
         </section>
 
         <aside className="space-y-5">

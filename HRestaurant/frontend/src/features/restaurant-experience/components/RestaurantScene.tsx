@@ -1,6 +1,7 @@
 import { AdaptiveDpr } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useMemo, useState } from "react";
+import { ACESFilmicToneMapping, PCFSoftShadowMap } from "three";
 import { supportsWebGL } from "@/features/food-3d/lib/scene-utils";
 import { useRestaurantExperienceStore } from "@/features/restaurant-experience/store/restaurant-experience-store";
 import type { PublicBranchScene, PublicRestaurantTable } from "@/types/public";
@@ -67,14 +68,14 @@ export function RestaurantScene({
   }
 
   return (
-    <div className="relative min-h-[42rem] overflow-hidden rounded-[2rem] border border-white/10 bg-[#17110e] shadow-[0_35px_100px_rgba(34,20,13,0.32)]">
+    <div className="relative h-[clamp(36rem,78svh,50rem)] overflow-hidden rounded-[2rem] border border-white/10 bg-[#17110e] shadow-[0_35px_100px_rgba(34,20,13,0.32)]">
       <Canvas
         aria-label={`${scene.branchName} filialının interaktiv 3D virtual turu`}
         camera={{
           position: [
-            scene.centerX + scene.floorWidth * 0.42,
-            scene.wallHeight + 3.8,
-            scene.centerZ + scene.floorDepth * 0.9,
+            scene.centerX + scene.floorWidth * 0.3,
+            scene.wallHeight + 1.9,
+            scene.centerZ + scene.floorDepth * 0.48,
           ],
           fov: 46,
           near: 0.1,
@@ -84,11 +85,16 @@ export function RestaurantScene({
         shadows={profile.shadows}
         frameloop={profile.frameloop}
         gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
+        onCreated={({ gl }) => {
+          gl.toneMapping = ACESFilmicToneMapping;
+          gl.toneMappingExposure = 1.08;
+          gl.shadowMap.type = PCFSoftShadowMap;
+        }}
         fallback={<SceneLoadingScreen />}
         onPointerMissed={() => setSelectedTableId(null)}
       >
-        <color attach="background" args={["#211914"]} />
-        <fog attach="fog" args={["#211914", 20, 58]} />
+        <color attach="background" args={["#140e0c"]} />
+        <fog attach="fog" args={["#1b130f", 22, 62]} />
         <Suspense fallback={null}>
           <RestaurantBuilding3D
             width={scene.floorWidth}

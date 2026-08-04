@@ -16,6 +16,10 @@ public sealed class MenuConfiguration : IEntityTypeConfiguration<Menu>
         entity.Property(x => x.Nutrition).HasMaxLength(1000).IsRequired();
         entity.Property(x => x.Model3DUrl).HasMaxLength(500);
         entity.Property(x => x.ModelPosterUrl).HasMaxLength(500);
+        entity.Property(x => x.VideoUrl).HasMaxLength(500);
+        entity.Property(x => x.VideoPosterUrl).HasMaxLength(500);
+        entity.Property(x => x.IsVideoEnabled).HasDefaultValue(false);
+        entity.Property(x => x.VideoDisplayOrder).HasDefaultValue(0);
         entity.Property(x => x.Price).HasPrecision(18, 2);
         entity.Property(x => x.DiscountPercentage).HasPrecision(5, 2);
         entity.Property(x => x.FinalPrice).HasPrecision(18, 2);
@@ -26,6 +30,7 @@ public sealed class MenuConfiguration : IEntityTypeConfiguration<Menu>
         entity.HasIndex(x => new { x.CategoryId, x.NormalizedName })
             .IsUnique().HasFilter("[IsDeleted] = 0");
         entity.HasIndex(x => new { x.RestaurantId, x.IsDeleted, x.IsAvailable, x.IsPopular });
+        entity.HasIndex(x => new { x.RestaurantId, x.IsVideoEnabled, x.VideoDisplayOrder });
         entity.HasOne(x => x.Restaurant).WithMany()
             .HasForeignKey(x => x.RestaurantId).OnDelete(DeleteBehavior.Restrict);
         entity.HasOne(x => x.Category).WithMany(x => x.Menus)

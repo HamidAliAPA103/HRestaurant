@@ -28,5 +28,10 @@ public sealed class MenuGetDTO
     public decimal ModelRotationY { get; set; }
     public decimal ModelRotationZ { get; set; }
     public bool Is3DEnabled { get; set; }
+    public string? VideoUrl { get; set; }
+    public string? VideoPosterUrl { get; set; }
+    public int? VideoDurationSeconds { get; set; }
+    public bool IsVideoEnabled { get; set; }
+    public int VideoDisplayOrder { get; set; }
     public List<MenuItemIngredientGetDTO> Ingredients { get; set; } = [];
 }

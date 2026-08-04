@@ -17,6 +17,14 @@ public sealed class BranchCreateDTO
     public decimal? Latitude { get; set; }
 
     public decimal? Longitude { get; set; }
+    public string? FrontImageUrl { get; set; }
+    public string? CoverImageUrl { get; set; }
+    public string? ShortDescription { get; set; }
+    public string? GoogleMapsUrl { get; set; }
+    public string? VirtualTourUrl { get; set; }
+    public string? ParkingInfo { get; set; }
+    public string? Landmark { get; set; }
+    public bool IsPubliclyVisible { get; set; } = true;
 
     public string TimeZoneId { get; set; } = "Asia/Baku";
 

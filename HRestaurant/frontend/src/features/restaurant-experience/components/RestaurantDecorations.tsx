@@ -5,6 +5,7 @@ import { BufferAttribute, BufferGeometry, type Points } from "three";
 interface RestaurantDecorationsProps {
   width: number;
   depth: number;
+  wallHeight: number;
   centerX: number;
   centerZ: number;
   reducedMotion: boolean;
@@ -13,6 +14,7 @@ interface RestaurantDecorationsProps {
 export const RestaurantDecorations = memo(function RestaurantDecorations({
   width,
   depth,
+  wallHeight,
   centerX,
   centerZ,
   reducedMotion,
@@ -39,20 +41,37 @@ export const RestaurantDecorations = memo(function RestaurantDecorations({
 
   return (
     <group>
-      <group position={[centerX + width * 0.34, 0, centerZ + depth * 0.27]}>
-        <mesh castShadow position={[0, 0.55, 0]}>
-          <boxGeometry args={[width * 0.22, 1.1, 1.1]} />
-          <meshStandardMaterial color="#5a3525" roughness={0.74} />
+      <group position={[centerX + width * 0.34, 0, centerZ + depth * 0.28]}>
+        <mesh castShadow receiveShadow position={[0, 0.55, 0]}>
+          <boxGeometry args={[width * 0.24, 1.1, 1.05]} />
+          <meshStandardMaterial color="#3b241d" roughness={0.68} />
         </mesh>
-        <mesh position={[0, 1.16, 0]}>
-          <boxGeometry args={[width * 0.24, 0.1, 1.2]} />
-          <meshStandardMaterial color="#c18a5e" roughness={0.46} />
+        {Array.from({ length: 5 }, (_, index) => (
+          <mesh
+            key={index}
+            position={[-width * 0.09 + index * width * 0.045, 0.54, -0.535]}
+          >
+            <boxGeometry args={[0.055, 0.92, 0.035]} />
+            <meshStandardMaterial color="#b27a4d" roughness={0.48} />
+          </mesh>
+        ))}
+        <mesh castShadow position={[0, 1.16, 0]}>
+          <boxGeometry args={[width * 0.26, 0.11, 1.2]} />
+          <meshStandardMaterial color="#b98558" roughness={0.4} metalness={0.06} />
+        </mesh>
+        <mesh position={[0, 0.18, -0.62]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.035, 0.035, width * 0.21, 12]} />
+          <meshStandardMaterial color="#c8a35c" metalness={0.72} roughness={0.26} />
         </mesh>
       </group>
       <group position={[centerX - width * 0.33, 0, centerZ - depth * 0.35]}>
-        <mesh castShadow position={[0, 0.72, 0]}>
-          <boxGeometry args={[width * 0.3, 1.44, 0.85]} />
-          <meshStandardMaterial color="#80766c" metalness={0.18} roughness={0.5} />
+        <mesh castShadow position={[0, 0.43, 0]}>
+          <boxGeometry args={[width * 0.3, 0.86, 0.72]} />
+          <meshStandardMaterial color="#62372d" roughness={0.66} />
+        </mesh>
+        <mesh castShadow position={[0, 0.88, 0.26]} rotation={[-0.08, 0, 0]}>
+          <boxGeometry args={[width * 0.3, 0.68, 0.18]} />
+          <meshStandardMaterial color="#874737" roughness={0.62} />
         </mesh>
       </group>
       {[-1, 1].map((side) => (
@@ -64,9 +83,43 @@ export const RestaurantDecorations = memo(function RestaurantDecorations({
             <cylinderGeometry args={[0.34, 0.28, 0.64, 18]} />
             <meshStandardMaterial color="#9a6545" roughness={0.8} />
           </mesh>
-          <mesh castShadow position={[0, 1.05, 0]}>
-            <sphereGeometry args={[0.65, 18, 14]} />
-            <meshStandardMaterial color="#416b42" roughness={0.9} />
+          {[-0.26, 0, 0.25].map((x, leafIndex) => (
+            <mesh
+              key={x}
+              castShadow
+              position={[x, 0.98 + leafIndex * 0.08, 0]}
+              scale={[0.62, 0.9, 0.62]}
+            >
+              <sphereGeometry args={[0.58, 18, 14]} />
+              <meshStandardMaterial
+                color={leafIndex === 1 ? "#315d3c" : "#47784b"}
+                roughness={0.88}
+              />
+            </mesh>
+          ))}
+        </group>
+      ))}
+      {[-0.27, 0, 0.27].map((xOffset) => (
+        <group
+          key={`pendant-${xOffset}`}
+          position={[centerX + width * xOffset, wallHeight - 0.62, centerZ - depth * 0.05]}
+        >
+          <mesh position={[0, 0.52, 0]}>
+            <cylinderGeometry args={[0.018, 0.018, 1.05, 8]} />
+            <meshStandardMaterial color="#211713" metalness={0.45} roughness={0.42} />
+          </mesh>
+          <mesh castShadow rotation={[Math.PI, 0, 0]}>
+            <coneGeometry args={[0.34, 0.36, 28, 1, true]} />
+            <meshStandardMaterial color="#34231d" roughness={0.48} metalness={0.18} side={2} />
+          </mesh>
+          <mesh position={[0, -0.08, 0]}>
+            <sphereGeometry args={[0.105, 16, 12]} />
+            <meshStandardMaterial
+              color="#fff0bd"
+              emissive="#ffb257"
+              emissiveIntensity={2.1}
+              roughness={0.22}
+            />
           </mesh>
         </group>
       ))}

@@ -21,6 +21,14 @@ public sealed class BranchGetDTO
     public decimal? Latitude { get; set; }
 
     public decimal? Longitude { get; set; }
+    public string? FrontImageUrl { get; set; }
+    public string? CoverImageUrl { get; set; }
+    public string? ShortDescription { get; set; }
+    public string? GoogleMapsUrl { get; set; }
+    public string? VirtualTourUrl { get; set; }
+    public string? ParkingInfo { get; set; }
+    public string? Landmark { get; set; }
+    public bool IsPubliclyVisible { get; set; }
 
     public Guid? ManagerId { get; set; }
 

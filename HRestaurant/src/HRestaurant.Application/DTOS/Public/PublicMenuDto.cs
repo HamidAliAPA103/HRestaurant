@@ -24,5 +24,12 @@ public sealed class PublicMenuItemDto
     public bool IsAvailable { get; init; }
     public bool IsPopular { get; init; }
     public bool Is3DEnabled { get; init; }
+    public bool Has3DModel { get; init; }
     public string? ModelPosterUrl { get; init; }
+    public string? VideoUrl { get; init; }
+    public string? VideoPosterUrl { get; init; }
+    public int? VideoDurationSeconds { get; init; }
+    public bool IsVideoEnabled { get; init; }
+    public int VideoDisplayOrder { get; init; }
+    public IReadOnlyCollection<string> Ingredients { get; init; } = [];
 }

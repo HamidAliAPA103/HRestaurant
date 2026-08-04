@@ -32,11 +32,14 @@ export const RestaurantInterior3D = memo(function RestaurantInterior3D({
       <RestaurantLights
         centerX={scene.centerX}
         centerZ={scene.centerZ}
+        width={scene.floorWidth}
+        depth={scene.floorDepth}
         reducedMotion={reducedMotion}
       />
       <RestaurantDecorations
         width={scene.floorWidth}
         depth={scene.floorDepth}
+        wallHeight={scene.wallHeight}
         centerX={scene.centerX}
         centerZ={scene.centerZ}
         reducedMotion={reducedMotion}
