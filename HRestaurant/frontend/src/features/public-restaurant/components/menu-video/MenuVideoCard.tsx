@@ -1,19 +1,12 @@
-import { Star } from "lucide-react";
+import { Box, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { PublicMenuItem } from "@/types/public";
 import { MenuVideoFallback } from "./MenuVideoFallback";
 import { MenuVideoPlayer } from "./MenuVideoPlayer";
 
 type Item = PublicMenuItem & { categoryName: string };
-export function MenuVideoCard({ item, restaurantSlug, activeVideoId, onActiveChange }: { item: Item; restaurantSlug: string; activeVideoId: string | null; onActiveChange: (id: string | null) => void }) {
+interface Props { item: Item; restaurantSlug: string; activeVideoId: string | null; onActiveChange: (id: string | null) => void; onOpen3D: (item: Item) => void }
+export function MenuVideoCard({ item, restaurantSlug, activeVideoId, onActiveChange, onOpen3D }: Props) {
   const hasVideo = item.isVideoEnabled && Boolean(item.videoUrl);
-  return <article className="group overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#2b211c] text-[#fff7e8] shadow-xl transition motion-safe:hover:-translate-y-1">
-    {hasVideo ? <MenuVideoPlayer item={item} activeVideoId={activeVideoId} onActiveChange={onActiveChange} /> : <MenuVideoFallback item={item} />}
-    <Link to={`/restaurants/${restaurantSlug}/menu/${item.id}`} className="block p-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d7a64a]">
-      <div className="flex items-center justify-between gap-3"><p className="text-xs font-bold uppercase tracking-widest text-[#e7774f]">{item.categoryName}</p>{item.isPopular && <span className="inline-flex items-center gap-1 text-xs text-[#f0c96a]"><Star className="h-4 w-4 fill-current" /> Populyar</span>}</div>
-      <h2 className="mt-2 font-serif text-2xl">{item.name}</h2><p className="mt-2 line-clamp-2 min-h-10 text-sm text-[#d8c9b6]">{item.description}</p>
-      {item.ingredients.length > 0 && <p className="mt-2 line-clamp-1 text-xs text-[#b9a998]">{item.ingredients.join(" · ")}</p>}
-      <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4"><div><strong className="rounded-full bg-[#d7a64a] px-3 py-1 text-[#241a15]">{item.finalPrice.toFixed(2)} ₼</strong>{item.discountPercentage > 0 && <span className="ml-2 text-xs line-through text-[#b9a998]">{item.price.toFixed(2)} ₼</span>}</div><span className={`text-xs font-bold ${item.isAvailable ? "text-emerald-300" : "text-red-300"}`}>{item.isAvailable ? "Mövcuddur" : "Mövcud deyil"}</span></div>
-    </Link>
-  </article>;
+  return <article className="group overflow-hidden rounded-xl border border-[#d5c2c6]/70 bg-[#f0ede9] text-[#1c1c19] shadow-[0_24px_70px_rgba(49,27,34,.08)] transition duration-500 hover:-translate-y-2 hover:shadow-[0_34px_80px_rgba(49,27,34,.15)]">{hasVideo ? <MenuVideoPlayer item={item} activeVideoId={activeVideoId} onActiveChange={onActiveChange} /> : <MenuVideoFallback item={item} />}<div className="p-6"><div className="flex items-center justify-between gap-3"><p className="text-[10px] font-bold tracking-[.16em] text-[#ae9154]">{item.categoryName.toUpperCase()}</p>{item.isPopular && <span className="inline-flex items-center gap-1 text-xs font-bold text-[#844e60]"><Star className="h-4 w-4 fill-current" /> Populyar</span>}</div><Link to={`/restaurants/${restaurantSlug}/menu/${item.id}`} className="mt-3 block font-serif text-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#e3c281]">{item.name}</Link><p className="mt-2 line-clamp-2 min-h-10 text-sm leading-5 text-[#514347]">{item.description}</p>{item.ingredients.length > 0 && <p className="mt-3 line-clamp-1 text-xs text-[#837377]">{item.ingredients.join(" · ")}</p>}<div className="mt-5 flex items-center justify-between border-t border-[#d5c2c6]/70 pt-4"><div><strong className="font-serif text-lg text-[#32091a]">{item.finalPrice.toFixed(2)} ₼</strong>{item.discountPercentage > 0 && <span className="ml-2 text-xs line-through text-[#837377]">{item.price.toFixed(2)} ₼</span>}</div><span className="text-[10px] font-bold tracking-[.1em] text-[#566345]">MÖVCUDDUR</span></div>{item.has3DModel && <button type="button" onClick={() => onOpen3D(item)} className="mt-6 inline-flex w-full items-center justify-center gap-2 bg-[#32091a] px-5 py-3 text-[10px] font-bold tracking-[.14em] text-white transition hover:bg-[#4b1e2f]" aria-label={`${item.name} üçün 3D baxış`}><Box className="h-4 w-4" />3D BAXIŞ</button>}</div></article>;
 }

@@ -74,6 +74,8 @@ public sealed class MenuService : IMenuService
             entity.Nutrition = dto.Nutrition.Trim();
             entity.Model3DUrl = NormalizeOptional(dto.Model3DUrl);
             entity.ModelPosterUrl = NormalizeOptional(dto.ModelPosterUrl);
+            entity.VideoUrl = NormalizeOptional(dto.VideoUrl);
+            entity.VideoPosterUrl = NormalizeOptional(dto.VideoPosterUrl);
             entity.FinalPrice = CalculateFinalPrice(dto.Price, dto.DiscountPercentage);
             entity.CreatAt = UtcNow;
             entity.Ingredients = dto.Ingredients.Select(item => new MenuItemIngredient
@@ -190,6 +192,12 @@ public sealed class MenuService : IMenuService
             if (dto.ModelRotationY.HasValue) entity.ModelRotationY = dto.ModelRotationY.Value;
             if (dto.ModelRotationZ.HasValue) entity.ModelRotationZ = dto.ModelRotationZ.Value;
             if (dto.Is3DEnabled.HasValue) entity.Is3DEnabled = dto.Is3DEnabled.Value;
+            if (dto.EnableIngredientAnimation.HasValue) entity.EnableIngredientAnimation = dto.EnableIngredientAnimation.Value;
+            if (dto.VideoUrl is not null) entity.VideoUrl = NormalizeOptional(dto.VideoUrl);
+            if (dto.VideoPosterUrl is not null) entity.VideoPosterUrl = NormalizeOptional(dto.VideoPosterUrl);
+            if (dto.VideoDurationSeconds.HasValue) entity.VideoDurationSeconds = dto.VideoDurationSeconds.Value;
+            if (dto.IsVideoEnabled.HasValue) entity.IsVideoEnabled = dto.IsVideoEnabled.Value;
+            if (dto.VideoDisplayOrder.HasValue) entity.VideoDisplayOrder = dto.VideoDisplayOrder.Value;
             if (newImage is not null)
             {
                 entity.Image = newImage;

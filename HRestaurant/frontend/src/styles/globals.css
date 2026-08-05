@@ -20,6 +20,11 @@
   text-rendering: optimizeLegibility;
 }
 
+@keyframes cinema-drift {
+  from { transform: scale(1.03) translate3d(-.4%, -.4%, 0); }
+  to { transform: scale(1.1) translate3d(.6%, .4%, 0); }
+}
+
 @theme {
   --color-background-primary: var(--background-primary);
   --color-background-secondary: var(--background-secondary);
@@ -40,6 +45,7 @@
 html {
   min-width: 320px;
   background: var(--background-primary);
+  scroll-behavior: smooth;
 }
 
 body {

@@ -122,6 +122,7 @@ export interface PublicMenuItem {
   isPopular: boolean;
   is3DEnabled: boolean;
   has3DModel: boolean;
+  enableIngredientAnimation: boolean;
   modelPosterUrl: string | null;
   videoUrl: string | null;
   videoPosterUrl: string | null;
@@ -153,6 +154,7 @@ export interface PublicFood3D {
   modelRotationY: number;
   modelRotationZ: number;
   is3DEnabled: boolean;
+  enableIngredientAnimation: boolean;
   usesProceduralFallback: boolean;
 }
 

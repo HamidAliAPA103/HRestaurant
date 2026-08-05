@@ -3,10 +3,6 @@
   "WorkspaceRootPath": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2F12B3EC-2F74-4AF4-8144-E11CACDDDD4F}|HRestaurant\\src\\HRestaurant.Infrastructure\\HRestaurant.Infrastructure.csproj|c:\\users\\asus\\desktop\\hrestaurant\\hrestaurant\\src\\hrestaurant.infrastructure\\data\\configurations\\ingredientconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2F12B3EC-2F74-4AF4-8144-E11CACDDDD4F}|HRestaurant\\src\\HRestaurant.Infrastructure\\HRestaurant.Infrastructure.csproj|solutionrelative:hrestaurant\\src\\hrestaurant.infrastructure\\data\\configurations\\ingredientconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{E7562686-AA81-4178-99B1-458E0D30A910}|HRestaurant\\src\\HRestaurant.Application\\HRestaurant.Application.csproj|c:\\users\\asus\\desktop\\hrestaurant\\hrestaurant\\src\\hrestaurant.application\\dtos\\common\\fileuploaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E7562686-AA81-4178-99B1-458E0D30A910}|HRestaurant\\src\\HRestaurant.Application\\HRestaurant.Application.csproj|solutionrelative:hrestaurant\\src\\hrestaurant.application\\dtos\\common\\fileuploaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -18,36 +14,25 @@
       "DocumentGroups": [
         {
           "DockedHeight": 82,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "IngredientConfiguration.cs",
-              "DocumentMoniker": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.Infrastructure\\Data\\Configurations\\IngredientConfiguration.cs",
-              "RelativeDocumentMoniker": "HRestaurant\\src\\HRestaurant.Infrastructure\\Data\\Configurations\\IngredientConfiguration.cs",
-              "ToolTip": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.Infrastructure\\Data\\Configurations\\IngredientConfiguration.cs",
-              "RelativeToolTip": "HRestaurant\\src\\HRestaurant.Infrastructure\\Data\\Configurations\\IngredientConfiguration.cs",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAswA4AAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-03T18:35:18.569Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "FileUploadDTO.cs",
               "DocumentMoniker": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.Application\\DTOS\\Common\\FileUploadDTO.cs",
               "RelativeDocumentMoniker": "HRestaurant\\src\\HRestaurant.Application\\DTOS\\Common\\FileUploadDTO.cs",
               "ToolTip": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.Application\\DTOS\\Common\\FileUploadDTO.cs",
               "RelativeToolTip": "HRestaurant\\src\\HRestaurant.Application\\DTOS\\Common\\FileUploadDTO.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAlAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-22T11:17:32.431Z"
+              "WhenOpened": "2026-07-22T11:17:32.431Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
             }
           ]
         }

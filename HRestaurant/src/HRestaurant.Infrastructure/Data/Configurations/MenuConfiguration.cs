@@ -16,6 +16,7 @@ public sealed class MenuConfiguration : IEntityTypeConfiguration<Menu>
         entity.Property(x => x.Nutrition).HasMaxLength(1000).IsRequired();
         entity.Property(x => x.Model3DUrl).HasMaxLength(500);
         entity.Property(x => x.ModelPosterUrl).HasMaxLength(500);
+        entity.Property(x => x.EnableIngredientAnimation).HasDefaultValue(false);
         entity.Property(x => x.VideoUrl).HasMaxLength(500);
         entity.Property(x => x.VideoPosterUrl).HasMaxLength(500);
         entity.Property(x => x.IsVideoEnabled).HasDefaultValue(false);

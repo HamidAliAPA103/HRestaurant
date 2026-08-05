@@ -1,5 +1,9 @@
 # HRestaurant Frontend
 
+## Verdant Table assets
+
+The Verdant Table landing page currently uses its native Three.js Caesar salad scene and CSS artwork. When production photography is approved, download licensed source images into `public/images/` and reference the local files rather than relying on remote image hosts.
+
 React, TypeScript, Vite və React Three Fiber ilə hazırlanmış idarəetmə və public restoran tətbiqi.
 
 ## Lokal işə salma

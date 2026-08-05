@@ -6,6 +6,7 @@ export interface MenuItemInput {
   model3DUrl?: string; modelPosterUrl?: string; modelScale: number;
   modelRotationX: number; modelRotationY: number; modelRotationZ: number;
   is3DEnabled: boolean;
+  enableIngredientAnimation: boolean;
   videoUrl?: string; videoPosterUrl?: string; videoDurationSeconds?: number;
   isVideoEnabled: boolean; videoDisplayOrder: number;
   image?: File; ingredients?: Array<{ ingredientId: string; requiredQuantity: number }>;
@@ -24,6 +25,7 @@ function form(input: MenuItemInput) {
   data.append("modelRotationY", String(input.modelRotationY));
   data.append("modelRotationZ", String(input.modelRotationZ));
   data.append("is3DEnabled", String(input.is3DEnabled));
+  data.append("enableIngredientAnimation", String(input.enableIngredientAnimation));
   if (input.videoUrl) data.append("videoUrl", input.videoUrl);
   if (input.videoPosterUrl) data.append("videoPosterUrl", input.videoPosterUrl);
   if (input.videoDurationSeconds != null) data.append("videoDurationSeconds", String(input.videoDurationSeconds));

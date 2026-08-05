@@ -25,6 +25,7 @@ public sealed class PublicMenuItemDto
     public bool IsPopular { get; init; }
     public bool Is3DEnabled { get; init; }
     public bool Has3DModel { get; init; }
+    public bool EnableIngredientAnimation { get; init; }
     public string? ModelPosterUrl { get; init; }
     public string? VideoUrl { get; init; }
     public string? VideoPosterUrl { get; init; }

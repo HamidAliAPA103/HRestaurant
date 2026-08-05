@@ -22,6 +22,12 @@ public sealed class MenuUpdateRequest
     public decimal? ModelRotationZ { get; init; }
 
     public bool? Is3DEnabled { get; init; }
+    public bool? EnableIngredientAnimation { get; init; }
+    public string? VideoUrl { get; init; }
+    public string? VideoPosterUrl { get; init; }
+    public int? VideoDurationSeconds { get; init; }
+    public bool? IsVideoEnabled { get; init; }
+    public int? VideoDisplayOrder { get; init; }
 
     public string? Name { get; init; }
 

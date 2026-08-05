@@ -16,7 +16,7 @@ import { EmptyState, ErrorState, LoadingState } from "@/shared/components/StateP
 import { formatCurrency, getErrorMessage } from "@/shared/lib/utils";
 import type { MenuItem } from "@/shared/types/domain";
 
-const optionalUrl = z.string().trim().url("Düzgün URL daxil edin.").or(z.literal(""));
+const optionalUrl = z.string().trim().refine((value) => value === "" || (/^\/(?!\/)/.test(value) && !value.includes("..")) || z.url().safeParse(value).success, "Düzgün HTTP(S) və ya / ilə başlayan lokal URL daxil edin.");
 const schema = z.object({
   name: z.string().trim().min(2).max(100),
   desc: z.string().trim().min(3).max(1000),
@@ -33,6 +33,7 @@ const schema = z.object({
   modelRotationY: z.number().min(-360).max(360),
   modelRotationZ: z.number().min(-360).max(360),
   is3DEnabled: z.boolean(),
+  enableIngredientAnimation: z.boolean(),
   videoUrl: optionalUrl,
   videoPosterUrl: optionalUrl,
   videoDurationSeconds: z.number().int().min(0),
@@ -53,7 +54,7 @@ const defaults: Values = {
   name: "", desc: "", nutrition: "", price: 0, discountPercentage: 0,
   preparationTimeMinutes: 20, categoryId: "", imageUrl: "", model3DUrl: "",
   modelPosterUrl: "", modelScale: 1, modelRotationX: 0, modelRotationY: 0,
-  modelRotationZ: 0, is3DEnabled: false,
+  modelRotationZ: 0, is3DEnabled: false, enableIngredientAnimation: false,
   videoUrl: "", videoPosterUrl: "", videoDurationSeconds: 0, isVideoEnabled: false, videoDisplayOrder: 0,
 };
 const allowedImages = ["image/jpeg", "image/png", "image/webp"];
@@ -77,6 +78,7 @@ export function MenuPage() {
     modelRotationY: editing.modelRotationY || 0,
     modelRotationZ: editing.modelRotationZ || 0,
     is3DEnabled: editing.is3DEnabled,
+    enableIngredientAnimation: editing.enableIngredientAnimation,
     videoUrl: editing.videoUrl ?? "", videoPosterUrl: editing.videoPosterUrl ?? "",
     videoDurationSeconds: editing.videoDurationSeconds ?? 0,
     isVideoEnabled: editing.isVideoEnabled, videoDisplayOrder: editing.videoDisplayOrder,
@@ -100,7 +102,7 @@ export function MenuPage() {
         <div className="grid grid-cols-3 gap-3"><FormField label="Qiymət" type="number" step="0.01" error={errors.price?.message} {...register("price", { valueAsNumber: true })} /><FormField label="Endirim %" type="number" step="0.01" error={errors.discountPercentage?.message} {...register("discountPercentage", { valueAsNumber: true })} /><FormField label="Hazırlanma dəq." type="number" error={errors.preparationTimeMinutes?.message} {...register("preparationTimeMinutes", { valueAsNumber: true })} /></div>
         <fieldset className="space-y-3 rounded-2xl border p-4">
           <legend className="px-2 text-sm font-bold">3D model</legend>
-          <label className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" {...register("is3DEnabled")} />3D görünüşü aktiv et</label>
+          <div className="flex flex-wrap gap-5"><label className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" {...register("is3DEnabled")} />3D görünüşü aktiv et</label><label className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" {...register("enableIngredientAnimation")} />İnqrediyent animasiyasını aktiv et</label></div>
           <div className="grid gap-3 sm:grid-cols-2"><FormField label="GLB/GLTF model URL-i" error={errors.model3DUrl?.message} {...register("model3DUrl")} /><FormField label="Model poster URL-i" error={errors.modelPosterUrl?.message} {...register("modelPosterUrl")} /></div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4"><FormField label="Miqyas" type="number" min="0.01" max="100" step="0.01" error={errors.modelScale?.message} {...register("modelScale", { valueAsNumber: true })} /><FormField label="Rotasiya X" type="number" min="-360" max="360" step="0.1" error={errors.modelRotationX?.message} {...register("modelRotationX", { valueAsNumber: true })} /><FormField label="Rotasiya Y" type="number" min="-360" max="360" step="0.1" error={errors.modelRotationY?.message} {...register("modelRotationY", { valueAsNumber: true })} /><FormField label="Rotasiya Z" type="number" min="-360" max="360" step="0.1" error={errors.modelRotationZ?.message} {...register("modelRotationZ", { valueAsNumber: true })} /></div>
         </fieldset>

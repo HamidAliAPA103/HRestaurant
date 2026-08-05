@@ -12,6 +12,7 @@ export function PublicLayout() {
     { label: "Restoran", to: `/restaurants/${slug}` }, { label: "Menyu", to: `/restaurants/${slug}/menu` },
     { label: "3D təcrübə", to: `/restaurants/${slug}/experience` }, { label: "Rezervasiya", to: `/restaurants/${slug}/reservation` },
   ] : []), { label: "Rezervasiyanı yoxla", to: "/reservation/track" }];
+  if (location.pathname === "/") return <Outlet />;
   return <PublicExperience>
     <header className="sticky top-0 z-50 border-b border-black/5 bg-background-primary/80 backdrop-blur-2xl">
       <div className="mx-auto flex max-w-[90rem] items-center justify-between px-4 py-4 sm:px-6 lg:px-10">

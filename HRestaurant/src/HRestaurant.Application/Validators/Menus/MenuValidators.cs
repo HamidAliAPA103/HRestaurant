@@ -18,19 +18,19 @@ public sealed class MenuCreateDTOValidator : AbstractValidator<MenuCreateDTO>
             .When(x => x.ImageUrl is not null);
         RuleFor(x => x.Model3DUrl).MaximumLength(500)
             .Must(PublicModelUrlRules.IsValid)
-            .WithMessage("Model3DUrl must be an absolute HTTP or HTTPS URL.")
+            .WithMessage("Model3DUrl must be HTTP(S) or a root-relative public asset URL.")
             .When(x => x.Model3DUrl is not null);
         RuleFor(x => x.ModelPosterUrl).MaximumLength(500)
             .Must(PublicModelUrlRules.IsValid)
-            .WithMessage("ModelPosterUrl must be an absolute HTTP or HTTPS URL.")
+            .WithMessage("ModelPosterUrl must be HTTP(S) or a root-relative public asset URL.")
             .When(x => x.ModelPosterUrl is not null);
         RuleFor(x => x.VideoUrl).MaximumLength(500)
             .Must(PublicModelUrlRules.IsValid)
-            .WithMessage("VideoUrl must be an absolute HTTP or HTTPS URL.")
+            .WithMessage("VideoUrl must be HTTP(S) or a root-relative public asset URL.")
             .When(x => x.VideoUrl is not null);
         RuleFor(x => x.VideoPosterUrl).MaximumLength(500)
             .Must(PublicModelUrlRules.IsValid)
-            .WithMessage("VideoPosterUrl must be an absolute HTTP or HTTPS URL.")
+            .WithMessage("VideoPosterUrl must be HTTP(S) or a root-relative public asset URL.")
             .When(x => x.VideoPosterUrl is not null);
         RuleFor(x => x.VideoDurationSeconds).GreaterThanOrEqualTo(0)
             .When(x => x.VideoDurationSeconds.HasValue);
@@ -68,19 +68,19 @@ public sealed class MenuUpdateDTOValidator : AbstractValidator<MenuUpdateDTO>
             .When(x => x.ImageURL is not null);
         RuleFor(x => x.Model3DUrl).NotEmpty().MaximumLength(500)
             .Must(PublicModelUrlRules.IsValid)
-            .WithMessage("Model3DUrl must be an absolute HTTP or HTTPS URL.")
+            .WithMessage("Model3DUrl must be HTTP(S) or a root-relative public asset URL.")
             .When(x => x.Model3DUrl is not null);
         RuleFor(x => x.ModelPosterUrl).NotEmpty().MaximumLength(500)
             .Must(PublicModelUrlRules.IsValid)
-            .WithMessage("ModelPosterUrl must be an absolute HTTP or HTTPS URL.")
+            .WithMessage("ModelPosterUrl must be HTTP(S) or a root-relative public asset URL.")
             .When(x => x.ModelPosterUrl is not null);
         RuleFor(x => x.VideoUrl).NotEmpty().MaximumLength(500)
             .Must(PublicModelUrlRules.IsValid)
-            .WithMessage("VideoUrl must be an absolute HTTP or HTTPS URL.")
+            .WithMessage("VideoUrl must be HTTP(S) or a root-relative public asset URL.")
             .When(x => x.VideoUrl is not null);
         RuleFor(x => x.VideoPosterUrl).NotEmpty().MaximumLength(500)
             .Must(PublicModelUrlRules.IsValid)
-            .WithMessage("VideoPosterUrl must be an absolute HTTP or HTTPS URL.")
+            .WithMessage("VideoPosterUrl must be HTTP(S) or a root-relative public asset URL.")
             .When(x => x.VideoPosterUrl is not null);
         RuleFor(x => x.VideoDurationSeconds).GreaterThanOrEqualTo(0)
             .When(x => x.VideoDurationSeconds.HasValue);
@@ -181,6 +181,8 @@ internal static class PublicModelUrlRules
     public static bool IsValid(string? value)
     {
         if (string.IsNullOrWhiteSpace(value)) return true;
+        if (value.StartsWith('/') && !value.StartsWith("//", StringComparison.Ordinal)
+            && !value.Contains("..", StringComparison.Ordinal)) return true;
         return Uri.TryCreate(value, UriKind.Absolute, out var uri)
             && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
     }

@@ -18,6 +18,7 @@ public sealed class MenuUpdateDTO
     public decimal? ModelRotationY { get; set; }
     public decimal? ModelRotationZ { get; set; }
     public bool? Is3DEnabled { get; set; }
+    public bool? EnableIngredientAnimation { get; set; }
     public string? VideoUrl { get; set; }
     public string? VideoPosterUrl { get; set; }
     public int? VideoDurationSeconds { get; set; }

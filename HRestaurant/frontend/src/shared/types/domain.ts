@@ -74,6 +74,7 @@ export interface MenuItem extends BaseEntity {
   modelRotationY: number;
   modelRotationZ: number;
     is3DEnabled: boolean;
+    enableIngredientAnimation: boolean;
     videoUrl: string | null;
     videoPosterUrl: string | null;
     videoDurationSeconds: number | null;

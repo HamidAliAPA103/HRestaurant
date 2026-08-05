@@ -120,6 +120,7 @@ public sealed class PublicRestaurantService
                         Is3DEnabled = item.Is3DEnabled,
                         Has3DModel = item.Is3DEnabled
                             && !string.IsNullOrWhiteSpace(item.Model3DUrl),
+                        EnableIngredientAnimation = item.EnableIngredientAnimation,
                         ModelPosterUrl = item.ModelPosterUrl
                         ,VideoUrl = item.VideoUrl
                         ,VideoPosterUrl = item.VideoPosterUrl
@@ -177,7 +178,8 @@ public sealed class PublicRestaurantService
                 ModelRotationX = menu.ModelRotationX,
                 ModelRotationY = menu.ModelRotationY,
                 ModelRotationZ = menu.ModelRotationZ,
-                Is3DEnabled = menu.Is3DEnabled
+                Is3DEnabled = menu.Is3DEnabled,
+                EnableIngredientAnimation = menu.EnableIngredientAnimation
             })
             .FirstOrDefaultAsync(cancellationToken)
             ?? throw new NotFoundException("Menu item", menuItemId);

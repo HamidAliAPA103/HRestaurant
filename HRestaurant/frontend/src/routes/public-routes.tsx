@@ -11,8 +11,8 @@ const PublicRestaurantPage = lazy(() =>
     default: module.PublicRestaurantPage,
   })),
 );
-const PublicHomePage = lazy(() =>
-  import("@/features/public-restaurant/pages/PublicHomePage").then((module) => ({ default: module.PublicHomePage })),
+const CinematicHomePage = lazy(() =>
+  import("@/features/cinematic/pages/CinematicHomePage").then((module) => ({ default: module.CinematicHomePage })),
 );
 const PublicMenuPage = lazy(() =>
   import("@/features/public-restaurant/pages/PublicMenuPage").then((module) => ({ default: module.PublicMenuPage })),
@@ -44,7 +44,7 @@ export const publicRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <Suspense fallback={<LoadingState label="Restoranlar yüklənir" />}><PublicHomePage /></Suspense>,
+        element: <Suspense fallback={<LoadingState label="Səhifə yüklənir" />}><CinematicHomePage /></Suspense>,
       },
       {
         path: "/restaurants/:restaurantSlug",

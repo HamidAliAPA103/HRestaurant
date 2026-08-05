@@ -6633,6 +6633,26 @@
                   "Is3DEnabled": {
                     "type": "boolean"
                   },
+                  "EnableIngredientAnimation": {
+                    "type": "boolean"
+                  },
+                  "VideoUrl": {
+                    "type": "string"
+                  },
+                  "VideoPosterUrl": {
+                    "type": "string"
+                  },
+                  "VideoDurationSeconds": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "IsVideoEnabled": {
+                    "type": "boolean"
+                  },
+                  "VideoDisplayOrder": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
                   "Name": {
                     "type": "string"
                   },
@@ -6692,6 +6712,24 @@
                   "style": "form"
                 },
                 "Is3DEnabled": {
+                  "style": "form"
+                },
+                "EnableIngredientAnimation": {
+                  "style": "form"
+                },
+                "VideoUrl": {
+                  "style": "form"
+                },
+                "VideoPosterUrl": {
+                  "style": "form"
+                },
+                "VideoDurationSeconds": {
+                  "style": "form"
+                },
+                "IsVideoEnabled": {
+                  "style": "form"
+                },
+                "VideoDisplayOrder": {
                   "style": "form"
                 },
                 "Name": {
@@ -6985,6 +7023,26 @@
                   "Is3DEnabled": {
                     "type": "boolean"
                   },
+                  "EnableIngredientAnimation": {
+                    "type": "boolean"
+                  },
+                  "VideoUrl": {
+                    "type": "string"
+                  },
+                  "VideoPosterUrl": {
+                    "type": "string"
+                  },
+                  "VideoDurationSeconds": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "IsVideoEnabled": {
+                    "type": "boolean"
+                  },
+                  "VideoDisplayOrder": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
                   "Name": {
                     "type": "string"
                   },
@@ -7044,6 +7102,24 @@
                   "style": "form"
                 },
                 "Is3DEnabled": {
+                  "style": "form"
+                },
+                "EnableIngredientAnimation": {
+                  "style": "form"
+                },
+                "VideoUrl": {
+                  "style": "form"
+                },
+                "VideoPosterUrl": {
+                  "style": "form"
+                },
+                "VideoDurationSeconds": {
+                  "style": "form"
+                },
+                "IsVideoEnabled": {
+                  "style": "form"
+                },
+                "VideoDisplayOrder": {
                   "style": "form"
                 },
                 "Name": {
@@ -8078,6 +8154,26 @@
                   "Is3DEnabled": {
                     "type": "boolean"
                   },
+                  "EnableIngredientAnimation": {
+                    "type": "boolean"
+                  },
+                  "VideoUrl": {
+                    "type": "string"
+                  },
+                  "VideoPosterUrl": {
+                    "type": "string"
+                  },
+                  "VideoDurationSeconds": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "IsVideoEnabled": {
+                    "type": "boolean"
+                  },
+                  "VideoDisplayOrder": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
                   "Name": {
                     "type": "string"
                   },
@@ -8137,6 +8233,24 @@
                   "style": "form"
                 },
                 "Is3DEnabled": {
+                  "style": "form"
+                },
+                "EnableIngredientAnimation": {
+                  "style": "form"
+                },
+                "VideoUrl": {
+                  "style": "form"
+                },
+                "VideoPosterUrl": {
+                  "style": "form"
+                },
+                "VideoDurationSeconds": {
+                  "style": "form"
+                },
+                "IsVideoEnabled": {
+                  "style": "form"
+                },
+                "VideoDisplayOrder": {
                   "style": "form"
                 },
                 "Name": {
@@ -8416,6 +8530,26 @@
                   "Is3DEnabled": {
                     "type": "boolean"
                   },
+                  "EnableIngredientAnimation": {
+                    "type": "boolean"
+                  },
+                  "VideoUrl": {
+                    "type": "string"
+                  },
+                  "VideoPosterUrl": {
+                    "type": "string"
+                  },
+                  "VideoDurationSeconds": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "IsVideoEnabled": {
+                    "type": "boolean"
+                  },
+                  "VideoDisplayOrder": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
                   "Name": {
                     "type": "string"
                   },
@@ -8475,6 +8609,24 @@
                   "style": "form"
                 },
                 "Is3DEnabled": {
+                  "style": "form"
+                },
+                "EnableIngredientAnimation": {
+                  "style": "form"
+                },
+                "VideoUrl": {
+                  "style": "form"
+                },
+                "VideoPosterUrl": {
+                  "style": "form"
+                },
+                "VideoDurationSeconds": {
+                  "style": "form"
+                },
+                "IsVideoEnabled": {
+                  "style": "form"
+                },
+                "VideoDisplayOrder": {
                   "style": "form"
                 },
                 "Name": {
@@ -26589,6 +26741,37 @@
             "format": "double",
             "nullable": true
           },
+          "frontImageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "coverImageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "shortDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "googleMapsUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "virtualTourUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "parkingInfo": {
+            "type": "string",
+            "nullable": true
+          },
+          "landmark": {
+            "type": "string",
+            "nullable": true
+          },
+          "isPubliclyVisible": {
+            "type": "boolean"
+          },
           "timeZoneId": {
             "type": "string",
             "nullable": true
@@ -26647,6 +26830,37 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          },
+          "frontImageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "coverImageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "shortDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "googleMapsUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "virtualTourUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "parkingInfo": {
+            "type": "string",
+            "nullable": true
+          },
+          "landmark": {
+            "type": "string",
+            "nullable": true
+          },
+          "isPubliclyVisible": {
+            "type": "boolean"
           },
           "managerId": {
             "type": "string",
@@ -26844,6 +27058,37 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          },
+          "frontImageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "coverImageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "shortDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "googleMapsUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "virtualTourUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "parkingInfo": {
+            "type": "string",
+            "nullable": true
+          },
+          "landmark": {
+            "type": "string",
+            "nullable": true
+          },
+          "isPubliclyVisible": {
+            "type": "boolean"
           },
           "timeZoneId": {
             "type": "string",
@@ -29651,6 +29896,29 @@
           "is3DEnabled": {
             "type": "boolean"
           },
+          "enableIngredientAnimation": {
+            "type": "boolean"
+          },
+          "videoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "videoPosterUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "videoDurationSeconds": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "isVideoEnabled": {
+            "type": "boolean"
+          },
+          "videoDisplayOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
           "ingredients": {
             "type": "array",
             "items": {
@@ -30931,6 +31199,47 @@
             "type": "string",
             "nullable": true
           },
+          "latitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "frontImageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "coverImageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "shortDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "googleMapsUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "virtualTourUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "parkingInfo": {
+            "type": "string",
+            "nullable": true
+          },
+          "landmark": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
           "timeZoneId": {
             "type": "string",
             "nullable": true
@@ -31423,6 +31732,9 @@
           "is3DEnabled": {
             "type": "boolean"
           },
+          "enableIngredientAnimation": {
+            "type": "boolean"
+          },
           "usesProceduralFallback": {
             "type": "boolean",
             "readOnly": true
@@ -31523,8 +31835,41 @@
           "is3DEnabled": {
             "type": "boolean"
           },
+          "has3DModel": {
+            "type": "boolean"
+          },
+          "enableIngredientAnimation": {
+            "type": "boolean"
+          },
           "modelPosterUrl": {
             "type": "string",
+            "nullable": true
+          },
+          "videoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "videoPosterUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "videoDurationSeconds": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "isVideoEnabled": {
+            "type": "boolean"
+          },
+          "videoDisplayOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
             "nullable": true
           }
         },

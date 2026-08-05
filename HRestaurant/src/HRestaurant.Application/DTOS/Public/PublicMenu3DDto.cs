@@ -23,6 +23,7 @@ public sealed class PublicMenuItem3DDto
     public decimal ModelRotationY { get; init; }
     public decimal ModelRotationZ { get; init; }
     public bool Is3DEnabled { get; init; }
+    public bool EnableIngredientAnimation { get; init; }
     public bool UsesProceduralFallback =>
         !Is3DEnabled || string.IsNullOrWhiteSpace(Model3DUrl);
 }

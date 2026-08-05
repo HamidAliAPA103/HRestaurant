@@ -20,7 +20,7 @@ public static class IdentityDataSeeder
 
         foreach (var roleName in AppRoles.All)
         {
-            var role = await roleManager.FindByNameAsync(roleName);
+                var role = await roleManager.FindByNameAsync(roleName);
 
             if (role is null)
             {
