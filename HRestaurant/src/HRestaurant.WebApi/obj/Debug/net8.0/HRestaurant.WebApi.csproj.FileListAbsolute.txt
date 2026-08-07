@@ -211,10 +211,10 @@ C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\n
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\HRestaur.BB42D41A.Up2Date
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\HRestaurant.WebApi.dll
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\refint\HRestaurant.WebApi.dll
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\HRestaurant.WebApi.pdb
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\HRestaurant.WebApi.genruntimeconfig.cache
 C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\ref\HRestaurant.WebApi.dll
+C:\Users\ASUS\Desktop\HRestaurant\HRestaurant\src\HRestaurant.WebApi\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

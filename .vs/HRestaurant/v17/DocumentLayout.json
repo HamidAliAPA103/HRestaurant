@@ -3,6 +3,30 @@
   "WorkspaceRootPath": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{2F12B3EC-2F74-4AF4-8144-E11CACDDDD4F}|HRestaurant\\src\\HRestaurant.Infrastructure\\HRestaurant.Infrastructure.csproj|c:\\users\\asus\\desktop\\hrestaurant\\hrestaurant\\src\\hrestaurant.infrastructure\\extensions\\fileextention.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2F12B3EC-2F74-4AF4-8144-E11CACDDDD4F}|HRestaurant\\src\\HRestaurant.Infrastructure\\HRestaurant.Infrastructure.csproj|solutionrelative:hrestaurant\\src\\hrestaurant.infrastructure\\extensions\\fileextention.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2F12B3EC-2F74-4AF4-8144-E11CACDDDD4F}|HRestaurant\\src\\HRestaurant.Infrastructure\\HRestaurant.Infrastructure.csproj|c:\\users\\asus\\desktop\\hrestaurant\\hrestaurant\\src\\hrestaurant.infrastructure\\extensions\\paginationextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2F12B3EC-2F74-4AF4-8144-E11CACDDDD4F}|HRestaurant\\src\\HRestaurant.Infrastructure\\HRestaurant.Infrastructure.csproj|solutionrelative:hrestaurant\\src\\hrestaurant.infrastructure\\extensions\\paginationextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E7562686-AA81-4178-99B1-458E0D30A910}|HRestaurant\\src\\HRestaurant.Application\\HRestaurant.Application.csproj|c:\\users\\asus\\desktop\\hrestaurant\\hrestaurant\\src\\hrestaurant.application\\dtos\\menucategory\\menucategorycreatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E7562686-AA81-4178-99B1-458E0D30A910}|HRestaurant\\src\\HRestaurant.Application\\HRestaurant.Application.csproj|solutionrelative:hrestaurant\\src\\hrestaurant.application\\dtos\\menucategory\\menucategorycreatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D65ADC6-BAE1-4ECD-9EE3-F13B81B62CD5}|HRestaurant\\src\\HRestaurant.WebApi\\HRestaurant.WebApi.csproj|c:\\users\\asus\\desktop\\hrestaurant\\hrestaurant\\src\\hrestaurant.webapi\\validation\\fluentvalidationactionfilter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0D65ADC6-BAE1-4ECD-9EE3-F13B81B62CD5}|HRestaurant\\src\\HRestaurant.WebApi\\HRestaurant.WebApi.csproj|solutionrelative:hrestaurant\\src\\hrestaurant.webapi\\validation\\fluentvalidationactionfilter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D65ADC6-BAE1-4ECD-9EE3-F13B81B62CD5}|HRestaurant\\src\\HRestaurant.WebApi\\HRestaurant.WebApi.csproj|c:\\users\\asus\\desktop\\hrestaurant\\hrestaurant\\src\\hrestaurant.webapi\\validation\\validationerrorresponsefactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0D65ADC6-BAE1-4ECD-9EE3-F13B81B62CD5}|HRestaurant\\src\\HRestaurant.WebApi\\HRestaurant.WebApi.csproj|solutionrelative:hrestaurant\\src\\hrestaurant.webapi\\validation\\validationerrorresponsefactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E7562686-AA81-4178-99B1-458E0D30A910}|HRestaurant\\src\\HRestaurant.Application\\HRestaurant.Application.csproj|c:\\users\\asus\\desktop\\hrestaurant\\hrestaurant\\src\\hrestaurant.application\\validators\\menucategories\\menucategoryvalidators.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E7562686-AA81-4178-99B1-458E0D30A910}|HRestaurant\\src\\HRestaurant.Application\\HRestaurant.Application.csproj|solutionrelative:hrestaurant\\src\\hrestaurant.application\\validators\\menucategories\\menucategoryvalidators.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{E7562686-AA81-4178-99B1-458E0D30A910}|HRestaurant\\src\\HRestaurant.Application\\HRestaurant.Application.csproj|c:\\users\\asus\\desktop\\hrestaurant\\hrestaurant\\src\\hrestaurant.application\\dtos\\common\\fileuploaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E7562686-AA81-4178-99B1-458E0D30A910}|HRestaurant\\src\\HRestaurant.Application\\HRestaurant.Application.csproj|solutionrelative:hrestaurant\\src\\hrestaurant.application\\dtos\\common\\fileuploaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -14,11 +38,11 @@
       "DocumentGroups": [
         {
           "DockedHeight": 82,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 6,
               "Title": "FileUploadDTO.cs",
               "DocumentMoniker": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.Application\\DTOS\\Common\\FileUploadDTO.cs",
               "RelativeDocumentMoniker": "HRestaurant\\src\\HRestaurant.Application\\DTOS\\Common\\FileUploadDTO.cs",
@@ -28,6 +52,84 @@
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-07-22T11:17:32.431Z",
               "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "FileExtention.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.Infrastructure\\Extensions\\FileExtention.cs",
+              "RelativeDocumentMoniker": "HRestaurant\\src\\HRestaurant.Infrastructure\\Extensions\\FileExtention.cs",
+              "ToolTip": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.Infrastructure\\Extensions\\FileExtention.cs",
+              "RelativeToolTip": "HRestaurant\\src\\HRestaurant.Infrastructure\\Extensions\\FileExtention.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-06T11:59:20.47Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "PaginationExtensions.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.Infrastructure\\Extensions\\PaginationExtensions.cs",
+              "RelativeDocumentMoniker": "HRestaurant\\src\\HRestaurant.Infrastructure\\Extensions\\PaginationExtensions.cs",
+              "ToolTip": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.Infrastructure\\Extensions\\PaginationExtensions.cs",
+              "RelativeToolTip": "HRestaurant\\src\\HRestaurant.Infrastructure\\Extensions\\PaginationExtensions.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-06T11:59:19.352Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MenuCategoryCreateDTO.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.Application\\DTOS\\MenuCategory\\MenuCategoryCreateDTO.cs",
+              "RelativeDocumentMoniker": "HRestaurant\\src\\HRestaurant.Application\\DTOS\\MenuCategory\\MenuCategoryCreateDTO.cs",
+              "ToolTip": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.Application\\DTOS\\MenuCategory\\MenuCategoryCreateDTO.cs",
+              "RelativeToolTip": "HRestaurant\\src\\HRestaurant.Application\\DTOS\\MenuCategory\\MenuCategoryCreateDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAoAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-06T11:55:24.483Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "FluentValidationActionFilter.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.WebApi\\Validation\\FluentValidationActionFilter.cs",
+              "RelativeDocumentMoniker": "HRestaurant\\src\\HRestaurant.WebApi\\Validation\\FluentValidationActionFilter.cs",
+              "ToolTip": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.WebApi\\Validation\\FluentValidationActionFilter.cs",
+              "RelativeToolTip": "HRestaurant\\src\\HRestaurant.WebApi\\Validation\\FluentValidationActionFilter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-06T11:55:04.407Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ValidationErrorResponseFactory.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.WebApi\\Validation\\ValidationErrorResponseFactory.cs",
+              "RelativeDocumentMoniker": "HRestaurant\\src\\HRestaurant.WebApi\\Validation\\ValidationErrorResponseFactory.cs",
+              "ToolTip": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.WebApi\\Validation\\ValidationErrorResponseFactory.cs",
+              "RelativeToolTip": "HRestaurant\\src\\HRestaurant.WebApi\\Validation\\ValidationErrorResponseFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-06T11:55:02.609Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "MenuCategoryValidators.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.Application\\Validators\\MenuCategories\\MenuCategoryValidators.cs",
+              "RelativeDocumentMoniker": "HRestaurant\\src\\HRestaurant.Application\\Validators\\MenuCategories\\MenuCategoryValidators.cs",
+              "ToolTip": "C:\\Users\\ASUS\\Desktop\\HRestaurant\\HRestaurant\\src\\HRestaurant.Application\\Validators\\MenuCategories\\MenuCategoryValidators.cs",
+              "RelativeToolTip": "HRestaurant\\src\\HRestaurant.Application\\Validators\\MenuCategories\\MenuCategoryValidators.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAAwCEAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-06T11:54:29.837Z",
               "EditorCaption": ""
             },
             {

@@ -15,6 +15,7 @@ import { FoodLoadingFallback } from "@/features/food-3d/components/FoodLoadingFa
 import { IngredientInfoPanel } from "@/features/food-3d/components/IngredientInfoPanel";
 import { IngredientLegend } from "@/features/food-3d/components/IngredientLegend";
 import { useFoodViewerStore } from "@/features/food-3d/store/food-viewer-store";
+import { FoodExperience } from "@/features/caesar-salad/FoodExperience";
 
 const azn = new Intl.NumberFormat("az-AZ", {
   style: "currency",
@@ -109,6 +110,11 @@ export function FoodDetailPage() {
     if (!nextValue) setSelectedIngredient(null);
   };
   const has3DModel = food.is3DEnabled && Boolean(food.model3DUrl);
+  const isCaesarSalad = /caesar/i.test(food.name) || food.model3DUrl === "/models/caesar-salad.glb";
+
+  if (isCaesarSalad) {
+    return <FoodExperience food={food} restaurantSlug={restaurantSlug} />;
+  }
 
   return (
     <motion.main

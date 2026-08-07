@@ -132,7 +132,19 @@ try
 
     var app = builder.Build();
 
-    await app.Services.SeedIdentityDataAsync();
+    // Identity seeding must not prevent Kestrel from starting when the
+    // development SQL Server instance is temporarily unavailable. The API
+    // can still expose health/swagger endpoints while the database recovers.
+    try
+    {
+        await app.Services.SeedIdentityDataAsync();
+    }
+    catch (Exception exception)
+    {
+        app.Logger.LogWarning(
+            exception,
+            "Identity data seeding was skipped because the configured database is unavailable.");
+    }
 
     app.UseSerilogRequestLogging(options =>
     {
